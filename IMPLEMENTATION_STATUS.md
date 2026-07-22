@@ -17,5 +17,6 @@
 | Compile | Validates before per-subject inventory; summarizes resolved, pending, and unavailable entries; unexpected failures propagate | Feature/architecture | No compilation context or revision pinning | Implemented | Keep summary focused |
 | Workbench | Authenticated repository overview, per-subject lifecycle/document inventory, and resolved-document viewer | Feature | Read-only; no action execution | Implemented | Preserve projection boundary |
 | GeNEi execution | Durable role and integration seam | Documentation | No autonomous actions/provider | Deferred | Keep deferred |
-| x-document/x-change | Documented optional seams | Architecture checks | Not installed | Deferred | x-document adapter after resolved document |
+| x-document adapter contract | Versioned `1.0` request/result DTOs, JSON Schemas, deterministic mapper/fingerprint, fixtures, and inspection CLI | Unit/feature/architecture/fixture compatibility | Preparatory GNE-owned contract only; no package invocation, renderer, binary transport, or negotiated capabilities | Implemented | Bootstrap x-document against the reviewed contract |
+| x-document/x-change runtime integration | Documented optional seams | Architecture checks | Neither package is installed; no rendering, PDF, settlement, or execution | Deferred | Keep external and optional |
 | Production controls | None claimed | None | Audit/compliance/scale uncertified | Deferred | Deliberate later milestone |

@@ -15,6 +15,7 @@ arch('commands delegate repository behavior')
     ->expect('App\Console\Commands')
     ->toOnlyUse([
         'App\Domain',
+        'App\Integration',
         'Illuminate\Console',
         'Illuminate\Filesystem',
         'Illuminate\Support',
@@ -130,4 +131,54 @@ it('derives document set identity from direct inputs rather than the repository 
     $source = file_get_contents(dirname(__DIR__, 2).'/app/Domain/Compilation/BuildResolvedDocumentSet.php');
 
     expect($source)->not->toContain('$manifest->fingerprint', 'repository_fingerprint');
+});
+
+arch('x-document transfer DTOs remain independent of GNE compiler and persistence classes')
+    ->expect([
+        'App\Integration\XDocument\XDocumentContractVersion',
+        'App\Integration\XDocument\XDocumentSubject',
+        'App\Integration\XDocument\XDocumentEvidence',
+        'App\Integration\XDocument\XDocumentField',
+        'App\Integration\XDocument\XDocumentSection',
+        'App\Integration\XDocument\XDocumentAction',
+        'App\Integration\XDocument\XDocumentAttachment',
+        'App\Integration\XDocument\XDocumentResolvedDocument',
+        'App\Integration\XDocument\XDocumentCompilationRequest',
+        'App\Integration\XDocument\XDocumentOutput',
+        'App\Integration\XDocument\XDocumentCompilationResult',
+    ])
+    ->not->toUse([
+        'App\Domain',
+        'App\Models',
+        'Illuminate\Database',
+        'Illuminate\Http',
+        'App\Domain\Compilation\ResolvedDocument',
+    ]);
+
+arch('only the x-document adapter maps the internal compiler IR')
+    ->expect('App\Integration\XDocument\PrepareXDocumentCompilationRequest')
+    ->toUse('App\Domain\Compilation\ResolvedDocument')
+    ->not->toUse([
+        'App\Domain\Repository',
+        'App\Domain\Compilation\SelectedArtifactChain',
+        'App\Domain\Compilation\LifecyclePosition',
+        'Illuminate\Filesystem',
+        'App\Domain\Compilation\BrowserProjectionDriver',
+    ]);
+
+it('keeps repository machinery rendering and PDF semantics out of the external contract', function () {
+    $root = dirname(__DIR__, 2);
+    $contract = collect((new RecursiveIteratorIterator(new RecursiveDirectoryIterator($root.'/app/Integration/XDocument'))))
+        ->filter(fn (SplFileInfo $file): bool => $file->isFile())
+        ->map(fn (SplFileInfo $file): string => file_get_contents($file->getPathname()))
+        ->implode("\n");
+    $composer = file_get_contents($root.'/composer.json');
+
+    expect($contract)->not->toContain('RepositoryManifest', 'SelectedArtifactChain', 'LifecyclePosition', 'render(', 'Adobe', 'AcroForm')
+        ->and($composer)->not->toContain('3neti/x-document');
+});
+
+it('versions the x-document contract schema in its repository path', function () {
+    expect(dirname(__DIR__, 2).'/resources/gne/contracts/x-document/1.0/compilation-request.schema.json')->toBeFile()
+        ->and(dirname(__DIR__, 2).'/resources/gne/contracts/x-document/1.0/compilation-result.schema.json')->toBeFile();
 });

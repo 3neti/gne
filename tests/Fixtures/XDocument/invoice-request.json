@@ -1,0 +1,161 @@
+{
+ "contract_version": "1.0",
+ "request_identifier": "XDOC-REQUEST@cdf7957d9952d0e862733ed0b3c1864a38a76195c4d509b4bd07d6426ed5ac77",
+ "request_fingerprint": "cdf7957d9952d0e862733ed0b3c1864a38a76195c4d509b4bd07d6426ed5ac77",
+ "correlation_identifier": "DOCUMENT-INVOICE@96353db772d186796c7ed485018c2e5cfe742d20c9a8972d90dc14f9a58b37bf",
+ "requested_driver": "json",
+ "requested_capabilities": [
+ "actions",
+ "attachments",
+ "evidence"
+ ],
+ "options": {
+ "include_evidence": true
+ },
+ "document": {
+ "identifier": "DOCUMENT-INVOICE@96353db772d186796c7ed485018c2e5cfe742d20c9a8972d90dc14f9a58b37bf",
+ "definition_identifier": "DOCUMENT-INVOICE",
+ "definition_revision": 1,
+ "resolution_fingerprint": "96353db772d186796c7ed485018c2e5cfe742d20c9a8972d90dc14f9a58b37bf",
+ "title": "Reservation Invoice",
+ "status": "accepted",
+ "audience": [
+ "applicant",
+ "billing-operator"
+ ],
+ "subject": {
+ "identifier": "RESERVATION-000001",
+ "type": "PropertyReservation"
+ },
+ "primary_artifact": {
+ "identifier": "ARTIFACT-INVOICE-000001",
+ "revision": 2,
+ "type": "Invoice",
+ "source_reference": "business/profiles/property-reservation/examples/artifacts/invoice-000001-r2.yaml"
+ },
+ "sections": [
+ {
+ "identifier": "reservation",
+ "title": "Reservation",
+ "fields": [
+ {
+ "identifier": "applicant_alias",
+ "label": "Applicant",
+ "value": {
+ "type": "string",
+ "value": "Ana Example"
+ },
+ "evidence": [
+ {
+ "artifact_identifier": "ARTIFACT-APPLICATION-000001",
+ "artifact_revision": 1,
+ "artifact_type": "Application",
+ "subject_identifier": "RESERVATION-000001",
+ "source_reference": "business/profiles/property-reservation/examples/artifacts/application-000001-r1.yaml",
+ "payload_path": "payload.applicant_alias"
+ }
+ ],
+ "metadata": {}
+ },
+ {
+ "identifier": "lot_identifier",
+ "label": "Property",
+ "value": {
+ "type": "string",
+ "value": "LOT-037"
+ },
+ "evidence": [
+ {
+ "artifact_identifier": "ARTIFACT-APPLICATION-000001",
+ "artifact_revision": 1,
+ "artifact_type": "Application",
+ "subject_identifier": "RESERVATION-000001",
+ "source_reference": "business/profiles/property-reservation/examples/artifacts/application-000001-r1.yaml",
+ "payload_path": "payload.lot_identifier"
+ }
+ ],
+ "metadata": {}
+ }
+ ]
+ },
+ {
+ "identifier": "charges",
+ "title": "Charges",
+ "fields": [
+ {
+ "identifier": "amount",
+ "label": "Invoice amount",
+ "value": {
+ "type": "integer",
+ "value": 50000
+ },
+ "evidence": [
+ {
+ "artifact_identifier": "ARTIFACT-INVOICE-000001",
+ "artifact_revision": 2,
+ "artifact_type": "Invoice",
+ "subject_identifier": "RESERVATION-000001",
+ "source_reference": "business/profiles/property-reservation/examples/artifacts/invoice-000001-r2.yaml",
+ "payload_path": "payload.amount"
+ }
+ ],
+ "metadata": {}
+ },
+ {
+ "identifier": "currency",
+ "label": "Currency",
+ "value": {
+ "type": "string",
+ "value": "PHP"
+ },
+ "evidence": [
+ {
+ "artifact_identifier": "ARTIFACT-INVOICE-000001",
+ "artifact_revision": 2,
+ "artifact_type": "Invoice",
+ "subject_identifier": "RESERVATION-000001",
+ "source_reference": "business/profiles/property-reservation/examples/artifacts/invoice-000001-r2.yaml",
+ "payload_path": "payload.currency"
+ }
+ ],
+ "metadata": {}
+ }
+ ]
+ }
+ ],
+ "actions": [
+ {
+ "identifier": "submit_payment_evidence",
+ "label": "Submit payment evidence",
+ "type": "submit_evidence",
+ "enabled": true,
+ "metadata": {
+ "execution_owner": "host"
+ }
+ }
+ ],
+ "attachments": [],
+ "evidence": [
+ {
+ "artifact_identifier": "ARTIFACT-APPLICATION-000001",
+ "artifact_revision": 1,
+ "artifact_type": "Application",
+ "subject_identifier": "RESERVATION-000001",
+ "source_reference": "business/profiles/property-reservation/examples/artifacts/application-000001-r1.yaml",
+ "payload_path": null
+ },
+ {
+ "artifact_identifier": "ARTIFACT-INVOICE-000001",
+ "artifact_revision": 2,
+ "artifact_type": "Invoice",
+ "subject_identifier": "RESERVATION-000001",
+ "source_reference": "business/profiles/property-reservation/examples/artifacts/invoice-000001-r2.yaml",
+ "payload_path": null
+ }
+ ],
+ "metadata": {
+ "definition_source_fingerprint": "b70ca0abd349d2622192ad20e336ec355c96f7c48af3d97a2865fbc54ff29d0e",
+ "selected_evidence_count": 2
+ }
+ }
+}

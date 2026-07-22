@@ -1,0 +1,8 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://3neti.dev/gne/contracts/x-document/1.0/resolved-document",
+  "title": "x-document resolved document transfer 1.0",
+  "description": "The document member defined by compilation-request.schema.json. This schema is published separately for future package compatibility; request validation remains authoritative during preparation.",
+  "type": "object",
+  "required": ["identifier", "definition_identifier", "definition_revision", "resolution_fingerprint", "title", "status", "audience", "subject", "primary_artifact", "sections", "actions", "attachments", "evidence", "metadata"]
+}

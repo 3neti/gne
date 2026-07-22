@@ -1,0 +1,19 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://3neti.dev/gne/contracts/x-document/1.0/compilation-result",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["contract_version", "request_identifier", "document_identifier", "resolution_fingerprint", "driver", "status", "output", "warnings", "capabilities", "metadata"],
+  "properties": {
+    "contract_version": {"const": "1.0"},
+    "request_identifier": {"type": "string"},
+    "document_identifier": {"type": "string"},
+    "resolution_fingerprint": {"type": "string", "pattern": "^[a-f0-9]{64}$"},
+    "driver": {"type": "string"},
+    "status": {"enum": ["succeeded", "unsupported", "failed"]},
+    "output": {"type": ["object", "null"]},
+    "warnings": {"type": "array", "items": {"type": "string"}},
+    "capabilities": {"type": "array", "items": {"type": "string"}},
+    "metadata": {"type": "object"}
+  }
+}

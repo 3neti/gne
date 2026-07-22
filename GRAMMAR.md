@@ -66,3 +66,13 @@
 | Rebuild | Recreating derived state without changing canonical source. |
 | Explainability | Ability to state how evidence produced a result. |
 | Traceability | Ability to follow a result to identities, revisions, relationships, and paths. |
+| x-document Adapter | Anti-corruption mapper that translates GNE's internal Resolved Document into the versioned external contract without resolving or rendering business meaning. |
+| External Document Contract | Portable, versioned transfer representation consumed independently of GNE classes and repository services. |
+| Contract Version | Identifier for the external transfer schema; version `1.0` is distinct from document, definition, driver, and output revisions. |
+| XDocument Compilation Request | Versioned external document payload plus requested driver, capabilities, options, correlation identity, and deterministic request fingerprint. |
+| XDocument Compilation Result | Future external response describing success, unsupported behavior, or failure and an optional output; never document readiness. |
+| Request Fingerprint | Deterministic hash of contract version, external resolved meaning, requested driver, capabilities, and normalized options. |
+| Driver Request | Non-authoritative label naming the desired future projection driver without claiming availability. |
+| Capability | Named external-contract semantic requested from a future driver, currently limited to actions, attachments, and evidence. |
+| Output Reference | Portable output metadata or content reference that never requires an absolute local filesystem path. |
+| Anti-Corruption Layer | Boundary that prevents an external system from depending on GNE's internal compiler and repository models. |

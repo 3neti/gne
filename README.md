@@ -22,7 +22,7 @@ npm run build
 php artisan test
 ```
 
-Repository operations: `php artisan gne:validate`, `gne:index`, `gne:materialize`, `gne:rebuild --force`, `gne:explain`, `gne:compile`, and `gne:documents`. Use `php artisan gne:documents --subject=RESERVATION-000001 --json` for a deterministic subject inventory.
+Repository operations: `php artisan gne:validate`, `gne:index`, `gne:materialize`, `gne:rebuild --force`, `gne:explain`, `gne:compile`, `gne:documents`, and `gne:x-document:request`. Use `php artisan gne:documents --subject=RESERVATION-000001 --json` for a deterministic subject inventory. Use `php artisan gne:x-document:request --document=DOCUMENT-INVOICE --subject=RESERVATION-000001 --json` to inspect the versioned external transfer payload for one fully resolved document; it does not invoke x-document or render output.
 
 `business/` is canonical source, `app/` interprets and projects it, and `.gne/` is disposable generated state. Configuration version 1 requires relative canonical/generated paths and an optional enabled-profile list in `gne.yaml`.
 

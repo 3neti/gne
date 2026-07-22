@@ -37,6 +37,22 @@ flowchart LR
 
 Browser and PDF are peer projections. GNE knows no Adobe details; future x-document consumes `ResolvedDocument`. Settlement remains outside core and x-change optional. GeNEi may use different engines and must cite evidence.
 
+## x-document anti-corruption contract
+
+`ResolvedDocument` remains GNE's internal compiler IR. `PrepareXDocumentCompilationRequest` is the only component that knows both that IR and the versioned DTOs under `App\Integration\XDocument`. It normalizes supported values, maps allowlisted metadata and descriptive evidence, validates the generated request against JSON Schema, and derives a request fingerprint from direct transfer inputs.
+
+```mermaid
+flowchart LR
+  IR[GNE ResolvedDocument] --> A[Prepare x-document request]
+  A --> C[Contract 1.0 DTO + JSON Schema]
+  C -. future .-> X[3neti/x-document]
+  X -. future .-> O[Driver output]
+```
+
+The contract contains no repository manifest, selected chain, lifecycle model, database identity, HTTP object, or executable callback. Actions declare host-owned affordances. Attachments are metadata-only and reject absolute paths. Evidence uses `source_reference` as non-operative provenance and may be omitted. Version 1 supports tagged null, string, integer, boolean, list, and string-keyed map values; floats and arbitrary objects fail rather than being coerced. A requested driver is a request label, not a claim that a driver exists.
+
+During phase 1 GNE owns these preparatory DTOs and schemas. A future x-document package should own its canonical input contract, after which this adapter targets that package-owned shape. A shared lightweight contract package remains an option only if demonstrated necessary. The current GNE browser driver is unchanged.
+
 ## Resolved document intermediate representation
 
 Repository-authored document definitions declare contributing artifact types, a primary artifact, audience, ordered semantic sections, fields, actions, and attachments. `SelectArtifactChain` first selects latest accepted revisions by artifact identity inside one explicit Compilation Subject and rejects incompatible or cross-subject evidence. `ResolveDocument` only interprets that selected chain, resolves declared payload paths, and emits an immutable `ResolvedDocument`. Each resolved field carries its artifact identifier, artifact revision, source path, and value path.

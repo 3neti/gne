@@ -1,0 +1,178 @@
+{
+ "contract_version": "1.0",
+ "request_identifier": "XDOC-REQUEST@e44d09eac87d321bcbc4d80eb86589ec23d985a00f362db0bd8ba9ea6f377cec",
+ "request_fingerprint": "e44d09eac87d321bcbc4d80eb86589ec23d985a00f362db0bd8ba9ea6f377cec",
+ "correlation_identifier": "DOCUMENT-RECEIPT@ed0e4a5d58402e720ec912ee1d68a35a1d525615da7ea956e95d72ee8510eede",
+ "requested_driver": "json",
+ "requested_capabilities": [
+ "actions",
+ "attachments",
+ "evidence"
+ ],
+ "options": {
+ "include_evidence": true
+ },
+ "document": {
+ "identifier": "DOCUMENT-RECEIPT@ed0e4a5d58402e720ec912ee1d68a35a1d525615da7ea956e95d72ee8510eede",
+ "definition_identifier": "DOCUMENT-RECEIPT",
+ "definition_revision": 1,
+ "resolution_fingerprint": "ed0e4a5d58402e720ec912ee1d68a35a1d525615da7ea956e95d72ee8510eede",
+ "title": "Reservation Receipt",
+ "status": "accepted",
+ "audience": [
+ "applicant",
+ "billing-operator"
+ ],
+ "subject": {
+ "identifier": "RESERVATION-000001",
+ "type": "PropertyReservation"
+ },
+ "primary_artifact": {
+ "identifier": "ARTIFACT-RECEIPT-000001",
+ "revision": 1,
+ "type": "Receipt",
+ "source_reference": "business/profiles/property-reservation/examples/artifacts/receipt-000001-r1.yaml"
+ },
+ "sections": [
+ {
+ "identifier": "reservation",
+ "title": "Reservation",
+ "fields": [
+ {
+ "identifier": "applicant_alias",
+ "label": "Applicant",
+ "value": {
+ "type": "string",
+ "value": "Ana Example"
+ },
+ "evidence": [
+ {
+ "artifact_identifier": "ARTIFACT-APPLICATION-000001",
+ "artifact_revision": 1,
+ "artifact_type": "Application",
+ "subject_identifier": "RESERVATION-000001",
+ "source_reference": "business/profiles/property-reservation/examples/artifacts/application-000001-r1.yaml",
+ "payload_path": "payload.applicant_alias"
+ }
+ ],
+ "metadata": {}
+ },
+ {
+ "identifier": "lot_identifier",
+ "label": "Property",
+ "value": {
+ "type": "string",
+ "value": "LOT-037"
+ },
+ "evidence": [
+ {
+ "artifact_identifier": "ARTIFACT-APPLICATION-000001",
+ "artifact_revision": 1,
+ "artifact_type": "Application",
+ "subject_identifier": "RESERVATION-000001",
+ "source_reference": "business/profiles/property-reservation/examples/artifacts/application-000001-r1.yaml",
+ "payload_path": "payload.lot_identifier"
+ }
+ ],
+ "metadata": {}
+ }
+ ]
+ },
+ {
+ "identifier": "payment",
+ "title": "Accepted Payment",
+ "fields": [
+ {
+ "identifier": "amount",
+ "label": "Amount received",
+ "value": {
+ "type": "integer",
+ "value": 50000
+ },
+ "evidence": [
+ {
+ "artifact_identifier": "ARTIFACT-RECEIPT-000001",
+ "artifact_revision": 1,
+ "artifact_type": "Receipt",
+ "subject_identifier": "RESERVATION-000001",
+ "source_reference": "business/profiles/property-reservation/examples/artifacts/receipt-000001-r1.yaml",
+ "payload_path": "payload.amount"
+ }
+ ],
+ "metadata": {}
+ },
+ {
+ "identifier": "currency",
+ "label": "Currency",
+ "value": {
+ "type": "string",
+ "value": "PHP"
+ },
+ "evidence": [
+ {
+ "artifact_identifier": "ARTIFACT-RECEIPT-000001",
+ "artifact_revision": 1,
+ "artifact_type": "Receipt",
+ "subject_identifier": "RESERVATION-000001",
+ "source_reference": "business/profiles/property-reservation/examples/artifacts/receipt-000001-r1.yaml",
+ "payload_path": "payload.currency"
+ }
+ ],
+ "metadata": {}
+ },
+ {
+ "identifier": "approval",
+ "label": "Review outcome",
+ "value": {
+ "type": "string",
+ "value": "approved"
+ },
+ "evidence": [
+ {
+ "artifact_identifier": "ARTIFACT-PAYMENT-APPROVAL-000001",
+ "artifact_revision": 1,
+ "artifact_type": "PaymentApproval",
+ "subject_identifier": "RESERVATION-000001",
+ "source_reference": "business/profiles/property-reservation/examples/artifacts/payment-approval-000001-r1.yaml",
+ "payload_path": "payload.outcome"
+ }
+ ],
+ "metadata": {}
+ }
+ ]
+ }
+ ],
+ "actions": [],
+ "attachments": [],
+ "evidence": [
+ {
+ "artifact_identifier": "ARTIFACT-APPLICATION-000001",
+ "artifact_revision": 1,
+ "artifact_type": "Application",
+ "subject_identifier": "RESERVATION-000001",
+ "source_reference": "business/profiles/property-reservation/examples/artifacts/application-000001-r1.yaml",
+ "payload_path": null
+ },
+ {
+ "artifact_identifier": "ARTIFACT-PAYMENT-APPROVAL-000001",
+ "artifact_revision": 1,
+ "artifact_type": "PaymentApproval",
+ "subject_identifier": "RESERVATION-000001",
+ "source_reference": "business/profiles/property-reservation/examples/artifacts/payment-approval-000001-r1.yaml",
+ "payload_path": null
+ },
+ {
+ "artifact_identifier": "ARTIFACT-RECEIPT-000001",
+ "artifact_revision": 1,
+ "artifact_type": "Receipt",
+ "subject_identifier": "RESERVATION-000001",
+ "source_reference": "business/profiles/property-reservation/examples/artifacts/receipt-000001-r1.yaml",
+ "payload_path": null
+ }
+ ],
+ "metadata": {
+ "definition_source_fingerprint": "0b149b949aa4f1bb159d740efb8ca6fc3dc1068a8646298a76062d5b14ef2ba9",
+ "selected_evidence_count": 3
+ }
+ }
+}

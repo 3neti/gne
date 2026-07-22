@@ -1,0 +1,134 @@
+{
+ "contract_version": "1.0",
+ "request_identifier": "XDOC-REQUEST@000a9a3db0373cbc51eaee2e8b469680d71e8e7e77c84acf878d0b84d37bbbec",
+ "request_fingerprint": "000a9a3db0373cbc51eaee2e8b469680d71e8e7e77c84acf878d0b84d37bbbec",
+ "correlation_identifier": "DOCUMENT-RESERVATION-CERTIFICATE@8f6a21595ee24e80753a00d56504ba39cf7e9f0df1b559b4569d0f4479264ee5",
+ "requested_driver": "json",
+ "requested_capabilities": [
+ "actions",
+ "attachments",
+ "evidence"
+ ],
+ "options": {
+ "include_evidence": true
+ },
+ "document": {
+ "identifier": "DOCUMENT-RESERVATION-CERTIFICATE@8f6a21595ee24e80753a00d56504ba39cf7e9f0df1b559b4569d0f4479264ee5",
+ "definition_identifier": "DOCUMENT-RESERVATION-CERTIFICATE",
+ "definition_revision": 1,
+ "resolution_fingerprint": "8f6a21595ee24e80753a00d56504ba39cf7e9f0df1b559b4569d0f4479264ee5",
+ "title": "Reservation Certificate",
+ "status": "accepted",
+ "audience": [
+ "applicant",
+ "reservation-authority"
+ ],
+ "subject": {
+ "identifier": "RESERVATION-000001",
+ "type": "PropertyReservation"
+ },
+ "primary_artifact": {
+ "identifier": "ARTIFACT-RESERVATION-CERTIFICATE-000001",
+ "revision": 1,
+ "type": "ReservationCertificate",
+ "source_reference": "business/profiles/property-reservation/examples/artifacts/reservation-certificate-000001-r1.yaml"
+ },
+ "sections": [
+ {
+ "identifier": "certificate",
+ "title": "Certified Reservation",
+ "fields": [
+ {
+ "identifier": "applicant_alias",
+ "label": "Applicant",
+ "value": {
+ "type": "string",
+ "value": "Ana Example"
+ },
+ "evidence": [
+ {
+ "artifact_identifier": "ARTIFACT-APPLICATION-000001",
+ "artifact_revision": 1,
+ "artifact_type": "Application",
+ "subject_identifier": "RESERVATION-000001",
+ "source_reference": "business/profiles/property-reservation/examples/artifacts/application-000001-r1.yaml",
+ "payload_path": "payload.applicant_alias"
+ }
+ ],
+ "metadata": {}
+ },
+ {
+ "identifier": "lot_identifier",
+ "label": "Reserved property",
+ "value": {
+ "type": "string",
+ "value": "LOT-037"
+ },
+ "evidence": [
+ {
+ "artifact_identifier": "ARTIFACT-RESERVATION-CERTIFICATE-000001",
+ "artifact_revision": 1,
+ "artifact_type": "ReservationCertificate",
+ "subject_identifier": "RESERVATION-000001",
+ "source_reference": "business/profiles/property-reservation/examples/artifacts/reservation-certificate-000001-r1.yaml",
+ "payload_path": "payload.lot_identifier"
+ }
+ ],
+ "metadata": {}
+ },
+ {
+ "identifier": "receipt_amount",
+ "label": "Accepted reservation payment",
+ "value": {
+ "type": "integer",
+ "value": 50000
+ },
+ "evidence": [
+ {
+ "artifact_identifier": "ARTIFACT-RECEIPT-000001",
+ "artifact_revision": 1,
+ "artifact_type": "Receipt",
+ "subject_identifier": "RESERVATION-000001",
+ "source_reference": "business/profiles/property-reservation/examples/artifacts/receipt-000001-r1.yaml",
+ "payload_path": "payload.amount"
+ }
+ ],
+ "metadata": {}
+ }
+ ]
+ }
+ ],
+ "actions": [],
+ "attachments": [],
+ "evidence": [
+ {
+ "artifact_identifier": "ARTIFACT-APPLICATION-000001",
+ "artifact_revision": 1,
+ "artifact_type": "Application",
+ "subject_identifier": "RESERVATION-000001",
+ "source_reference": "business/profiles/property-reservation/examples/artifacts/application-000001-r1.yaml",
+ "payload_path": null
+ },
+ {
+ "artifact_identifier": "ARTIFACT-RECEIPT-000001",
+ "artifact_revision": 1,
+ "artifact_type": "Receipt",
+ "subject_identifier": "RESERVATION-000001",
+ "source_reference": "business/profiles/property-reservation/examples/artifacts/receipt-000001-r1.yaml",
+ "payload_path": null
+ },
+ {
+ "artifact_identifier": "ARTIFACT-RESERVATION-CERTIFICATE-000001",
+ "artifact_revision": 1,
+ "artifact_type": "ReservationCertificate",
+ "subject_identifier": "RESERVATION-000001",
+ "source_reference": "business/profiles/property-reservation/examples/artifacts/reservation-certificate-000001-r1.yaml",
+ "payload_path": null
+ }
+ ],
+ "metadata": {
+ "definition_source_fingerprint": "329a7f5a2777e8f2f8ad6cdd47346f32e93a493e9a55b7f6d33d26e2df1fce62",
+ "selected_evidence_count": 3
+ }
+ }
+}
