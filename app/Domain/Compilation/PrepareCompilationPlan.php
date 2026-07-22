@@ -3,7 +3,6 @@
 namespace App\Domain\Compilation;
 
 use App\Domain\Repository\RepositoryManifest;
-use Throwable;
 
 final readonly class PrepareCompilationPlan
 {
@@ -19,7 +18,7 @@ final readonly class PrepareCompilationPlan
                 $resolved = $this->resolver->handle($repositoryRoot, $manifest, $definition['identifier']);
                 $projection = $this->browserDriver->project($resolved);
                 $documents[] = ['identifier' => $definition['identifier'], 'status' => 'resolved', 'resolved_document' => $resolved->identifier, 'browser_projection' => $projection->identifier];
-            } catch (Throwable $exception) {
+            } catch (DocumentResolutionException $exception) {
                 $documents[] = ['identifier' => $definition['identifier'], 'status' => 'unresolved', 'reason' => $exception->getMessage()];
             }
         }

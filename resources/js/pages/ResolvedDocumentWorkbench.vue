@@ -32,7 +32,15 @@ type Projection = {
     actions: Array<{ identifier: string; label: string; intent: string }>;
     metadata: {
         document_definition: string;
-        revision: string | number;
+        definition_identifier: string;
+        definition_revision: string | number;
+        resolution_fingerprint: string;
+        primary_artifact: {
+            identifier: string;
+            revision: string | number;
+            type: string;
+            source_path: string;
+        };
         profile: string;
         scenario: string;
         audience: string[];
@@ -43,7 +51,7 @@ defineProps<{
     document: {
         identifier: string;
         evidence: Array<Omit<Evidence, 'value_path'>>;
-        metadata: { repository_fingerprint: string };
+        resolution_fingerprint: string;
     };
     projection: Projection;
 }>();
@@ -144,8 +152,8 @@ defineOptions({
             <span>Profile: {{ projection.metadata.profile }}</span>
             <span>Scenario: {{ projection.metadata.scenario }}</span>
             <span class="break-all">
-                Repository fingerprint:
-                {{ document.metadata.repository_fingerprint }}
+                Resolution fingerprint:
+                {{ document.resolution_fingerprint }}
             </span>
         </footer>
     </main>

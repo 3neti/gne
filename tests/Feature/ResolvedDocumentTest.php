@@ -9,12 +9,12 @@ use Inertia\Testing\AssertableInertia as Assert;
 
 uses(RefreshDatabase::class);
 
-it('resolves the supported property-reservation documents', function (string $identifier, int $revision, string $expectedField) {
+it('resolves the supported property-reservation documents', function (string $identifier, int $primaryRevision, string $expectedField) {
     $manifest = app(ValidateRepository::class)->handle(base_path());
     $document = app(ResolveDocument::class)->handle(base_path(), $manifest, $identifier);
     $fieldIdentifiers = collect($document->sections)->flatMap(fn ($section) => $section->fields)->map(fn ($field) => $field->identifier);
 
-    expect($document->revision)->toBe($revision)
+    expect($document->primaryArtifact->revision)->toBe($primaryRevision)
         ->and($document->profile)->toBe('PROFILE-PROPERTY-RESERVATION')
         ->and($fieldIdentifiers)->toContain($expectedField)
         ->and($document->evidence)->not->toBeEmpty();
@@ -48,4 +48,12 @@ it('protects and displays a browser projection with field evidence', function ()
             ->where('projection.sections.1.fields.0.evidence.artifact_revision', 2)
             ->where('projection.sections.1.fields.0.evidence.value_path', 'payload.amount')
         );
+});
+
+it('distinguishes missing definitions from definitions with missing evidence', function () {
+    $this->withoutVite();
+    $this->actingAs(User::factory()->create(['email_verified_at' => now()]));
+
+    $this->get(route('documents.show', 'DOCUMENT-NOT-FOUND'))->assertNotFound();
+    $this->get(route('documents.show', 'DOCUMENT-BROCHURE'))->assertUnprocessable();
 });

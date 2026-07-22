@@ -9,7 +9,7 @@ Canonical cognition, portable discovery, declaration-driven profiles, byte-compl
 
 ## Immediate direction
 
-Stabilize multi-chain document selection and document-definition validation against a second accepted artifact chain before introducing an external document driver.
+Introduce an explicit compilation subject and select one coherent artifact chain before introducing an external document driver.
 
 ## Explicit deferrals
 
@@ -21,4 +21,4 @@ Validation is intentionally structural rather than a complete JSON Schema engine
 
 ## Recommended next task
 
-**Resolved Document Contract Hardening** — validate the authored document-definition grammar and resolve one of multiple artifact chains explicitly, preserving deterministic evidence before future x-document integration.
+**Explicit Compilation Subject and Artifact Chain Selection** — identify the business subject being compiled and resolve one coherent chain so artifacts from different transactions can never be combined.

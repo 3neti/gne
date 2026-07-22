@@ -14,10 +14,11 @@ final readonly class ResolveDocument
 
     public function handle(string $repositoryRoot, RepositoryManifest $manifest, string $documentIdentifier): ResolvedDocument
     {
+        $repository = new RepositoryAddress($repositoryRoot);
         $definition = collect($this->definitions($repositoryRoot, $manifest))->firstWhere('identifier', $documentIdentifier);
 
         if (! is_array($definition)) {
-            throw new DocumentResolutionException("Document definition {$documentIdentifier} was not found.");
+            throw new DocumentDefinitionNotFound("Document definition {$documentIdentifier} was not found.");
         }
 
         $primaryArtifactType = $definition['primary_artifact_type'] ?? null;
@@ -54,13 +55,28 @@ final readonly class ResolveDocument
             'artifact_revision' => $artifact['revision'],
             'artifact_type' => $artifact['type'],
             'source_path' => $artifact['path'],
-        ])->sortBy([['artifact_type', 'asc'], ['artifact_identifier', 'asc']])->values()->all();
+        ])->sortBy([['artifact_type', 'asc'], ['artifact_identifier', 'asc'], ['artifact_revision', 'asc']])->values()->all();
+        $resolutionEvidence = array_map(fn (array $artifact): array => [
+            ...$artifact,
+            'source_fingerprint' => hash_file('sha256', $repository->absolute($artifact['source_path'])),
+        ], $evidence);
+        $resolutionFingerprint = hash('sha256', json_encode([
+            'definition' => [
+                'identifier' => $definition['identifier'],
+                'revision' => $definition['revision'],
+                'source_fingerprint' => $definition['source_fingerprint'],
+            ],
+            'evidence' => $resolutionEvidence,
+        ], JSON_UNESCAPED_SLASHES | JSON_THROW_ON_ERROR));
 
         return new ResolvedDocument(
-            'RESOLVED-'.$definition['identifier'].'-'.$primaryArtifact['identifier'].'-R'.$primaryArtifact['revision'],
+            $definition['identifier'].'@'.$resolutionFingerprint,
             $definition['title'],
+            $definition['identifier'],
+            $definition['revision'],
             $definition['path'],
-            $primaryArtifact['revision'],
+            $resolutionFingerprint,
+            new PrimaryArtifact($primaryArtifact['identifier'], $primaryArtifact['revision'], $primaryArtifact['type'], $primaryArtifact['path']),
             $definition['profile'],
             $definition['scenario'],
             $primaryArtifact['status'],
@@ -69,7 +85,7 @@ final readonly class ResolveDocument
             $actions,
             array_values($definition['attachments'] ?? []),
             $evidence,
-            ['definition_identifier' => $definition['identifier'], 'definition_revision' => $definition['revision'], 'repository_fingerprint' => $manifest->fingerprint],
+            ['definition_source_fingerprint' => $definition['source_fingerprint'], 'selected_evidence_count' => count($evidence)],
         );
     }
 
@@ -87,7 +103,7 @@ final readonly class ResolveDocument
                 if (! is_array($definition) || ! is_string($definition['identifier'] ?? null)) {
                     throw new DocumentResolutionException("Invalid document definition: {$documentPath}");
                 }
-                $definitions[] = [...$definition, 'profile' => $profile['identifier'], 'path' => $repository->relative($absolutePath)];
+                $definitions[] = [...$definition, 'profile' => $profile['identifier'], 'path' => $repository->relative($absolutePath), 'source_fingerprint' => hash_file('sha256', $absolutePath)];
             }
         }
 
@@ -111,7 +127,7 @@ final readonly class ResolveDocument
         });
 
         if ($artifacts === []) {
-            throw new DocumentResolutionException("No accepted {$artifactType} artifact is available for {$definition['identifier']}.");
+            throw new DocumentEvidenceNotFound("No accepted {$artifactType} artifact is available for {$definition['identifier']}.");
         }
 
         return $artifacts[0];
@@ -126,7 +142,7 @@ final readonly class ResolveDocument
         $artifact = is_string($artifactType) ? ($selectedArtifacts[$artifactType] ?? null) : null;
 
         if (! is_array($artifact) || ! is_string($valuePath) || ! Arr::has($artifact, $valuePath)) {
-            throw new DocumentResolutionException("Field {$fieldDefinition['identifier']} in {$documentIdentifier} has unresolved evidence.");
+            throw new DocumentEvidenceNotFound("Field {$fieldDefinition['identifier']} in {$documentIdentifier} has unresolved evidence.");
         }
 
         return new ResolvedField(

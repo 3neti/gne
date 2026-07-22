@@ -51,3 +51,8 @@ arch('browser projection driver consumes the resolved document IR')
     ->expect('App\Domain\Compilation\BrowserProjectionDriver')
     ->toUse('App\Domain\Compilation\ResolvedDocument')
     ->not->toUse(['App\Http', 'Inertia', 'Vue']);
+
+arch('compilation planning catches only expected document resolution failures')
+    ->expect('App\Domain\Compilation\PrepareCompilationPlan')
+    ->toUse('App\Domain\Compilation\DocumentResolutionException')
+    ->not->toUse('Throwable');

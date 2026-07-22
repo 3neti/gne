@@ -38,8 +38,12 @@ Browser and PDF are peer projections. GNE knows no Adobe details; future x-docum
 
 ## Resolved document intermediate representation
 
-Repository-authored document definitions declare contributing artifact types, a primary artifact, audience, ordered semantic sections, fields, actions, and attachments. `ResolveDocument` selects accepted artifact revisions, resolves declared payload paths, and emits an immutable `ResolvedDocument`. Each resolved field carries its artifact identifier, artifact revision, source path, and value path. The repository fingerprint remains attached as compilation metadata.
+Repository-authored document definitions declare contributing artifact types, a primary artifact, audience, ordered semantic sections, fields, actions, and attachments. `ResolveDocument` selects accepted artifact revisions, resolves declared payload paths, and emits an immutable `ResolvedDocument`. Each resolved field carries its artifact identifier, artifact revision, source path, and value path.
+
+The primary artifact anchors the document but does not define its identity alone. Resolution hashes the document-definition identifier, revision, and raw source fingerprint together with the deterministically ordered selected artifact identifiers, revisions, types, source paths, and raw source fingerprints. The resolved identifier derives from this resolution fingerprint. The same direct inputs produce the same identity; changing any selected revision or source bytes changes it; unrelated repository changes do not.
 
 `ResolvedDocument` is the compiler intermediate representation: it contains business meaning but no HTML, Vue, Inertia, Tailwind, browser layout, PDF, or Adobe concepts. `BrowserProjectionDriver` maps that IR into a disposable structural browser projection without evaluating fields or adding business meaning. Future browser, PDF, Markdown, JSON, API, and mobile drivers are peers over the same IR.
+
+Compilation planning reports expected `DocumentResolutionException` failures as unresolved definitions. Missing definitions are HTTP 404, while existing definitions lacking acceptable evidence are HTTP 422. Parser defects, infrastructure failures, type errors, and other unexpected exceptions propagate rather than being normalized into compilation results.
 
 Laravel authentication protects the control plane. Public ceremonies may later use signed links, OTP, or transaction credentials without accounts. Organization, Repository, Membership, Role, and Authority need deliberate future modeling; generic teams are not enabled.

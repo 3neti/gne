@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Domain\Compilation\BrowserProjectionDriver;
+use App\Domain\Compilation\DocumentDefinitionNotFound;
 use App\Domain\Compilation\DocumentResolutionException;
 use App\Domain\Compilation\ResolveDocument;
 use App\Domain\Repository\ValidateRepository;
@@ -18,8 +19,10 @@ class ResolvedDocumentController extends Controller
 
         try {
             $resolvedDocument = $resolver->handle(base_path(), $manifest, $document);
-        } catch (DocumentResolutionException $exception) {
+        } catch (DocumentDefinitionNotFound $exception) {
             abort(404, $exception->getMessage());
+        } catch (DocumentResolutionException $exception) {
+            abort(422, $exception->getMessage());
         }
 
         return Inertia::render('ResolvedDocumentWorkbench', ['document' => $resolvedDocument->toArray(), 'projection' => $browserDriver->project($resolvedDocument)->toArray()]);

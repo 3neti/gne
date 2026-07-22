@@ -26,6 +26,10 @@
 | Compiler | Services that discover, validate, interpret, and project source. |
 | Document Definition | Authored declaration of a document projection. |
 | Resolved Document | Deterministic driver-neutral compiler intermediate representation resolved from accepted artifacts, with ordered semantic content and evidence. |
+| Primary Artifact | Selected accepted artifact that anchors a resolved document's status and business purpose; it is only one member of the evidence set and does not solely determine document identity. |
+| Resolution Fingerprint | Deterministic hash of the document definition revision/source and complete ordered selected evidence set; the basis of immutable resolved-document identity. |
+| Evidence Set | All selected artifact identities, revisions, types, source paths, and source fingerprints that materially contribute to one resolution. |
+| Document Definition Revision | Authored revision of a repository document definition, paired with its source fingerprint for resolution identity. |
 | Resolved Field | Named value in a resolved document carrying direct artifact, revision, path, and value-path evidence. |
 | Document Resolver | Compiler service that interprets an authored document definition and accepted artifacts into a Resolved Document. |
 | Document Driver | Adapter projecting a resolved document without introducing business meaning. |
