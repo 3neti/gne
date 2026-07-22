@@ -17,8 +17,8 @@ class GneExplainCommand extends Command
         $manifest = $validator->handle(base_path());
         $explanation = $explainer->handle(base_path(), $manifest);
         if ($profile = $this->option('profile')) {
-            $explanation['profiles'] = collect($explanation['profiles'])->filter(fn (array $item): bool => in_array($profile, [$item['identifier'], $item['slug']], true))->values()->all();
-            $explanation['scenarios'] = collect($explanation['scenarios'])->filter(fn (array $item): bool => in_array($item['profile'], [$profile, $explanation['profiles'][0]['identifier'] ?? null], true))->values()->all();
+            $explanation['profiles'] = array_values(array_filter($manifest->profiles, fn (array $item): bool => in_array($profile, [$item['identifier'], $item['slug']], true)));
+            $explanation['scenarios'] = array_values(array_filter($manifest->scenarios, fn (array $item): bool => in_array($item['profile'], [$profile, $explanation['profiles'][0]['identifier'] ?? null], true)));
             if ($explanation['profiles'] === []) {
                 $this->components->error("Profile {$profile} was not found.");
 

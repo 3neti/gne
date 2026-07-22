@@ -20,6 +20,11 @@ it('creates deterministic semantic indexes that can be deleted and rebuilt', fun
     expect(array_column($subjects, 'identifier'))->toBe(['RESERVATION-000001', 'RESERVATION-000002']);
     $artifactTypes = json_decode(file_get_contents(base_path('.gne/semantic/artifact-types.json')), true, flags: JSON_THROW_ON_ERROR);
     expect(collect($artifactTypes)->firstWhere('type', 'Invoice')['schema'])->toBe('business/profiles/property-reservation/schemas/invoice.schema.json');
+    $lifecycles = json_decode(file_get_contents(base_path('.gne/semantic/lifecycles.json')), true, flags: JSON_THROW_ON_ERROR);
+    $documentSets = json_decode(file_get_contents(base_path('.gne/semantic/document-sets.json')), true, flags: JSON_THROW_ON_ERROR);
+    expect(collect($lifecycles)->firstWhere('identifier', 'LIFECYCLE-MANUAL-RESERVATION')['subject_type'])->toBe('PropertyReservation')
+        ->and(array_column($documentSets, 'subject'))->toBe(['RESERVATION-000001', 'RESERVATION-000002'])
+        ->and($documentSets[1]['counts']['pending'])->toBe(3);
 });
 
 it('materializes idempotent projections with stable repository identities', function () {

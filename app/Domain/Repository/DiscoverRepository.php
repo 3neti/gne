@@ -49,8 +49,9 @@ final readonly class DiscoverRepository
 
         [$profiles, $profileFindings] = $this->definitions($repository, $businessRoot.'/profiles', 'profile.yaml', 'profile');
         [$scenarios, $scenarioFindings] = $this->definitions($repository, $businessRoot.'/profiles', 'scenarios/*.yaml', 'scenario');
+        [$lifecycles, $lifecycleFindings] = $this->lifecycles($repository, $businessRoot, $profiles);
         [$artifacts, $artifactFindings] = $this->artifacts($repository, $businessRoot);
-        $findings = [...$findings, ...$profileFindings, ...$scenarioFindings, ...$artifactFindings];
+        $findings = [...$findings, ...$profileFindings, ...$scenarioFindings, ...$lifecycleFindings, ...$artifactFindings];
 
         foreach ($profiles as $profile) {
             $profileRoot = dirname($repository->absolute($profile['path']));
@@ -107,13 +108,63 @@ final readonly class DiscoverRepository
             }
         }
 
+        foreach ($scenarios as $scenario) {
+            if (! is_string($scenario['lifecycle']) || ! array_any($lifecycles, fn (array $lifecycle): bool => $lifecycle['identifier'] === $scenario['lifecycle'] && $lifecycle['profile'] === $scenario['profile'])) {
+                $findings[] = new ValidationFinding(ValidationSeverity::Error, 'scenario.lifecycle_invalid', "Scenario {$scenario['identifier']} references an unknown lifecycle.", $scenario['path'], '/lifecycle');
+            }
+        }
+
         if (is_dir($generatedRoot) && $this->containsCanonicalMarkers($generatedRoot)) {
             $findings[] = new ValidationFinding(ValidationSeverity::Error, 'generated.contains_canonical', 'Generated state contains files marked canonical.', (string) $configuration->generatedPath);
         }
 
         $canonicalEvidence = $this->fingerprint->build($repository, $configuration->businessPath);
 
-        return new RepositoryManifest($configuration->businessPath, $configuration->generatedPath, $profiles, $scenarios, $artifacts, $canonicalEvidence['fingerprint'], $canonicalEvidence['files'], $findings);
+        return new RepositoryManifest($configuration->businessPath, $configuration->generatedPath, $profiles, $scenarios, $artifacts, $canonicalEvidence['fingerprint'], $canonicalEvidence['files'], $findings, $lifecycles);
+    }
+
+    /**
+     * @param  list<array<string, mixed>>  $profiles
+     * @return array{list<array<string, mixed>>, list<ValidationFinding>}
+     */
+    private function lifecycles(RepositoryAddress $repository, string $businessRoot, array $profiles): array
+    {
+        $lifecycles = [];
+        $findings = [];
+        $identifiers = [];
+        foreach ($profiles as $profile) {
+            $profileRoot = dirname($repository->absolute($profile['path']));
+            foreach ($profile['declarations']['lifecycles'] ?? [] as $declaredPath) {
+                $path = $profileRoot.'/'.$declaredPath;
+                try {
+                    $data = Yaml::parseFile($path);
+                    if (! is_array($data) || ! is_string($data['identifier'] ?? null) || ! is_string($data['subject_type'] ?? null) || ! is_array($data['states'] ?? null) || array_any($data['states'], fn (mixed $state): bool => ! is_string($state)) || ! is_array($data['transitions'] ?? null)) {
+                        throw new ParseException('Lifecycle requires identifier, subject_type, states, and transitions.');
+                    }
+                    $sourcePath = $repository->relative($path);
+                    if (isset($identifiers[$data['identifier']])) {
+                        $findings[] = new ValidationFinding(ValidationSeverity::Error, 'lifecycle.duplicate_identifier', "Duplicate lifecycle identifier {$data['identifier']}.", $sourcePath);
+                    }
+                    $identifiers[$data['identifier']] = true;
+                    $states = array_values($data['states']);
+                    if (count($states) !== count(array_unique($states))) {
+                        $findings[] = new ValidationFinding(ValidationSeverity::Error, 'lifecycle.duplicate_stage', "Lifecycle {$data['identifier']} contains duplicate states.", $sourcePath, '/states');
+                    }
+                    foreach ($data['transitions'] as $offset => $transition) {
+                        if (! is_array($transition) || ! is_string($transition['from'] ?? null) || ! is_string($transition['to'] ?? null) || ! is_string($transition['evidence'] ?? null) || ! in_array($transition['from'], $states, true) || ! in_array($transition['to'], $states, true) || ! isset($profile['artifact_types'][$transition['evidence']])) {
+                            $findings[] = new ValidationFinding(ValidationSeverity::Error, 'lifecycle.transition_invalid', "Lifecycle {$data['identifier']} contains an invalid transition.", $sourcePath, "/transitions/{$offset}");
+                        }
+                    }
+                    $lifecycles[] = ['identifier' => $data['identifier'], 'title' => (string) ($data['title'] ?? $data['identifier']), 'subject_type' => $data['subject_type'], 'profile' => $profile['identifier'], 'states' => $states, 'transitions' => array_values($data['transitions']), 'path' => $sourcePath, 'source_fingerprint' => hash_file('sha256', $path)];
+                } catch (ParseException $exception) {
+                    $findings[] = new ValidationFinding(ValidationSeverity::Error, 'lifecycle.invalid', $exception->getMessage(), $repository->relative($path));
+                }
+            }
+        }
+
+        usort($lifecycles, fn (array $left, array $right): int => $left['identifier'] <=> $right['identifier']);
+
+        return [$lifecycles, $findings];
     }
 
     /** @return array{list<array<string, mixed>>, list<ValidationFinding>} */

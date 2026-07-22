@@ -43,6 +43,7 @@ class GneCompileCommand extends Command
             $this->line("Resolved {$plan['profiles']} profile(s), {$plan['scenarios']} scenario(s), and {$plan['artifacts']} artifact revision(s).");
             $this->line("Compilation subjects: {$plan['compilation_subjects']}");
             $this->line("Compiled {$plan['resolved_documents']} resolved document(s) into {$plan['browser_projections']} browser projection(s).");
+            $this->line("Pending documents: {$plan['pending_documents']}; unavailable documents: {$plan['unavailable_documents']}.");
             foreach ($plan['documents'] as $document) {
                 $reason = isset($document['reason']) ? " — {$document['reason']}" : '';
                 $this->line("{$document['subject']['identifier']} · {$document['identifier']}: {$document['status']}{$reason}");

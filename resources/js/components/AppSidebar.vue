@@ -31,6 +31,7 @@ import {
     repository,
     scenarios,
 } from '@/routes';
+import { index as documentSets } from '@/routes/document_sets';
 import type { NavItem } from '@/types';
 
 const mainNavItems: NavItem[] = [
@@ -44,6 +45,7 @@ const mainNavItems: NavItem[] = [
     { title: 'Scenarios', href: scenarios(), icon: PlaySquare },
     { title: 'Artifacts', href: artifacts(), icon: ScrollText },
     { title: 'Resolved Documents', href: documents(), icon: FileText },
+    { title: 'Document Sets', href: documentSets(), icon: FileText },
     { title: 'Materialization', href: materialization(), icon: FileCheck2 },
 ];
 

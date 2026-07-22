@@ -19,7 +19,7 @@ final readonly class ValidateDocumentDefinitions
         $identifiers = [];
         $repository = new RepositoryAddress($repositoryRoot);
         $languageSchemaPath = dirname(__DIR__, 3).'/resources/gne/schemas/document-definition.schema.json';
-        $languageSchema = json_decode(file_get_contents($languageSchemaPath), false, flags: JSON_THROW_ON_ERROR);
+        $languageSchema = $this->sourceLoader->jsonObject($languageSchemaPath);
 
         foreach ($manifest->profiles as $profile) {
             $profileRoot = dirname($repository->absolute($profile['path']));
@@ -58,7 +58,11 @@ final readonly class ValidateDocumentDefinitions
         return $findings;
     }
 
-    /** @param array<string, mixed> $profile @param array<string, mixed> $definition @return list<ValidationFinding> */
+    /**
+     * @param  array<string, mixed>  $profile
+     * @param  array<string, mixed>  $definition
+     * @return list<ValidationFinding>
+     */
     private function contextualFindings(string $repositoryRoot, RepositoryManifest $manifest, array $profile, array $definition, string $sourcePath): array
     {
         $findings = [];
@@ -79,11 +83,11 @@ final readonly class ValidateDocumentDefinitions
             }
         }
 
-        $sections = is_array($definition['sections'] ?? null) ? $definition['sections'] : [];
+        $sections = is_array($definition['sections'] ?? null) ? array_values($definition['sections']) : [];
         $findings = [...$findings, ...$this->duplicates($sections, 'DOCUMENT_SECTION_IDENTIFIER_DUPLICATE', $sourcePath, '/sections')];
-        $fields = collect($sections)->flatMap(fn (mixed $section): array => is_array($section) && is_array($section['fields'] ?? null) ? $section['fields'] : [])->all();
-        $findings = [...$findings, ...$this->duplicates($fields, 'DOCUMENT_FIELD_IDENTIFIER_DUPLICATE', $sourcePath, '/sections/*/fields')];
-        $actions = is_array($definition['actions'] ?? null) ? $definition['actions'] : [];
+        $fields = collect($sections)->flatMap(fn (mixed $section): array => is_array($section) && is_array($section['fields'] ?? null) ? array_values($section['fields']) : [])->values()->all();
+        $findings = [...$findings, ...$this->duplicates(array_values($fields), 'DOCUMENT_FIELD_IDENTIFIER_DUPLICATE', $sourcePath, '/sections/*/fields')];
+        $actions = is_array($definition['actions'] ?? null) ? array_values($definition['actions']) : [];
         $findings = [...$findings, ...$this->duplicates($actions, 'DOCUMENT_ACTION_IDENTIFIER_DUPLICATE', $sourcePath, '/actions')];
 
         foreach ($fields as $field) {
@@ -116,7 +120,10 @@ final readonly class ValidateDocumentDefinitions
         return $findings;
     }
 
-    /** @param list<mixed> $items @return list<ValidationFinding> */
+    /**
+     * @param  list<mixed>  $items
+     * @return list<ValidationFinding>
+     */
     private function duplicates(array $items, string $code, string $sourcePath, string $location): array
     {
         $seen = [];

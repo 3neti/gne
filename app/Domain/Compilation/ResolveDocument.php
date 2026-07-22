@@ -4,13 +4,12 @@ namespace App\Domain\Compilation;
 
 use App\Domain\Repository\RepositoryAddress;
 use App\Domain\Repository\RepositoryManifest;
-use Illuminate\Filesystem\Filesystem;
 use Illuminate\Support\Arr;
 use Symfony\Component\Yaml\Yaml;
 
 final readonly class ResolveDocument
 {
-    public function __construct(private Filesystem $files, private SelectArtifactChain $chainSelector) {}
+    public function __construct(private SelectArtifactChain $chainSelector) {}
 
     public function handle(string $repositoryRoot, RepositoryManifest $manifest, DocumentResolutionRequest $request): ResolvedDocument
     {
@@ -48,16 +47,17 @@ final readonly class ResolveDocument
             $sections[] = new ResolvedSection($sectionDefinition['identifier'], $sectionDefinition['title'], $fields);
         }
 
-        $actions = array_map(
+        $actions = array_values(array_map(
             fn (array $action): ResolvedAction => new ResolvedAction($action['identifier'], $action['label'], $action['intent']),
             $definition['actions'] ?? [],
-        );
+        ));
         $evidence = collect($selectedArtifacts)->map(fn (array $artifact): array => [
             'artifact_identifier' => $artifact['identifier'],
             'artifact_revision' => $artifact['revision'],
             'artifact_type' => $artifact['type'],
             'source_path' => $artifact['path'],
         ])->sortBy([['artifact_type', 'asc'], ['artifact_identifier', 'asc'], ['artifact_revision', 'asc']])->values()->all();
+        $evidence = array_values($evidence);
         $resolutionEvidence = array_map(fn (array $artifact): array => [
             ...$artifact,
             'source_fingerprint' => hash_file('sha256', $repository->absolute($artifact['source_path'])),
@@ -116,7 +116,10 @@ final readonly class ResolveDocument
         return $definitions;
     }
 
-    /** @param array<string, mixed> $fieldDefinition @param array<string, array<string, mixed>> $selectedArtifacts */
+    /**
+     * @param  array<string, mixed>  $fieldDefinition
+     * @param  array<string, array<string, mixed>>  $selectedArtifacts
+     */
     private function resolveField(array $fieldDefinition, array $selectedArtifacts, string $documentIdentifier): ResolvedField
     {
         $source = $fieldDefinition['source'] ?? [];
@@ -125,7 +128,7 @@ final readonly class ResolveDocument
         $artifact = is_string($artifactType) ? ($selectedArtifacts[$artifactType] ?? null) : null;
 
         if (! is_array($artifact) || ! is_string($valuePath) || ! Arr::has($artifact, $valuePath)) {
-            throw new DocumentEvidenceNotFound("Field {$fieldDefinition['identifier']} in {$documentIdentifier} has unresolved evidence.");
+            throw new DocumentEvidenceNotFound(is_string($artifactType) ? $artifactType : 'Unknown', "Field {$fieldDefinition['identifier']} in {$documentIdentifier} has unresolved evidence.");
         }
 
         return new ResolvedField(

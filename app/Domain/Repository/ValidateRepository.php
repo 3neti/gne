@@ -25,6 +25,6 @@ final readonly class ValidateRepository
             $severity[$right->severity->value], $right->sourcePath ?? '', $right->location ?? '', $right->code, $right->message,
         ]);
 
-        return new RepositoryManifest($manifest->businessPath, $manifest->generatedPath, $manifest->profiles, $manifest->scenarios, $manifest->artifacts, $manifest->fingerprint, $manifest->canonicalFiles, $findings);
+        return new RepositoryManifest($manifest->businessPath, $manifest->generatedPath, $manifest->profiles, $manifest->scenarios, $manifest->artifacts, $manifest->fingerprint, $manifest->canonicalFiles, $findings, $manifest->lifecycles);
     }
 }

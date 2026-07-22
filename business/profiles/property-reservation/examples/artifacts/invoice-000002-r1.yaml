@@ -7,6 +7,6 @@ profile: PROFILE-PROPERTY-RESERVATION
 scenario: SCENARIO-MANUAL-PAYMENT-RESERVATION
 subject: { identifier: RESERVATION-000002, type: PropertyReservation }
 references:
-  - { relationship: produced_for, identifier: ARTIFACT-APPLICATION-000002, revision: 1 }
+  - { relationship: produced_by, identifier: ARTIFACT-ASSESSMENT-000002, revision: 1 }
 payload: { amount: 75000, currency: PHP }
 provenance: { source: synthetic-subject-selection-example, actor: billing-operator, recorded_by: repository }

@@ -2,7 +2,7 @@
 
 GNE is a repository-native **Business Compiler**: the business belongs to version-controlled files, while databases, browser views, documents, APIs, reports, and analytics are rebuildable projections.
 
-The repository-native bootstrap, portability hardening, Resolved Document vertical slice, and explicit compilation-subject selection are complete. GNE demonstrates discovery, declaration-driven validation, semantic indexing, byte-complete fingerprinting, database materialization, subject-bound artifact-chain selection, complete-evidence-set document identity, and a peer browser projection. It is not a production ERP, workflow engine, document renderer, or canonical artifact editor.
+The repository-native bootstrap now includes portable discovery, declaration-driven validation, semantic indexing, byte-complete fingerprinting, database materialization, subject-bound artifact chains, evidence-set document identity, and per-subject document/lifecycle inventories. It is not a production ERP, workflow engine, document renderer, or canonical artifact editor.
 
 Repository validation now checks accepted payloads against explicit profile-owned JSON Schema 2020-12 declarations and validates repository-authored documents against the GNE-owned definition grammar before compilation. See [Diff Review Workflow](docs/development/DIFF_REVIEW_WORKFLOW.md) for incremental review packaging.
 
@@ -20,7 +20,7 @@ npm run build
 php artisan test
 ```
 
-Repository operations: `php artisan gne:validate`, `gne:index`, `gne:materialize`, `gne:rebuild --force`, `gne:explain`, and `gne:compile`.
+Repository operations: `php artisan gne:validate`, `gne:index`, `gne:materialize`, `gne:rebuild --force`, `gne:explain`, `gne:compile`, and `gne:documents`. Use `php artisan gne:documents --subject=RESERVATION-000001 --json` for a deterministic subject inventory.
 
 `business/` is canonical source, `app/` interprets and projects it, and `.gne/` is disposable generated state. Configuration version 1 requires relative canonical/generated paths and an optional enabled-profile list in `gne.yaml`.
 

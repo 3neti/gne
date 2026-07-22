@@ -1,5 +1,6 @@
 identifier: LIFECYCLE-CIVIC-PERMIT-DEMO
 title: Permit progress demonstration
+subject_type: CivicPermit
 states: [submitted, acknowledged]
 transitions:
   - { from: submitted, to: acknowledged, evidence: Acknowledgement }

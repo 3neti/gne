@@ -69,7 +69,10 @@ final readonly class ValidateArtifactPayloads
         return $findings;
     }
 
-    /** @param array<string, mixed> $artifact @param array<string, mixed> $context */
+    /**
+     * @param  array<string, mixed>  $artifact
+     * @param  array<string, mixed>  $context
+     */
     private function finding(string $code, string $message, array $artifact, ?string $payloadPointer, string $remediation, array $context = []): ValidationFinding
     {
         return new ValidationFinding(ValidationSeverity::Error, $code, $message, $artifact['path'], $payloadPointer === null ? null : '/payload'.$payloadPointer, $remediation, [...$context, 'artifact_identifier' => $artifact['identifier'], 'artifact_revision' => $artifact['revision'], 'artifact_type' => $artifact['type'], 'profile' => $artifact['profile']]);

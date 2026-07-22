@@ -51,6 +51,24 @@ Profile defines business language; scenario defines a ceremony; Compilation Subj
 
 The primary artifact anchors the document but does not define its identity alone. Resolution hashes the document-definition identifier, revision, and raw source fingerprint together with the deterministically ordered selected artifact identifiers, revisions, types, source paths, and raw source fingerprints. The resolved identifier derives from this resolution fingerprint. The same direct inputs produce the same identity; changing any selected revision or source bytes changes it; unrelated repository changes do not.
 
+## Resolved document set and lifecycle inventory
+
+`BuildResolvedDocumentSet` selects one subject's coherent chain, evaluates every valid document definition owned by that profile and scenario through the existing `ResolveDocument`, and emits a driver-neutral inventory. Successful resolution is `resolved`; directly required but absent accepted evidence is `pending`; classified chain incompatibility is `unavailable`. Unexpected failures propagate. The `not_applicable` state is reserved for future explicit applicability declarations and is not inferred.
+
+```mermaid
+flowchart TD
+  S[Compilation Subject] --> C[Selected Artifact Chain]
+  C --> L[Derived Lifecycle Position]
+  C --> B[Build Resolved Document Set]
+  D[Valid Document Definitions] --> B
+  B --> R[Resolved entries]
+  B --> P[Pending entries + missing evidence]
+  B --> U[Unavailable entries]
+  B --> X[Browser / JSON projections]
+```
+
+Lifecycle position is read from the scenario's declared lifecycle and compared with accepted artifact types in the selected chain. The highest contiguous evidenced stage is current, the first missing stage is next, and later evidence beyond that absence is reported as a gap. This is an explanation of repository evidence, not a state machine. Set identity hashes only the subject, selected evidence, applicable definition sources, lifecycle source and resulting statuses; unrelated repository changes cannot alter it.
+
 `ResolvedDocument` is the compiler intermediate representation: it contains business meaning but no HTML, Vue, Inertia, Tailwind, browser layout, PDF, or Adobe concepts. `BrowserProjectionDriver` maps that IR into a disposable structural browser projection without evaluating fields or adding business meaning. Future browser, PDF, Markdown, JSON, API, and mobile drivers are peers over the same IR.
 
 Compilation planning reports expected `DocumentResolutionException` failures as unresolved definitions. Missing definitions are HTTP 404, while existing definitions lacking acceptable evidence are HTTP 422. Parser defects, infrastructure failures, type errors, and other unexpected exceptions propagate rather than being normalized into compilation results.

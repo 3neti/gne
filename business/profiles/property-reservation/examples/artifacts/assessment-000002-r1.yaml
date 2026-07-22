@@ -1,0 +1,12 @@
+identifier: ARTIFACT-ASSESSMENT-000002
+type: Assessment
+revision: 1
+status: accepted
+occurred_at: 2026-07-03T10:00:00+08:00
+profile: PROFILE-PROPERTY-RESERVATION
+scenario: SCENARIO-MANUAL-PAYMENT-RESERVATION
+subject: { identifier: RESERVATION-000002, type: PropertyReservation }
+references:
+  - { relationship: assessed_by, identifier: ARTIFACT-APPLICATION-000002, revision: 1 }
+payload: { outcome: approved }
+provenance: { source: synthetic-subject-selection-example, actor: reservation-reviewer, recorded_by: repository }

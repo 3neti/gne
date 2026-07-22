@@ -12,7 +12,7 @@ final readonly class SelectedArtifactChain
     {
         $candidates = array_values(array_filter($this->artifacts, fn (array $artifact): bool => $artifact['type'] === $artifactType));
         if ($candidates === []) {
-            throw new DocumentEvidenceNotFound("No accepted {$artifactType} artifact is available for subject {$this->subject->identifier}.");
+            throw new DocumentEvidenceNotFound($artifactType, "No accepted {$artifactType} artifact is available for subject {$this->subject->identifier}.");
         }
         if (count($candidates) > 1) {
             throw new AmbiguousArtifactSelection("Multiple accepted {$artifactType} artifact identities are available for subject {$this->subject->identifier}.");

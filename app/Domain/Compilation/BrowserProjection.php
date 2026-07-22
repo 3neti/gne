@@ -4,7 +4,11 @@ namespace App\Domain\Compilation;
 
 final readonly class BrowserProjection implements DocumentProjection
 {
-    /** @param list<array<string, mixed>> $sections @param list<array<string, string>> $actions @param array<string, mixed> $metadata */
+    /**
+     * @param  list<array<string, mixed>>  $sections
+     * @param  list<array<string, string>>  $actions
+     * @param  array<string, mixed>  $metadata
+     */
     public function __construct(public string $identifier, public string $title, public string $status, public array $sections, public array $actions, public array $metadata) {}
 
     /** @return array<string, mixed> */

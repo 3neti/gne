@@ -54,6 +54,28 @@ arch('browser projection driver consumes the resolved document IR')
     ->toUse('App\Domain\Compilation\ResolvedDocument')
     ->not->toUse(['App\Http', 'Inertia', 'Vue']);
 
+arch('document set IR and lifecycle inventory are framework independent')
+    ->expect([
+        'App\Domain\Compilation\ResolvedDocumentSet',
+        'App\Domain\Compilation\DocumentInventoryEntry',
+        'App\Domain\Compilation\DocumentReadiness',
+        'App\Domain\Compilation\LifecyclePosition',
+        'App\Domain\Compilation\MissingDocumentEvidence',
+        'App\Domain\Compilation\BuildResolvedDocumentSet',
+    ])
+    ->not->toUse(['Illuminate\Database', 'Illuminate\Database\Eloquent', 'Inertia', 'Vue', 'App\Http']);
+
+arch('document set browser driver only projects prepared inventory')
+    ->expect('App\Domain\Compilation\DocumentSetBrowserProjectionDriver')
+    ->toUse('App\Domain\Compilation\ResolvedDocumentSet')
+    ->not->toUse([
+        'App\Domain\Compilation\ResolveDocument',
+        'App\Domain\Compilation\SelectArtifactChain',
+        'App\Domain\Repository\DiscoverRepository',
+        'App\Domain\Repository\ValidateRepository',
+        'Inertia',
+    ]);
+
 arch('artifact chain selection is independent of persistence')
     ->expect('App\Domain\Compilation\SelectArtifactChain')
     ->not->toUse(['Illuminate\Database', 'Illuminate\Database\Eloquent']);
@@ -88,7 +110,17 @@ it('keeps global artifact selection out of document resolution', function () {
         ->not->toContain('$manifest->artifacts');
 });
 
-arch('compilation planning catches only expected document resolution failures')
+arch('compilation planning delegates readiness classification to the document set builder')
     ->expect('App\Domain\Compilation\PrepareCompilationPlan')
-    ->toUse('App\Domain\Compilation\DocumentResolutionException')
+    ->toUse('App\Domain\Compilation\BuildResolvedDocumentSet')
     ->not->toUse('Throwable');
+
+arch('document readiness catches no unclassified implementation failures')
+    ->expect('App\Domain\Compilation\BuildResolvedDocumentSet')
+    ->not->toUse('Throwable');
+
+it('derives document set identity from direct inputs rather than the repository fingerprint', function () {
+    $source = file_get_contents(dirname(__DIR__, 2).'/app/Domain/Compilation/BuildResolvedDocumentSet.php');
+
+    expect($source)->not->toContain('$manifest->fingerprint', 'repository_fingerprint');
+});

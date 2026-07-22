@@ -53,10 +53,6 @@ class RepositorySourceLoader
             throw new RepositorySourceException($exception->getMessage(), previous: $exception);
         }
 
-        if (! is_string($contents)) {
-            throw new RepositorySourceException("Source is unreadable: {$path}");
-        }
-
         return $contents;
     }
 }

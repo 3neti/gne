@@ -17,7 +17,7 @@ function resolveBootstrapDocument(string $identifier, string $subject = 'RESERVA
     $files = new Filesystem;
     $manifest = (new DiscoverRepository($files, new CanonicalRepositoryFingerprint($files)))->handle($root);
 
-    return (new ResolveDocument($files, new SelectArtifactChain))->handle($root, $manifest, new DocumentResolutionRequest($identifier, new CompilationSubject($subject, 'PropertyReservation')));
+    return (new ResolveDocument(new SelectArtifactChain))->handle($root, $manifest, new DocumentResolutionRequest($identifier, new CompilationSubject($subject, 'PropertyReservation')));
 }
 
 it('resolves ordered sections and fields from repository definitions', function () {
@@ -49,7 +49,7 @@ it('derives identity from the complete selected evidence set', function () {
     $root = dirname(__DIR__, 2);
     $files = new Filesystem;
     $manifest = (new DiscoverRepository($files, new CanonicalRepositoryFingerprint($files)))->handle($root);
-    $resolver = new ResolveDocument($files, new SelectArtifactChain);
+    $resolver = new ResolveDocument(new SelectArtifactChain);
     $request = new DocumentResolutionRequest('DOCUMENT-INVOICE', new CompilationSubject('RESERVATION-000001', 'PropertyReservation'));
     $original = $resolver->handle($root, $manifest, $request);
     $applicationRevisionTwo = collect($manifest->artifacts)->firstWhere('identifier', 'ARTIFACT-APPLICATION-000001');
@@ -82,7 +82,7 @@ it('does not change resolved identity for an unrelated repository fingerprint', 
     $root = dirname(__DIR__, 2);
     $files = new Filesystem;
     $manifest = (new DiscoverRepository($files, new CanonicalRepositoryFingerprint($files)))->handle($root);
-    $resolver = new ResolveDocument($files, new SelectArtifactChain);
+    $resolver = new ResolveDocument(new SelectArtifactChain);
     $request = new DocumentResolutionRequest('DOCUMENT-INVOICE', new CompilationSubject('RESERVATION-000001', 'PropertyReservation'));
     $unrelatedChange = new RepositoryManifest($manifest->businessPath, $manifest->generatedPath, $manifest->profiles, $manifest->scenarios, $manifest->artifacts, str_repeat('f', 64), $manifest->canonicalFiles, $manifest->findings);
 

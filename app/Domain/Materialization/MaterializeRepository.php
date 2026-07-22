@@ -23,11 +23,13 @@ final readonly class MaterializeRepository
                 $this->replaceProjection('gne_profiles', $manifest->profiles, fn (array $item): array => ['repository_identifier' => $item['identifier'], 'title' => $item['title'], 'source_path' => $item['path'], 'metadata' => json_encode($item, JSON_THROW_ON_ERROR)]);
                 $this->replaceProjection('gne_scenarios', $manifest->scenarios, fn (array $item): array => ['repository_identifier' => $item['identifier'], 'profile_identifier' => $item['profile'], 'title' => $item['title'], 'source_path' => $item['path'], 'metadata' => json_encode($item, JSON_THROW_ON_ERROR)]);
                 $this->replaceProjection('gne_artifacts', $manifest->artifacts, fn (array $item): array => ['repository_identifier' => $item['identifier'], 'revision' => (string) $item['revision'], 'artifact_type' => $item['type'], 'profile_identifier' => $item['profile'], 'scenario_identifier' => $item['scenario'], 'subject_identifier' => $item['subject']['identifier'] ?? null, 'subject_type' => $item['subject']['type'] ?? null, 'status' => $item['status'], 'source_path' => $item['path'], 'metadata' => json_encode($item, JSON_THROW_ON_ERROR)]);
-                $relationships = collect($manifest->artifacts)->flatMap(fn (array $artifact): array => collect($artifact['references'])->map(function (mixed $reference) use ($artifact): array {
-                    $reference = is_array($reference) ? $reference : ['identifier' => $reference];
-
-                    return ['source_identifier' => $artifact['identifier'], 'source_revision' => (string) $artifact['revision'], 'relationship_type' => $reference['relationship'] ?? 'references', 'target_identifier' => $reference['identifier'] ?? $reference['artifact'], 'target_revision' => isset($reference['revision']) ? (string) $reference['revision'] : null, 'source_path' => $artifact['path']];
-                })->all())->all();
+                $relationships = [];
+                foreach ($manifest->artifacts as $artifact) {
+                    foreach ($artifact['references'] as $reference) {
+                        $reference = is_array($reference) ? $reference : ['identifier' => $reference];
+                        $relationships[] = ['source_identifier' => $artifact['identifier'], 'source_revision' => (string) $artifact['revision'], 'relationship_type' => $reference['relationship'] ?? 'references', 'target_identifier' => $reference['identifier'] ?? $reference['artifact'], 'target_revision' => isset($reference['revision']) ? (string) $reference['revision'] : null, 'source_path' => $artifact['path']];
+                    }
+                }
                 $this->replaceProjection('gne_artifact_relationships', $relationships, fn (array $item): array => $item);
 
                 return ['profiles' => count($manifest->profiles), 'scenarios' => count($manifest->scenarios), 'artifacts' => count($manifest->artifacts), 'relationships' => count($relationships)];

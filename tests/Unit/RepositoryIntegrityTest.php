@@ -20,8 +20,8 @@ function createPortableRepositoryFixture(): string
     $files->put($root.'/GENEI.md', '# External GNE Repository');
     $files->put($root.'/business/profiles/external/profile.yaml', "identifier: PROFILE-EXTERNAL\nslug: external\ntitle: External\nvocabulary: terms.yaml\nlifecycles: [lifecycles/progress.yaml]\nscenarios: [scenarios/example.yaml]\npolicies: [policies/rule.yaml]\ndocuments: [documents/note.yaml]\nschemas: [schemas/fact.schema.json]\n");
     $files->put($root.'/business/profiles/external/terms.yaml', "terms:\n  - { term: Fact, definition: External fact }\n");
-    $files->put($root.'/business/profiles/external/lifecycles/progress.yaml', "identifier: LIFE-EXTERNAL\n");
-    $files->put($root.'/business/profiles/external/scenarios/example.yaml', "identifier: SCENARIO-EXTERNAL\nprofile: PROFILE-EXTERNAL\ntitle: External scenario\n");
+    $files->put($root.'/business/profiles/external/lifecycles/progress.yaml', "identifier: LIFE-EXTERNAL\nsubject_type: ExternalCase\nstates: [recorded]\ntransitions: []\n");
+    $files->put($root.'/business/profiles/external/scenarios/example.yaml', "identifier: SCENARIO-EXTERNAL\nprofile: PROFILE-EXTERNAL\ntitle: External scenario\nlifecycle: LIFE-EXTERNAL\n");
     $files->put($root.'/business/profiles/external/policies/rule.yaml', "identifier: POLICY-EXTERNAL\n");
     $files->put($root.'/business/profiles/external/documents/note.yaml', "identifier: DOCUMENT-EXTERNAL\n");
     $files->put($root.'/business/profiles/external/schemas/fact.schema.json', '{"type":"object"}');

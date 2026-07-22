@@ -1,7 +1,7 @@
 identifier: ARTIFACT-PAYMENT-EVIDENCE-000001
 type: PaymentEvidence
 revision: 1
-status: submitted
+status: accepted
 occurred_at: 2026-07-02T09:00:00+08:00
 profile: PROFILE-PROPERTY-RESERVATION
 scenario: SCENARIO-MANUAL-PAYMENT-RESERVATION

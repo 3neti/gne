@@ -1,5 +1,6 @@
 identifier: LIFECYCLE-MANUAL-RESERVATION
 title: Manual-payment reservation lifecycle
+subject_type: PropertyReservation
 states:
   - brochure_available
   - application_accepted

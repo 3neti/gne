@@ -48,6 +48,15 @@
 | Document Resolver | Compiler service that interprets an authored document definition and accepted artifacts into a Resolved Document. |
 | Document Driver | Adapter projecting a resolved document without introducing business meaning. |
 | Browser Projection | Disposable browser-consumable structure produced from a Resolved Document; never canonical. |
+| Resolved Document Set | Deterministic, derived inventory of valid document definitions for exactly one Compilation Subject, including readiness and resolved IR where available. |
+| Document Inventory Entry | Subject-specific assessment of one valid Document Definition. |
+| Document Readiness | Derived ability to resolve a definition from the selected accepted Artifact Chain. |
+| Resolved | Readiness state in which all directly required accepted evidence exists and a Resolved Document was produced. |
+| Pending | Readiness state in which a valid applicable definition lacks directly required accepted evidence as an ordinary lifecycle condition. |
+| Unavailable | Readiness state in which a valid definition cannot currently resolve because the subject chain is incompatible or ambiguous, rather than merely incomplete. |
+| Not Applicable | Reserved readiness state for a valid definition excluded by future explicit applicability declarations; never inferred from missing evidence. |
+| Missing Evidence | Structured description of repository evidence directly required by a definition but absent from the selected chain. |
+| Lifecycle Position | Read-only derivation of contiguous completed, next, future, and gap stages from a declared lifecycle and selected accepted evidence. |
 | Semantic Index | Disposable AI-readable metadata linked to source evidence. |
 | Repository Agent | Human or software actor operating under repository constraints. |
 | Runtime State | Sessions, queues, locks, caches, OTPs, and temporary tokens. |

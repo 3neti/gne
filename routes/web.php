@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\DocumentSetController;
 use App\Http\Controllers\RepositoryWorkbenchController;
 use App\Http\Controllers\ResolvedDocumentController;
 use Illuminate\Support\Facades\Route;
@@ -14,6 +15,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('artifacts', RepositoryWorkbenchController::class)->name('artifacts')->defaults('section', 'artifacts');
     Route::get('materialization', RepositoryWorkbenchController::class)->name('materialization')->defaults('section', 'materialization');
     Route::get('documents', RepositoryWorkbenchController::class)->name('documents')->defaults('section', 'documents');
+    Route::get('document-sets', [DocumentSetController::class, 'index'])->name('document_sets.index');
+    Route::get('document-sets/{subject}', [DocumentSetController::class, 'show'])->name('document_sets.show');
     Route::get('documents/{document}/{subject}', ResolvedDocumentController::class)->name('documents.show');
 });
 
