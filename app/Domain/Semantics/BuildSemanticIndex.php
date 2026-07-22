@@ -20,19 +20,24 @@ final readonly class BuildSemanticIndex
         $profiles = $this->sorted($manifest->profiles);
         $scenarios = $this->sorted($manifest->scenarios);
         $artifacts = collect($manifest->artifacts)->sortBy([['identifier', 'asc'], ['revision', 'asc']])->values()->all();
+        $subjects = collect($artifacts)->filter(fn (array $artifact): bool => is_array($artifact['subject'] ?? null))->groupBy('subject.identifier')->map(function ($subjectArtifacts, string $identifier): array {
+            $first = $subjectArtifacts->first();
+
+            return ['identifier' => $identifier, 'type' => $first['subject']['type'], 'profile' => $first['profile'], 'scenarios' => $subjectArtifacts->pluck('scenario')->unique()->sort()->values()->all(), 'artifact_count' => $subjectArtifacts->count(), 'artifact_types' => $subjectArtifacts->pluck('type')->unique()->sort()->values()->all()];
+        })->sortBy('identifier')->values()->all();
         $relationships = collect($artifacts)->flatMap(fn (array $artifact): array => collect(Arr::wrap($artifact['references']))->map(function (mixed $reference) use ($artifact): array {
             $reference = is_array($reference) ? $reference : ['identifier' => $reference];
 
             return ['from' => $artifact['identifier'], 'from_revision' => $artifact['revision'], 'relationship' => $reference['relationship'] ?? 'references', 'to' => $reference['identifier'] ?? $reference['artifact'] ?? null, 'to_revision' => $reference['revision'] ?? null, 'evidence_path' => $artifact['path']];
         })->all())->sortBy([['from', 'asc'], ['relationship', 'asc'], ['to', 'asc']])->values()->all();
         $glossary = $this->glossary($repositoryRoot, $profiles);
-        $repository = ['notice' => 'Generated, non-canonical projection. Rebuild from repository evidence.', 'version' => 1, 'fingerprint' => $manifest->fingerprint, 'business_path' => (string) $manifest->businessPath, 'generated_path' => (string) $manifest->generatedPath, 'counts' => ['profiles' => count($profiles), 'scenarios' => count($scenarios), 'artifacts' => count($artifacts)], 'evidence' => $manifest->canonicalFiles];
+        $repository = ['notice' => 'Generated, non-canonical projection. Rebuild from repository evidence.', 'version' => 1, 'fingerprint' => $manifest->fingerprint, 'business_path' => (string) $manifest->businessPath, 'generated_path' => (string) $manifest->generatedPath, 'counts' => ['profiles' => count($profiles), 'scenarios' => count($scenarios), 'subjects' => count($subjects), 'artifacts' => count($artifacts)], 'evidence' => $manifest->canonicalFiles];
 
-        foreach (compact('repository', 'profiles', 'scenarios', 'artifacts', 'glossary', 'relationships') as $name => $data) {
+        foreach (compact('repository', 'profiles', 'scenarios', 'subjects', 'artifacts', 'glossary', 'relationships') as $name => $data) {
             $this->files->put($directory.'/'.$name.'.json', json_encode($data, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES | JSON_THROW_ON_ERROR).PHP_EOL);
         }
 
-        return ['profiles' => count($profiles), 'scenarios' => count($scenarios), 'artifacts' => count($artifacts), 'relationships' => count($relationships), 'glossary_terms' => count($glossary)];
+        return ['profiles' => count($profiles), 'scenarios' => count($scenarios), 'subjects' => count($subjects), 'artifacts' => count($artifacts), 'relationships' => count($relationships), 'glossary_terms' => count($glossary)];
     }
 
     /** @param list<array<string, mixed>> $items @return list<array<string, mixed>> */

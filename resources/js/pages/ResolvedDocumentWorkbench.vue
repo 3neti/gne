@@ -35,6 +35,7 @@ type Projection = {
         definition_identifier: string;
         definition_revision: string | number;
         resolution_fingerprint: string;
+        compilation_subject: { identifier: string; type: string };
         primary_artifact: {
             identifier: string;
             revision: string | number;
@@ -151,6 +152,10 @@ defineOptions({
             </span>
             <span>Profile: {{ projection.metadata.profile }}</span>
             <span>Scenario: {{ projection.metadata.scenario }}</span>
+            <span>
+                Subject: {{ projection.metadata.compilation_subject.identifier }}
+                ({{ projection.metadata.compilation_subject.type }})
+            </span>
             <span class="break-all">
                 Resolution fingerprint:
                 {{ document.resolution_fingerprint }}

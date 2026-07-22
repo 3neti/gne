@@ -25,7 +25,7 @@ function createPortableRepositoryFixture(): string
     $files->put($root.'/business/profiles/external/policies/rule.yaml', "identifier: POLICY-EXTERNAL\n");
     $files->put($root.'/business/profiles/external/documents/note.yaml', "identifier: DOCUMENT-EXTERNAL\n");
     $files->put($root.'/business/profiles/external/schemas/fact.schema.json', '{"type":"object"}');
-    $files->put($root.'/business/profiles/external/examples/artifacts/fact.yaml', "identifier: FACT-001\ntype: Fact\nrevision: 1\nstatus: accepted\nprofile: PROFILE-EXTERNAL\nscenario: SCENARIO-EXTERNAL\npayload: { amount: 100 }\n");
+    $files->put($root.'/business/profiles/external/examples/artifacts/fact.yaml', "identifier: FACT-001\ntype: Fact\nrevision: 1\nstatus: accepted\nprofile: PROFILE-EXTERNAL\nscenario: SCENARIO-EXTERNAL\nsubject: { identifier: EXTERNAL-001, type: ExternalCase }\npayload: { amount: 100 }\n");
 
     return $root;
 }
@@ -62,6 +62,22 @@ it('changes the canonical fingerprint when artifact payload bytes change and pre
         expect($unchanged->fingerprint)->toBe($before->fingerprint)
             ->and($after->fingerprint)->not->toBe($before->fingerprint)
             ->and($after->artifacts[0]['payload'])->toBe(['amount' => 125]);
+    } finally {
+        $files->deleteDirectory($root);
+    }
+});
+
+it('rejects accepted artifacts without explicit subject membership', function () {
+    $root = createPortableRepositoryFixture();
+    $files = new Filesystem;
+    $artifactPath = $root.'/business/profiles/external/examples/artifacts/fact.yaml';
+    $files->put($artifactPath, str_replace('subject: { identifier: EXTERNAL-001, type: ExternalCase }'.PHP_EOL, '', $files->get($artifactPath)));
+
+    try {
+        $manifest = (new DiscoverRepository($files, new CanonicalRepositoryFingerprint($files)))->handle($root);
+
+        expect($manifest->hasErrors())->toBeTrue()
+            ->and(collect($manifest->findings)->pluck('code'))->toContain('artifact.invalid');
     } finally {
         $files->deleteDirectory($root);
     }

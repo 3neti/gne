@@ -5,6 +5,7 @@ status: superseded
 accepted_at: 2026-07-01T11:00:00+08:00
 profile: PROFILE-PROPERTY-RESERVATION
 scenario: SCENARIO-MANUAL-PAYMENT-RESERVATION
+subject: { identifier: RESERVATION-000001, type: PropertyReservation }
 references:
   - { relationship: produced_by, identifier: ARTIFACT-ASSESSMENT-000001, revision: 1 }
 payload: { amount: 49500, currency: PHP }

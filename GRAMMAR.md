@@ -26,6 +26,11 @@
 | Compiler | Services that discover, validate, interpret, and project source. |
 | Document Definition | Authored declaration of a document projection. |
 | Resolved Document | Deterministic driver-neutral compiler intermediate representation resolved from accepted artifacts, with ordered semantic content and evidence. |
+| Compilation Subject | Stable repository-native identifier and business-language type for the bounded case or transaction being compiled; independent of database IDs, profiles, and scenarios. |
+| Artifact Membership | Explicit repository-authored association between an artifact and its Compilation Subject. |
+| Artifact Chain | Deterministically selected accepted artifact revisions belonging to exactly one Compilation Subject. |
+| Chain Selector | Service that selects and checks one coherent Artifact Chain without interpreting document presentation. |
+| Compilation Request | Document-definition identifier plus the explicit Compilation Subject to resolve. |
 | Primary Artifact | Selected accepted artifact that anchors a resolved document's status and business purpose; it is only one member of the evidence set and does not solely determine document identity. |
 | Resolution Fingerprint | Deterministic hash of the document definition revision/source and complete ordered selected evidence set; the basis of immutable resolved-document identity. |
 | Evidence Set | All selected artifact identities, revisions, types, source paths, and source fingerprints that materially contribute to one resolution. |

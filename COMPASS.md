@@ -1,15 +1,15 @@
 # GNE Compass
 
-**Current milestone:** Resolved Document Vertical Slice
+**Current milestone:** Explicit Compilation Subject and Artifact Chain Selection
 **North star:** The business belongs to the repository. Everything operational is a projection.
 
 ## Completed
 
-Canonical cognition, portable discovery, declaration-driven profiles, byte-complete fingerprints, immutable artifacts, semantic/database projections, and the authenticated workbench are established. Repository-authored definitions can now compile Application, Invoice, Receipt, and Reservation Certificate artifacts into deterministic evidence-bearing `ResolvedDocument` IR and then into a peer browser projection.
+Canonical cognition, portable discovery, declaration-driven profiles, byte-complete fingerprints, immutable artifacts, semantic/database projections, and the authenticated workbench are established. Resolved documents are now anchored to an explicit repository-native Compilation Subject and one deterministically selected artifact chain.
 
 ## Immediate direction
 
-Introduce an explicit compilation subject and select one coherent artifact chain before introducing an external document driver.
+Harden document-definition and schema validation before introducing an external document driver.
 
 ## Explicit deferrals
 
@@ -21,4 +21,4 @@ Validation is intentionally structural rather than a complete JSON Schema engine
 
 ## Recommended next task
 
-**Explicit Compilation Subject and Artifact Chain Selection** — identify the business subject being compiled and resolve one coherent chain so artifacts from different transactions can never be combined.
+**Document Definition and Schema Validation Hardening** — validate the authored field grammar and payload contracts before resolution.

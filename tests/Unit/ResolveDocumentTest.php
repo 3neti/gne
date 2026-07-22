@@ -1,20 +1,23 @@
 <?php
 
 use App\Domain\Compilation\BrowserProjectionDriver;
+use App\Domain\Compilation\CompilationSubject;
+use App\Domain\Compilation\DocumentResolutionRequest;
 use App\Domain\Compilation\ResolvedDocument;
 use App\Domain\Compilation\ResolveDocument;
+use App\Domain\Compilation\SelectArtifactChain;
 use App\Domain\Repository\CanonicalRepositoryFingerprint;
 use App\Domain\Repository\DiscoverRepository;
 use App\Domain\Repository\RepositoryManifest;
 use Illuminate\Filesystem\Filesystem;
 
-function resolveBootstrapDocument(string $identifier): ResolvedDocument
+function resolveBootstrapDocument(string $identifier, string $subject = 'RESERVATION-000001'): ResolvedDocument
 {
     $root = dirname(__DIR__, 2);
     $files = new Filesystem;
     $manifest = (new DiscoverRepository($files, new CanonicalRepositoryFingerprint($files)))->handle($root);
 
-    return (new ResolveDocument($files))->handle($root, $manifest, $identifier);
+    return (new ResolveDocument($files, new SelectArtifactChain))->handle($root, $manifest, new DocumentResolutionRequest($identifier, new CompilationSubject($subject, 'PropertyReservation')));
 }
 
 it('resolves ordered sections and fields from repository definitions', function () {
@@ -46,8 +49,9 @@ it('derives identity from the complete selected evidence set', function () {
     $root = dirname(__DIR__, 2);
     $files = new Filesystem;
     $manifest = (new DiscoverRepository($files, new CanonicalRepositoryFingerprint($files)))->handle($root);
-    $resolver = new ResolveDocument($files);
-    $original = $resolver->handle($root, $manifest, 'DOCUMENT-INVOICE');
+    $resolver = new ResolveDocument($files, new SelectArtifactChain);
+    $request = new DocumentResolutionRequest('DOCUMENT-INVOICE', new CompilationSubject('RESERVATION-000001', 'PropertyReservation'));
+    $original = $resolver->handle($root, $manifest, $request);
     $applicationRevisionTwo = collect($manifest->artifacts)->firstWhere('identifier', 'ARTIFACT-APPLICATION-000001');
     $applicationRevisionTwo['revision'] = 2;
     $applicationRevisionTwo['payload']['applicant_alias'] = 'Revised Example Applicant';
@@ -61,12 +65,12 @@ it('derives identity from the complete selected evidence set', function () {
         $manifest->canonicalFiles,
         $manifest->findings,
     );
-    $revised = $resolver->handle($root, $revisedManifest, 'DOCUMENT-INVOICE');
-    $repeated = $resolver->handle($root, $revisedManifest, 'DOCUMENT-INVOICE');
+    $revised = $resolver->handle($root, $revisedManifest, $request);
+    $repeated = $resolver->handle($root, $revisedManifest, $request);
 
     expect($original->primaryArtifact->revision)->toBe(2)
         ->and($revised->primaryArtifact->revision)->toBe(2)
-        ->and($original->sections[0]->fields[0]->value)->toBe('Example Applicant')
+        ->and($original->sections[0]->fields[0]->value)->toBe('Ana Example')
         ->and($revised->sections[0]->fields[0]->value)->toBe('Revised Example Applicant')
         ->and($revised->resolutionFingerprint)->not->toBe($original->resolutionFingerprint)
         ->and($revised->identifier)->not->toBe($original->identifier)
@@ -78,11 +82,24 @@ it('does not change resolved identity for an unrelated repository fingerprint', 
     $root = dirname(__DIR__, 2);
     $files = new Filesystem;
     $manifest = (new DiscoverRepository($files, new CanonicalRepositoryFingerprint($files)))->handle($root);
-    $resolver = new ResolveDocument($files);
+    $resolver = new ResolveDocument($files, new SelectArtifactChain);
+    $request = new DocumentResolutionRequest('DOCUMENT-INVOICE', new CompilationSubject('RESERVATION-000001', 'PropertyReservation'));
     $unrelatedChange = new RepositoryManifest($manifest->businessPath, $manifest->generatedPath, $manifest->profiles, $manifest->scenarios, $manifest->artifacts, str_repeat('f', 64), $manifest->canonicalFiles, $manifest->findings);
 
-    expect($resolver->handle($root, $unrelatedChange, 'DOCUMENT-INVOICE')->identifier)
-        ->toBe($resolver->handle($root, $manifest, 'DOCUMENT-INVOICE')->identifier);
+    expect($resolver->handle($root, $unrelatedChange, $request)->identifier)
+        ->toBe($resolver->handle($root, $manifest, $request)->identifier);
+});
+
+it('never contaminates one compilation subject with another', function () {
+    $ana = resolveBootstrapDocument('DOCUMENT-INVOICE', 'RESERVATION-000001');
+    $ben = resolveBootstrapDocument('DOCUMENT-INVOICE', 'RESERVATION-000002');
+
+    expect($ana->sections[0]->fields[0]->value)->toBe('Ana Example')
+        ->and($ana->sections[1]->fields[0]->value)->toBe(50000)
+        ->and(json_encode($ana->toArray()))->not->toContain('Ben Example')->not->toContain('75000')
+        ->and($ben->sections[0]->fields[0]->value)->toBe('Ben Example')
+        ->and($ben->sections[1]->fields[0]->value)->toBe(75000)
+        ->and(json_encode($ben->toArray()))->not->toContain('Ana Example')->not->toContain('50000');
 });
 
 it('projects browser output without changing resolved business meaning', function () {

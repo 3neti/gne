@@ -5,6 +5,7 @@ status: submitted
 occurred_at: 2026-07-02T09:00:00+08:00
 profile: PROFILE-PROPERTY-RESERVATION
 scenario: SCENARIO-MANUAL-PAYMENT-RESERVATION
+subject: { identifier: RESERVATION-000001, type: PropertyReservation }
 references:
   - { relationship: payment_evidence_for, identifier: ARTIFACT-INVOICE-000001, revision: 2 }
 payload: { reference: SYNTHETIC-TRANSFER-001, amount: 50000 }

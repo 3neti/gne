@@ -25,7 +25,8 @@ Accepted artifacts are immutable and use stable repository identifiers plus revi
 
 ```mermaid
 flowchart LR
-  A[Accepted artifacts] --> R[ResolvedDocument]
+  A[Accepted artifacts] --> S[Select chain for explicit Compilation Subject]
+  S --> R[ResolvedDocument]
   R --> D{DocumentProjectionDriver}
   D --> B[Browser]
   D -. optional .-> P[x-document / Adobe PDF]
@@ -38,7 +39,9 @@ Browser and PDF are peer projections. GNE knows no Adobe details; future x-docum
 
 ## Resolved document intermediate representation
 
-Repository-authored document definitions declare contributing artifact types, a primary artifact, audience, ordered semantic sections, fields, actions, and attachments. `ResolveDocument` selects accepted artifact revisions, resolves declared payload paths, and emits an immutable `ResolvedDocument`. Each resolved field carries its artifact identifier, artifact revision, source path, and value path.
+Repository-authored document definitions declare contributing artifact types, a primary artifact, audience, ordered semantic sections, fields, actions, and attachments. `SelectArtifactChain` first selects latest accepted revisions by artifact identity inside one explicit Compilation Subject and rejects incompatible or cross-subject evidence. `ResolveDocument` only interprets that selected chain, resolves declared payload paths, and emits an immutable `ResolvedDocument`. Each resolved field carries its artifact identifier, artifact revision, source path, and value path.
+
+Profile defines business language; scenario defines a ceremony; Compilation Subject identifies one bounded business case; Artifact Chain contains its coherent accepted evidence. No resolver may substitute profile plus scenario for transaction identity. Ambiguous same-type identities fail instead of being selected by filesystem order.
 
 The primary artifact anchors the document but does not define its identity alone. Resolution hashes the document-definition identifier, revision, and raw source fingerprint together with the deterministically ordered selected artifact identifiers, revisions, types, source paths, and raw source fingerprints. The resolved identifier derives from this resolution fingerprint. The same direct inputs produce the same identity; changing any selected revision or source bytes changes it; unrelated repository changes do not.
 

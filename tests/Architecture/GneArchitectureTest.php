@@ -44,6 +44,8 @@ arch('resolved document IR has no browser or framework dependencies')
         'App\Domain\Compilation\ResolvedField',
         'App\Domain\Compilation\ResolvedAction',
         'App\Domain\Compilation\DocumentEvidence',
+        'App\Domain\Compilation\CompilationSubject',
+        'App\Domain\Compilation\SelectedArtifactChain',
     ])
     ->not->toUse(['Illuminate', 'Inertia', 'Vue', 'Tailwind', 'App\Http']);
 
@@ -51,6 +53,17 @@ arch('browser projection driver consumes the resolved document IR')
     ->expect('App\Domain\Compilation\BrowserProjectionDriver')
     ->toUse('App\Domain\Compilation\ResolvedDocument')
     ->not->toUse(['App\Http', 'Inertia', 'Vue']);
+
+arch('artifact chain selection is independent of persistence')
+    ->expect('App\Domain\Compilation\SelectArtifactChain')
+    ->not->toUse(['Illuminate\Database', 'Illuminate\Database\Eloquent']);
+
+it('keeps global artifact selection out of document resolution', function () {
+    $source = file_get_contents(dirname(__DIR__, 2).'/app/Domain/Compilation/ResolveDocument.php');
+
+    expect($source)->toContain('SelectArtifactChain')
+        ->not->toContain('$manifest->artifacts');
+});
 
 arch('compilation planning catches only expected document resolution failures')
     ->expect('App\Domain\Compilation\PrepareCompilationPlan')

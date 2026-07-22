@@ -5,6 +5,7 @@ status: accepted
 accepted_at: 2026-07-02T10:15:00+08:00
 profile: PROFILE-PROPERTY-RESERVATION
 scenario: SCENARIO-MANUAL-PAYMENT-RESERVATION
+subject: { identifier: RESERVATION-000001, type: PropertyReservation }
 references:
   - { relationship: authorized_by, identifier: ARTIFACT-PAYMENT-APPROVAL-000001, revision: 1 }
 payload: { amount: 50000, currency: PHP }

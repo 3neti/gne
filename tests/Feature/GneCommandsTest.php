@@ -16,6 +16,8 @@ it('creates deterministic semantic indexes that can be deleted and rebuilt', fun
     unlink(base_path('.gne/semantic/artifacts.json'));
     $this->artisan('gne:index')->assertSuccessful();
     expect(file_get_contents(base_path('.gne/semantic/artifacts.json')))->toBe($first);
+    $subjects = json_decode(file_get_contents(base_path('.gne/semantic/subjects.json')), true, flags: JSON_THROW_ON_ERROR);
+    expect(array_column($subjects, 'identifier'))->toBe(['RESERVATION-000001', 'RESERVATION-000002']);
 });
 
 it('materializes idempotent projections with stable repository identities', function () {
@@ -24,6 +26,7 @@ it('materializes idempotent projections with stable repository identities', func
     $this->artisan('gne:materialize')->assertSuccessful();
     expect(DB::table('gne_artifacts')->count())->toBe($count)
         ->and(DB::table('gne_artifacts')->where('repository_identifier', 'ARTIFACT-APPLICATION-000001')->exists())->toBeTrue()
+        ->and(DB::table('gne_artifacts')->where('repository_identifier', 'ARTIFACT-INVOICE-000002')->value('subject_identifier'))->toBe('RESERVATION-000002')
         ->and(DB::table('gne_materialization_runs')->count())->toBe(2)
         ->and(json_decode(DB::table('gne_artifacts')->where('repository_identifier', 'ARTIFACT-INVOICE-000001')->where('revision', '2')->value('metadata'), true)['payload']['amount'])->toBe(50000);
 });
@@ -37,6 +40,15 @@ it('rebuilds disposable projections non-interactively', function () {
 it('explains and plans compilation honestly', function () {
     $this->artisan('gne:explain --profile=property-reservation')->assertSuccessful()->expectsOutputToContain('The business belongs to the repository');
     $this->artisan('gne:compile')->assertSuccessful()->expectsOutputToContain('x-document not installed')->expectsOutputToContain('x-change not configured');
+});
+
+it('compiles one explicitly requested subject', function () {
+    expect(Artisan::call('gne:compile', ['--document' => 'DOCUMENT-INVOICE', '--subject' => 'RESERVATION-000002', '--json' => true]))->toBe(0);
+    $plan = json_decode(Artisan::output(), true, flags: JSON_THROW_ON_ERROR);
+
+    expect($plan['documents'])->toHaveCount(1)
+        ->and($plan['documents'][0]['subject']['identifier'])->toBe('RESERVATION-000002')
+        ->and($plan['documents'][0]['status'])->toBe('resolved');
 });
 
 it('returns a failing exit code for malformed configuration', function () {

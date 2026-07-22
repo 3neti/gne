@@ -10,11 +10,12 @@ use Symfony\Component\Yaml\Yaml;
 
 final readonly class ResolveDocument
 {
-    public function __construct(private Filesystem $files) {}
+    public function __construct(private Filesystem $files, private SelectArtifactChain $chainSelector) {}
 
-    public function handle(string $repositoryRoot, RepositoryManifest $manifest, string $documentIdentifier): ResolvedDocument
+    public function handle(string $repositoryRoot, RepositoryManifest $manifest, DocumentResolutionRequest $request): ResolvedDocument
     {
         $repository = new RepositoryAddress($repositoryRoot);
+        $documentIdentifier = $request->documentDefinitionIdentifier;
         $definition = collect($this->definitions($repositoryRoot, $manifest))->firstWhere('identifier', $documentIdentifier);
 
         if (! is_array($definition)) {
@@ -28,12 +29,13 @@ final readonly class ResolveDocument
             throw new DocumentResolutionException("Document definition {$documentIdentifier} must declare a primary artifact included in artifacts.");
         }
 
+        $chain = $this->chainSelector->handle($manifest, $request->compilationSubject, $definition['profile'], $definition['scenario']);
         $selectedArtifacts = [];
         foreach ($artifactTypes as $artifactType) {
             if (! is_string($artifactType)) {
                 throw new DocumentResolutionException("Document definition {$documentIdentifier} contains an invalid artifact type.");
             }
-            $selectedArtifacts[$artifactType] = $this->selectArtifact($manifest, $definition, $artifactType);
+            $selectedArtifacts[$artifactType] = $chain->one($artifactType);
         }
 
         $primaryArtifact = $selectedArtifacts[$primaryArtifactType];
@@ -66,6 +68,7 @@ final readonly class ResolveDocument
                 'revision' => $definition['revision'],
                 'source_fingerprint' => $definition['source_fingerprint'],
             ],
+            'subject' => $request->compilationSubject->toArray(),
             'evidence' => $resolutionEvidence,
         ], JSON_UNESCAPED_SLASHES | JSON_THROW_ON_ERROR));
 
@@ -76,6 +79,7 @@ final readonly class ResolveDocument
             $definition['revision'],
             $definition['path'],
             $resolutionFingerprint,
+            $request->compilationSubject,
             new PrimaryArtifact($primaryArtifact['identifier'], $primaryArtifact['revision'], $primaryArtifact['type'], $primaryArtifact['path']),
             $definition['profile'],
             $definition['scenario'],
@@ -110,27 +114,6 @@ final readonly class ResolveDocument
         usort($definitions, fn (array $left, array $right): int => $left['identifier'] <=> $right['identifier']);
 
         return $definitions;
-    }
-
-    /** @param array<string, mixed> $definition @return array<string, mixed> */
-    private function selectArtifact(RepositoryManifest $manifest, array $definition, string $artifactType): array
-    {
-        $artifacts = array_values(array_filter($manifest->artifacts, fn (array $artifact): bool => $artifact['type'] === $artifactType
-            && $artifact['profile'] === $definition['profile']
-            && $artifact['scenario'] === $definition['scenario']
-            && $artifact['status'] === 'accepted'));
-
-        usort($artifacts, function (array $left, array $right): int {
-            $identifierOrder = $left['identifier'] <=> $right['identifier'];
-
-            return $identifierOrder !== 0 ? $identifierOrder : $right['revision'] <=> $left['revision'];
-        });
-
-        if ($artifacts === []) {
-            throw new DocumentEvidenceNotFound("No accepted {$artifactType} artifact is available for {$definition['identifier']}.");
-        }
-
-        return $artifacts[0];
     }
 
     /** @param array<string, mixed> $fieldDefinition @param array<string, array<string, mixed>> $selectedArtifacts */

@@ -5,6 +5,7 @@ status: accepted
 accepted_at: 2026-07-01T09:00:00+08:00
 profile: PROFILE-PROPERTY-RESERVATION
 scenario: SCENARIO-MANUAL-PAYMENT-RESERVATION
+subject: { identifier: RESERVATION-000001, type: PropertyReservation }
 references: []
-payload: { applicant_alias: Example Applicant, lot_identifier: LOT-037 }
+payload: { applicant_alias: Ana Example, lot_identifier: LOT-037 }
 provenance: { source: synthetic-bootstrap-example, actor: applicant-example, recorded_by: repository }

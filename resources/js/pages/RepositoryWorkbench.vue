@@ -51,6 +51,7 @@ defineProps<{
         identifier: string;
         status: 'resolved' | 'unresolved';
         resolved_document?: string;
+        subject: { identifier: string; type: string };
         reason?: string;
     }>;
 }>();
@@ -210,12 +211,15 @@ defineOptions({
             <CardContent class="grid gap-3 md:grid-cols-2">
                 <div
                     v-for="document in documents"
-                    :key="document.identifier"
+                    :key="`${document.subject.identifier}-${document.identifier}`"
                     class="flex items-center justify-between gap-4 rounded-lg border p-3"
                 >
                     <div class="min-w-0">
                         <p class="truncate font-mono text-sm">
                             {{ document.identifier }}
+                        </p>
+                        <p class="font-mono text-xs text-muted-foreground">
+                            {{ document.subject.identifier }}
                         </p>
                         <p
                             v-if="document.reason"
@@ -226,7 +230,7 @@ defineOptions({
                     </div>
                     <Link
                         v-if="document.status === 'resolved'"
-                        :href="showDocument(document.identifier)"
+                        :href="showDocument({ document: document.identifier, subject: document.subject.identifier })"
                         class="text-sm font-medium text-primary hover:underline"
                     >
                         View

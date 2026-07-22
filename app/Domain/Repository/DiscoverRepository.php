@@ -2,6 +2,7 @@
 
 namespace App\Domain\Repository;
 
+use App\Domain\Compilation\CompilationSubject;
 use Illuminate\Filesystem\Filesystem;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Str;
@@ -67,12 +68,24 @@ final readonly class DiscoverRepository
             }
         }
 
-        $artifactIdentities = collect($artifacts)->mapWithKeys(fn (array $artifact): array => [$artifact['identifier'].'@'.$artifact['revision'] => true]);
+        $artifactIdentities = collect($artifacts)->mapWithKeys(fn (array $artifact): array => [$artifact['identifier'].'@'.$artifact['revision'] => $artifact]);
         foreach ($artifacts as $artifact) {
             foreach ($artifact['references'] as $reference) {
-                if (is_array($reference) && isset($reference['identifier']) && ! $artifactIdentities->has($reference['identifier'].'@'.($reference['revision'] ?? 1))) {
-                    $findings[] = new ValidationFinding(ValidationSeverity::Error, 'artifact.reference_missing', "Artifact reference {$reference['identifier']}@".($reference['revision'] ?? 1).' does not exist.', $artifact['path']);
+                if (is_array($reference) && isset($reference['identifier'])) {
+                    $target = $artifactIdentities->get($reference['identifier'].'@'.($reference['revision'] ?? 1));
+                    if (! is_array($target)) {
+                        $findings[] = new ValidationFinding(ValidationSeverity::Error, 'artifact.reference_missing', "Artifact reference {$reference['identifier']}@".($reference['revision'] ?? 1).' does not exist.', $artifact['path']);
+                    } elseif (($target['subject']['identifier'] ?? null) !== ($artifact['subject']['identifier'] ?? null)) {
+                        $findings[] = new ValidationFinding(ValidationSeverity::Error, 'artifact.cross_subject_reference', "Artifact {$artifact['identifier']} references a conflicting compilation subject.", $artifact['path']);
+                    }
                 }
+            }
+        }
+
+        foreach (collect($artifacts)->groupBy(fn (array $artifact): string => (string) ($artifact['subject']['identifier'] ?? ''))->filter(fn ($group, string $identifier): bool => $identifier !== '') as $identifier => $subjectArtifacts) {
+            $contexts = $subjectArtifacts->map(fn (array $artifact): string => ($artifact['subject']['type'] ?? '').'|'.$artifact['profile'].'|'.$artifact['scenario'])->unique();
+            if ($contexts->count() > 1) {
+                $findings[] = new ValidationFinding(ValidationSeverity::Error, 'subject.incompatible_context', "Compilation subject {$identifier} has conflicting type, profile, or scenario membership.");
             }
         }
 
@@ -173,7 +186,14 @@ final readonly class DiscoverRepository
                     $findings[] = new ValidationFinding(ValidationSeverity::Error, 'artifact.duplicate_identifier', "Duplicate artifact identity {$key}.", $relativePath);
                 }
                 $identities[$key] = true;
-                $artifacts[] = ['identifier' => $data['identifier'], 'type' => $data['type'], 'revision' => $data['revision'], 'status' => $data['status'] ?? null, 'profile' => $data['profile'] ?? null, 'scenario' => $data['scenario'] ?? null, 'occurred_at' => $data['occurred_at'] ?? $data['accepted_at'] ?? null, 'references' => Arr::wrap($data['references'] ?? []), 'payload' => $data['payload'] ?? [], 'provenance' => $data['provenance'] ?? [], 'path' => $relativePath];
+                $subjectData = $data['subject'] ?? null;
+                if (($data['status'] ?? null) === 'accepted' && (! is_array($subjectData) || ! is_string($subjectData['identifier'] ?? null) || ! is_string($subjectData['type'] ?? null))) {
+                    throw new ParseException('Accepted artifact requires an explicit compilation subject identifier and type.');
+                }
+                if (is_array($subjectData)) {
+                    new CompilationSubject((string) ($subjectData['identifier'] ?? ''), (string) ($subjectData['type'] ?? ''));
+                }
+                $artifacts[] = ['identifier' => $data['identifier'], 'type' => $data['type'], 'revision' => $data['revision'], 'status' => $data['status'] ?? null, 'profile' => $data['profile'] ?? null, 'scenario' => $data['scenario'] ?? null, 'subject' => $subjectData, 'occurred_at' => $data['occurred_at'] ?? $data['accepted_at'] ?? null, 'references' => Arr::wrap($data['references'] ?? []), 'payload' => $data['payload'] ?? [], 'provenance' => $data['provenance'] ?? [], 'path' => $relativePath];
             } catch (Throwable $exception) {
                 $findings[] = new ValidationFinding(ValidationSeverity::Error, 'artifact.invalid', $exception->getMessage(), $repository->relative($path));
             }

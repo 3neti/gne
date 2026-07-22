@@ -1,0 +1,11 @@
+identifier: ARTIFACT-APPLICATION-000002
+type: Application
+revision: 1
+status: accepted
+accepted_at: 2026-07-03T09:00:00+08:00
+profile: PROFILE-PROPERTY-RESERVATION
+scenario: SCENARIO-MANUAL-PAYMENT-RESERVATION
+subject: { identifier: RESERVATION-000002, type: PropertyReservation }
+references: []
+payload: { applicant_alias: Ben Example, lot_identifier: LOT-052 }
+provenance: { source: synthetic-subject-selection-example, actor: applicant-example, recorded_by: repository }
