@@ -25,6 +25,7 @@ final readonly class BuildSemanticIndex
 
             return ['identifier' => $identifier, 'type' => $first['subject']['type'], 'profile' => $first['profile'], 'scenarios' => $subjectArtifacts->pluck('scenario')->unique()->sort()->values()->all(), 'artifact_count' => $subjectArtifacts->count(), 'artifact_types' => $subjectArtifacts->pluck('type')->unique()->sort()->values()->all()];
         })->sortBy('identifier')->values()->all();
+        $artifactTypes = collect($profiles)->flatMap(fn (array $profile): array => collect($profile['artifact_types'])->map(fn (array $declaration, string $type): array => ['type' => $type, 'profile' => $profile['identifier'], 'schema' => dirname($profile['path']).'/'.$declaration['schema'], 'scenarios' => collect($scenarios)->where('profile', $profile['identifier'])->pluck('identifier')->sort()->values()->all(), 'accepted_artifact_count' => collect($artifacts)->where('profile', $profile['identifier'])->where('type', $type)->where('status', 'accepted')->count()])->all())->sortBy([['profile', 'asc'], ['type', 'asc']])->values()->all();
         $relationships = collect($artifacts)->flatMap(fn (array $artifact): array => collect(Arr::wrap($artifact['references']))->map(function (mixed $reference) use ($artifact): array {
             $reference = is_array($reference) ? $reference : ['identifier' => $reference];
 
@@ -33,11 +34,11 @@ final readonly class BuildSemanticIndex
         $glossary = $this->glossary($repositoryRoot, $profiles);
         $repository = ['notice' => 'Generated, non-canonical projection. Rebuild from repository evidence.', 'version' => 1, 'fingerprint' => $manifest->fingerprint, 'business_path' => (string) $manifest->businessPath, 'generated_path' => (string) $manifest->generatedPath, 'counts' => ['profiles' => count($profiles), 'scenarios' => count($scenarios), 'subjects' => count($subjects), 'artifacts' => count($artifacts)], 'evidence' => $manifest->canonicalFiles];
 
-        foreach (compact('repository', 'profiles', 'scenarios', 'subjects', 'artifacts', 'glossary', 'relationships') as $name => $data) {
+        foreach (['repository' => $repository, 'profiles' => $profiles, 'scenarios' => $scenarios, 'subjects' => $subjects, 'artifact-types' => $artifactTypes, 'artifacts' => $artifacts, 'glossary' => $glossary, 'relationships' => $relationships] as $name => $data) {
             $this->files->put($directory.'/'.$name.'.json', json_encode($data, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES | JSON_THROW_ON_ERROR).PHP_EOL);
         }
 
-        return ['profiles' => count($profiles), 'scenarios' => count($scenarios), 'subjects' => count($subjects), 'artifacts' => count($artifacts), 'relationships' => count($relationships), 'glossary_terms' => count($glossary)];
+        return ['profiles' => count($profiles), 'scenarios' => count($scenarios), 'subjects' => count($subjects), 'artifact_types' => count($artifactTypes), 'artifacts' => count($artifacts), 'relationships' => count($relationships), 'glossary_terms' => count($glossary)];
     }
 
     /** @param list<array<string, mixed>> $items @return list<array<string, mixed>> */

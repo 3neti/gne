@@ -46,6 +46,8 @@ defineProps<{
         code: string;
         message: string;
         source_path?: string;
+        location?: string;
+        remediation?: string;
     }>;
     documents: Array<{
         identifier: string;
@@ -241,7 +243,7 @@ defineOptions({
         </Card>
 
         <Card v-if="findings.length"
-            ><CardHeader><CardTitle>Validation findings</CardTitle></CardHeader
+            ><CardHeader><CardTitle>Validation findings</CardTitle><CardDescription>{{ findings.filter((finding) => finding.severity === 'error').length }} errors · {{ findings.filter((finding) => finding.severity === 'warning').length }} warnings</CardDescription></CardHeader
             ><CardContent class="grid gap-2"
                 ><div
                     v-for="finding in findings"
@@ -249,6 +251,8 @@ defineOptions({
                     class="rounded-lg border p-3 text-sm"
                 >
                     <strong>{{ finding.code }}</strong> — {{ finding.message }}
+                    <p v-if="finding.source_path" class="mt-1 font-mono text-xs text-muted-foreground">{{ finding.source_path }}{{ finding.location ? `:${finding.location}` : '' }}</p>
+                    <p v-if="finding.remediation" class="mt-1 text-xs text-muted-foreground">Remediation: {{ finding.remediation }}</p>
                 </div></CardContent
             ></Card
         >

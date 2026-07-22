@@ -1,0 +1,63 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://3neti.dev/gne/schemas/document-definition-v1",
+  "title": "GNE Document Definition",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["identifier", "revision", "title", "scenario", "audience", "primary_artifact_type", "artifacts", "sections", "actions", "attachments"],
+  "properties": {
+    "identifier": {"type": "string", "minLength": 1},
+    "revision": {"type": "integer", "minimum": 1},
+    "title": {"type": "string", "minLength": 1},
+    "scenario": {"type": "string", "minLength": 1},
+    "audience": {"type": "array", "items": {"type": "string", "minLength": 1}, "uniqueItems": true},
+    "primary_artifact_type": {"type": "string", "minLength": 1},
+    "artifacts": {"type": "array", "minItems": 1, "items": {"type": "string", "minLength": 1}, "uniqueItems": true},
+    "sections": {"type": "array", "items": {"$ref": "#/$defs/section"}},
+    "actions": {"type": "array", "items": {"$ref": "#/$defs/action"}},
+    "attachments": {"type": "array", "items": {"type": "object"}},
+    "drivers": {"type": "array", "items": {"type": "string", "minLength": 1}, "uniqueItems": true},
+    "metadata": {"type": "object"},
+    "extensions": {"type": "object"}
+  },
+  "$defs": {
+    "section": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["identifier", "title", "fields"],
+      "properties": {
+        "identifier": {"type": "string", "minLength": 1},
+        "title": {"type": "string", "minLength": 1},
+        "fields": {"type": "array", "items": {"$ref": "#/$defs/field"}}
+      }
+    },
+    "field": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["identifier", "label", "source"],
+      "properties": {
+        "identifier": {"type": "string", "minLength": 1},
+        "label": {"type": "string", "minLength": 1},
+        "source": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["artifact", "path"],
+          "properties": {
+            "artifact": {"type": "string", "minLength": 1},
+            "path": {"type": "string", "pattern": "^payload\\.[A-Za-z_][A-Za-z0-9_]*(\\.[A-Za-z_][A-Za-z0-9_]*)*$"}
+          }
+        }
+      }
+    },
+    "action": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["identifier", "label", "intent"],
+      "properties": {
+        "identifier": {"type": "string", "minLength": 1},
+        "label": {"type": "string", "minLength": 1},
+        "intent": {"type": "string", "minLength": 1}
+      }
+    }
+  }
+}

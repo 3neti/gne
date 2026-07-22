@@ -14,6 +14,8 @@ Repository evidence is addressed relative to the repository being interpreted, n
 
 Business artifacts are facts rather than documents. Repository-authored document definitions compile accepted artifacts into `ResolvedDocument`, the driver-neutral intermediate representation. Every compilation names one stable Compilation Subject; profile and scenario constrain interpretation but never identify the transaction. A resolved document must never combine artifacts from different subjects. Every resolved field retains direct artifact and revision evidence. Resolved-document identity derives from the definition, subject, and complete deterministically ordered selected evidence set. Browser, PDF, API, and other outputs are peer projections and must not add business meaning absent from that IR.
 
+Canonical source must validate before compilation. Profiles explicitly map artifact types to business-owned schemas; accepted payloads must satisfy those schemas. GNE owns the document-definition language schema. An authoring error blocks compilation, valid but absent subject evidence produces an unresolved document, and unexpected implementation failures propagate.
+
 ## Business cognition and GeNEi
 
 GNE reasons from profile vocabulary, schemas, policies, lifecycles, scenarios, document definitions, decisions, and immutable artifacts. Discovery establishes what exists; validation whether it is acceptable; interpretation resolves expressed meaning; compilation prepares projections; materialization produces disposable operational state. Git supplies provenance, replication, history, and review, but does not define semantics.

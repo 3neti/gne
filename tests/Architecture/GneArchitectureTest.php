@@ -58,6 +58,22 @@ arch('artifact chain selection is independent of persistence')
     ->expect('App\Domain\Compilation\SelectArtifactChain')
     ->not->toUse(['Illuminate\Database', 'Illuminate\Database\Eloquent']);
 
+arch('authoring validators remain outside artifact chain selection')
+    ->expect('App\Domain\Compilation\SelectArtifactChain')
+    ->not->toUse([
+        'App\Domain\Repository\ValidateArtifactPayloads',
+        'App\Domain\Repository\ValidateDocumentDefinitions',
+        'Opis\JsonSchema',
+    ]);
+
+arch('browser driver does not discover or validate repository source')
+    ->expect('App\Domain\Compilation\BrowserProjectionDriver')
+    ->not->toUse([
+        'App\Domain\Repository\DiscoverRepository',
+        'App\Domain\Repository\ValidateRepository',
+        'App\Domain\Repository\ValidateDocumentDefinitions',
+    ]);
+
 it('keeps global artifact selection out of document resolution', function () {
     $source = file_get_contents(dirname(__DIR__, 2).'/app/Domain/Compilation/ResolveDocument.php');
 

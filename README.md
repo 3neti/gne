@@ -4,6 +4,8 @@ GNE is a repository-native **Business Compiler**: the business belongs to versio
 
 The repository-native bootstrap, portability hardening, Resolved Document vertical slice, and explicit compilation-subject selection are complete. GNE demonstrates discovery, declaration-driven validation, semantic indexing, byte-complete fingerprinting, database materialization, subject-bound artifact-chain selection, complete-evidence-set document identity, and a peer browser projection. It is not a production ERP, workflow engine, document renderer, or canonical artifact editor.
 
+Repository validation now checks accepted payloads against explicit profile-owned JSON Schema 2020-12 declarations and validates repository-authored documents against the GNE-owned definition grammar before compilation. See [Diff Review Workflow](docs/development/DIFF_REVIEW_WORKFLOW.md) for incremental review packaging.
+
 ## Install and develop
 
 ```bash

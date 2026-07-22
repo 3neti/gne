@@ -31,6 +31,15 @@
 | Artifact Chain | Deterministically selected accepted artifact revisions belonging to exactly one Compilation Subject. |
 | Chain Selector | Service that selects and checks one coherent Artifact Chain without interpreting document presentation. |
 | Compilation Request | Document-definition identifier plus the explicit Compilation Subject to resolve. |
+| Document Definition Grammar | GNE-owned, machine-validatable structure supported by the current document resolver. |
+| Artifact Schema | Profile-owned JSON Schema that constrains one artifact type's payload. |
+| Artifact Type Declaration | Explicit profile mapping from a business artifact type to its canonical schema. |
+| Payload Path | Canonical dot path beginning with `payload.` that addresses a property declared by an artifact schema. |
+| Schema Validation | Deterministic comparison of accepted artifact payloads with their declared schemas. |
+| Definition Validation | Structural and contextual validation of a repository-authored document definition before compilation. |
+| Compilation Readiness | State in which authored source is valid; evidence may still be legitimately absent for a subject. |
+| Authoring Error | Invalid canonical source that blocks compilation. |
+| Resolution Absence | Valid definition that cannot resolve for a subject because accepted evidence is not yet present. |
 | Primary Artifact | Selected accepted artifact that anchors a resolved document's status and business purpose; it is only one member of the evidence set and does not solely determine document identity. |
 | Resolution Fingerprint | Deterministic hash of the document definition revision/source and complete ordered selected evidence set; the basis of immutable resolved-document identity. |
 | Evidence Set | All selected artifact identities, revisions, types, source paths, and source fingerprints that materially contribute to one resolution. |

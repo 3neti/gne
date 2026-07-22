@@ -9,19 +9,20 @@ use Illuminate\Console\Command;
 
 class GneCompileCommand extends Command
 {
-    protected $signature = 'gne:compile {--document= : Compile one document definition} {--subject= : Compile one compilation subject} {--json : Emit structured JSON}';
+    protected $signature = 'gne:compile {--repository= : Repository root (defaults to the application root)} {--document= : Compile one document definition} {--subject= : Compile one compilation subject} {--json : Emit structured JSON}';
 
     protected $description = 'Validate, index, and prepare an honest GNE compilation plan';
 
     public function handle(ValidateRepository $validator, BuildSemanticIndex $indexer, PrepareCompilationPlan $planner): int
     {
-        $manifest = $validator->handle(base_path());
+        $repositoryRoot = is_string($this->option('repository')) ? $this->option('repository') : base_path();
+        $manifest = $validator->handle($repositoryRoot);
         if ($manifest->hasErrors()) {
             $this->components->error('Compilation planning stopped because validation failed.');
 
             return self::FAILURE;
         }
-        $indexer->handle(base_path(), $manifest);
+        $indexer->handle($repositoryRoot, $manifest);
         $document = $this->option('document');
         $subject = $this->option('subject');
         if (($document === null) !== ($subject === null)) {
@@ -29,7 +30,7 @@ class GneCompileCommand extends Command
 
             return self::FAILURE;
         }
-        $plan = $planner->handle(base_path(), $manifest, is_string($document) ? $document : null, is_string($subject) ? $subject : null);
+        $plan = $planner->handle($repositoryRoot, $manifest, is_string($document) ? $document : null, is_string($subject) ? $subject : null);
         if ($document !== null && $plan['documents'] === []) {
             $this->components->error('The requested document definition or compilation subject was not found.');
 

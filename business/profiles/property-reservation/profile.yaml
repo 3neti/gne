@@ -19,6 +19,7 @@ documents:
   - documents/receipt.yaml
   - documents/reservation-certificate.yaml
 schemas:
+  - schemas/property-offering.schema.json
   - schemas/application.schema.json
   - schemas/assessment.schema.json
   - schemas/invoice.schema.json
@@ -26,3 +27,12 @@ schemas:
   - schemas/payment-approval.schema.json
   - schemas/receipt.schema.json
   - schemas/reservation-certificate.schema.json
+artifact_types:
+  PropertyOffering: { schema: schemas/property-offering.schema.json }
+  Application: { schema: schemas/application.schema.json }
+  Assessment: { schema: schemas/assessment.schema.json }
+  Invoice: { schema: schemas/invoice.schema.json }
+  PaymentEvidence: { schema: schemas/payment-evidence.schema.json }
+  PaymentApproval: { schema: schemas/payment-approval.schema.json }
+  Receipt: { schema: schemas/receipt.schema.json }
+  ReservationCertificate: { schema: schemas/reservation-certificate.schema.json }

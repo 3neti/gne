@@ -25,6 +25,6 @@ it('rebuilds the manual-payment reservation profile without changing accepted ar
 
 it('validates profiles from their declarations instead of reservation-specific filenames', function () {
     $this->artisan('gne:validate --json')->assertSuccessful()
-        ->expectsOutputToContain('PROFILE-CIVIC-PERMIT-DEMO')
+        ->expectsOutputToContain('business/profiles/civic-permit/documents/acknowledgement-note.yaml')
         ->doesntExpectOutputToContain('profile.baseline_missing');
 });

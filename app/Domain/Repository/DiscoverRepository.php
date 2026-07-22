@@ -150,7 +150,7 @@ final readonly class DiscoverRepository
                         $declarations[$declaration] = array_values($declaredPaths);
                     }
                 }
-                $definition = ['identifier' => $identifier, 'slug' => (string) ($data['slug'] ?? basename(dirname($path))), 'title' => (string) ($data['title'] ?? $identifier), 'description' => (string) ($data['description'] ?? ''), 'path' => $relativePath, 'profile' => $data['profile'] ?? $identifier, 'lifecycle' => $data['lifecycle'] ?? null, 'relationships' => $data['relationships'] ?? [], 'declarations' => $declarations];
+                $definition = ['identifier' => $identifier, 'slug' => (string) ($data['slug'] ?? basename(dirname($path))), 'title' => (string) ($data['title'] ?? $identifier), 'description' => (string) ($data['description'] ?? ''), 'path' => $relativePath, 'profile' => $data['profile'] ?? $identifier, 'lifecycle' => $data['lifecycle'] ?? null, 'relationships' => $data['relationships'] ?? [], 'artifact_types' => is_array($data['artifact_types'] ?? null) ? $data['artifact_types'] : [], 'declarations' => $declarations];
                 $definitions[] = $definition;
 
                 if (isset($identifiers[$identifier])) {

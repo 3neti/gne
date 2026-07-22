@@ -15,3 +15,7 @@ documents:
   - documents/acknowledgement-note.yaml
 schemas:
   - schemas/submission-envelope.schema.json
+  - schemas/acknowledgement.schema.json
+artifact_types:
+  SubmissionEnvelope: { schema: schemas/submission-envelope.schema.json }
+  Acknowledgement: { schema: schemas/acknowledgement.schema.json }

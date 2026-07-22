@@ -43,6 +43,10 @@ Repository-authored document definitions declare contributing artifact types, a 
 
 Profile defines business language; scenario defines a ceremony; Compilation Subject identifies one bounded business case; Artifact Chain contains its coherent accepted evidence. No resolver may substitute profile plus scenario for transaction identity. Ambiguous same-type identities fail instead of being selected by filesystem order.
 
+## Authoring validation
+
+`ValidateRepository` orchestrates discovery findings, accepted-payload validation, and document-definition validation, then deterministically orders structured findings. Business profiles own explicit artifact-type-to-schema mappings and their JSON Schema 2020-12 files. GNE owns `resources/gne/schemas/document-definition.schema.json`, because document grammar is compiler language rather than profile vocabulary. Opis JSON Schema performs standards validation; contextual rules check unique identities, declared types, scenario ownership, primary artifacts, and schema-backed `payload.*` field paths. Errors block compilation; readiness warnings do not.
+
 The primary artifact anchors the document but does not define its identity alone. Resolution hashes the document-definition identifier, revision, and raw source fingerprint together with the deterministically ordered selected artifact identifiers, revisions, types, source paths, and raw source fingerprints. The resolved identifier derives from this resolution fingerprint. The same direct inputs produce the same identity; changing any selected revision or source bytes changes it; unrelated repository changes do not.
 
 `ResolvedDocument` is the compiler intermediate representation: it contains business meaning but no HTML, Vue, Inertia, Tailwind, browser layout, PDF, or Adobe concepts. `BrowserProjectionDriver` maps that IR into a disposable structural browser projection without evaluating fields or adding business meaning. Future browser, PDF, Markdown, JSON, API, and mobile drivers are peers over the same IR.

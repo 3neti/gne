@@ -18,6 +18,8 @@ it('creates deterministic semantic indexes that can be deleted and rebuilt', fun
     expect(file_get_contents(base_path('.gne/semantic/artifacts.json')))->toBe($first);
     $subjects = json_decode(file_get_contents(base_path('.gne/semantic/subjects.json')), true, flags: JSON_THROW_ON_ERROR);
     expect(array_column($subjects, 'identifier'))->toBe(['RESERVATION-000001', 'RESERVATION-000002']);
+    $artifactTypes = json_decode(file_get_contents(base_path('.gne/semantic/artifact-types.json')), true, flags: JSON_THROW_ON_ERROR);
+    expect(collect($artifactTypes)->firstWhere('type', 'Invoice')['schema'])->toBe('business/profiles/property-reservation/schemas/invoice.schema.json');
 });
 
 it('materializes idempotent projections with stable repository identities', function () {
