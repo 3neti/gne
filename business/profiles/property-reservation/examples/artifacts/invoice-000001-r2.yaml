@@ -1,0 +1,12 @@
+identifier: ARTIFACT-INVOICE-000001
+type: Invoice
+revision: 2
+status: accepted
+accepted_at: 2026-07-01T11:30:00+08:00
+profile: PROFILE-PROPERTY-RESERVATION
+scenario: SCENARIO-MANUAL-PAYMENT-RESERVATION
+references:
+  - { relationship: supersedes, identifier: ARTIFACT-INVOICE-000001, revision: 1 }
+  - { relationship: produced_by, identifier: ARTIFACT-ASSESSMENT-000001, revision: 1 }
+payload: { amount: 50000, currency: PHP, correction_reason: Corrected reservation fee }
+provenance: { source: synthetic-bootstrap-example, actor: billing-operator, recorded_by: repository }

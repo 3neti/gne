@@ -1,0 +1,23 @@
+# GNE
+
+GNE is a repository-native **Business Compiler**: the business belongs to version-controlled files, while databases, browser views, documents, APIs, reports, and analytics are rebuildable projections.
+
+This repository is at the **Repository-Native Architecture Bootstrap** milestone. It demonstrates discovery, validation, semantic indexing, database materialization, deterministic explanation, compilation planning, and one synthetic property-reservation scenario. It is not a production ERP, workflow engine, or canonical artifact editor.
+
+## Install and develop
+
+```bash
+composer install
+npm install
+cp .env.example .env
+php artisan key:generate
+php artisan migrate
+npm run build
+php artisan test
+```
+
+Repository operations: `php artisan gne:validate`, `gne:index`, `gne:materialize`, `gne:rebuild --force`, `gne:explain`, and `gne:compile`.
+
+`business/` is canonical source, `app/` interprets and projects it, and `.gne/` is disposable generated state. Configuration version 1 requires relative canonical/generated paths and an optional enabled-profile list in `gne.yaml`.
+
+Canonical orientation: [GENEI.md](GENEI.md), [ARCHITECTURE.md](ARCHITECTURE.md), [GRAMMAR.md](GRAMMAR.md), [DECISION_REGISTER.md](DECISION_REGISTER.md), [COMPASS.md](COMPASS.md), and [IMPLEMENTATION_STATUS.md](IMPLEMENTATION_STATUS.md).

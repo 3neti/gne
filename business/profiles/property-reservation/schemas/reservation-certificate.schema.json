@@ -1,0 +1,1 @@
+{"$schema":"https://json-schema.org/draft/2020-12/schema","title":"Reservation Certificate","type":"object","required":["lot_identifier"],"properties":{"lot_identifier":{"type":"string"}}}

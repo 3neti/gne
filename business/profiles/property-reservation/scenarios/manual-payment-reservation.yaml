@@ -1,0 +1,16 @@
+identifier: SCENARIO-MANUAL-PAYMENT-RESERVATION
+slug: manual-payment-reservation
+profile: PROFILE-PROPERTY-RESERVATION
+title: Manual Payment Reservation
+description: A synthetic reservation whose payment evidence is reviewed by a human authority.
+lifecycle: LIFECYCLE-MANUAL-RESERVATION
+steps:
+  - brochure
+  - application
+  - assessment
+  - invoice
+  - proof_of_payment_submitted
+  - payment_review
+  - payment_approved
+  - receipt
+  - reservation_certificate

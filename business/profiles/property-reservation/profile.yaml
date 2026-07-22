@@ -1,0 +1,10 @@
+identifier: PROFILE-PROPERTY-RESERVATION
+slug: property-reservation
+title: Property Reservation
+description: A repository-native demonstration of a manually reviewed reservation payment lifecycle.
+version: 1
+canonical: true
+vocabulary: vocabulary.yaml
+lifecycle: lifecycles/reservation.yaml
+scenarios:
+  - scenarios/manual-payment-reservation.yaml

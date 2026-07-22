@@ -1,0 +1,13 @@
+gne:
+  version: 1
+  repository:
+    business_path: business
+    generated_path: .gne
+  projections:
+    database:
+      enabled: true
+    semantic_index:
+      enabled: true
+  profiles:
+    enabled:
+      - property-reservation

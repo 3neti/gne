@@ -1,0 +1,4 @@
+identifier: DOCUMENT-BROCHURE
+title: Property brochure
+projection_of: [PropertyOffering]
+drivers: [browser, x-document-deferred]

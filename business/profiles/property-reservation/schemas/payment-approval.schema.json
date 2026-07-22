@@ -1,0 +1,1 @@
+{"$schema":"https://json-schema.org/draft/2020-12/schema","title":"Payment Approval","type":"object","required":["outcome","reviewer_role"],"properties":{"outcome":{"const":"approved"},"reviewer_role":{"type":"string"}}}

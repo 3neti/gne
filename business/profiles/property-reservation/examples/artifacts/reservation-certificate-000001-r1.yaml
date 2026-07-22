@@ -1,0 +1,12 @@
+identifier: ARTIFACT-RESERVATION-CERTIFICATE-000001
+type: ReservationCertificate
+revision: 1
+status: accepted
+accepted_at: 2026-07-02T10:30:00+08:00
+profile: PROFILE-PROPERTY-RESERVATION
+scenario: SCENARIO-MANUAL-PAYMENT-RESERVATION
+references:
+  - { relationship: supports, identifier: ARTIFACT-RECEIPT-000001, revision: 1 }
+  - { relationship: certifies_application, identifier: ARTIFACT-APPLICATION-000001, revision: 1 }
+payload: { lot_identifier: LOT-037 }
+provenance: { source: synthetic-bootstrap-example, actor: reservation-authority, recorded_by: repository }

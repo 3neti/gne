@@ -1,0 +1,11 @@
+identifier: ARTIFACT-ASSESSMENT-000001
+type: Assessment
+revision: 1
+status: accepted
+occurred_at: 2026-07-01T10:00:00+08:00
+profile: PROFILE-PROPERTY-RESERVATION
+scenario: SCENARIO-MANUAL-PAYMENT-RESERVATION
+references:
+  - { relationship: assessed_by, identifier: ARTIFACT-APPLICATION-000001, revision: 1 }
+payload: { outcome: approved }
+provenance: { source: synthetic-bootstrap-example, actor: reservation-reviewer, recorded_by: repository }

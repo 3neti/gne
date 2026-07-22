@@ -1,0 +1,4 @@
+identifier: DOCUMENT-INVOICE
+title: Reservation invoice
+projection_of: [Invoice]
+drivers: [browser, x-document-deferred]

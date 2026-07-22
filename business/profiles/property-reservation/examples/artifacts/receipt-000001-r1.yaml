@@ -1,0 +1,11 @@
+identifier: ARTIFACT-RECEIPT-000001
+type: Receipt
+revision: 1
+status: accepted
+accepted_at: 2026-07-02T10:15:00+08:00
+profile: PROFILE-PROPERTY-RESERVATION
+scenario: SCENARIO-MANUAL-PAYMENT-RESERVATION
+references:
+  - { relationship: authorized_by, identifier: ARTIFACT-PAYMENT-APPROVAL-000001, revision: 1 }
+payload: { amount: 50000, currency: PHP }
+provenance: { source: synthetic-bootstrap-example, actor: billing-operator, recorded_by: repository }

@@ -1,0 +1,1 @@
+{"$schema":"https://json-schema.org/draft/2020-12/schema","title":"Application","type":"object","required":["applicant_alias","lot_identifier"],"properties":{"applicant_alias":{"type":"string"},"lot_identifier":{"type":"string"}}}

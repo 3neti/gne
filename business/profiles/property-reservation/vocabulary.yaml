@@ -1,0 +1,16 @@
+profile: PROFILE-PROPERTY-RESERVATION
+terms:
+  - term: Reservation
+    definition: A temporary claim on an identified property established by accepted evidence and policy.
+  - term: Application
+    definition: An applicant's submitted request to reserve a property.
+  - term: Assessment
+    definition: A recorded evaluation of an application against the profile policy.
+  - term: Invoice
+    definition: An accepted request for a specified reservation payment.
+  - term: Payment Evidence
+    definition: Evidence submitted for manual review; it is not itself payment approval.
+  - term: Payment Approval
+    definition: An authorized review outcome accepting payment evidence.
+  - term: Reservation Certificate
+    definition: A document projection supported by the accepted artifact chain.

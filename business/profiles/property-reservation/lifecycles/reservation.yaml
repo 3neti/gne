@@ -1,0 +1,20 @@
+identifier: LIFECYCLE-MANUAL-RESERVATION
+title: Manual-payment reservation lifecycle
+states:
+  - brochure_available
+  - application_accepted
+  - assessment_completed
+  - invoice_accepted
+  - payment_evidence_submitted
+  - payment_reviewed
+  - payment_approved
+  - receipt_accepted
+  - reservation_certified
+transitions:
+  - { from: brochure_available, to: application_accepted, evidence: Application }
+  - { from: application_accepted, to: assessment_completed, evidence: Assessment }
+  - { from: assessment_completed, to: invoice_accepted, evidence: Invoice }
+  - { from: invoice_accepted, to: payment_evidence_submitted, evidence: PaymentEvidence }
+  - { from: payment_evidence_submitted, to: payment_approved, evidence: PaymentApproval }
+  - { from: payment_approved, to: receipt_accepted, evidence: Receipt }
+  - { from: receipt_accepted, to: reservation_certified, evidence: ReservationCertificate }

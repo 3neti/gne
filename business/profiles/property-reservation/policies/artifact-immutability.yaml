@@ -1,0 +1,6 @@
+identifier: POLICY-ARTIFACT-IMMUTABILITY
+title: Accepted artifact immutability
+rules:
+  - Accepted artifact revisions are never edited in place.
+  - Corrections create a new revision with an explicit supersedes relationship.
+  - Provenance and prior revisions remain inspectable.

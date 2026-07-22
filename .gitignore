@@ -10,6 +10,14 @@
 /resources/js/actions
 /resources/js/routes
 /resources/js/wayfinder
+/.gne/semantic/*
+!/.gne/semantic/.gitkeep
+/.gne/cache/*
+!/.gne/cache/.gitkeep
+/.gne/projections/*
+!/.gne/projections/.gitkeep
+/.gne/reports/*
+!/.gne/reports/.gitkeep
 /vendor
 .DS_Store
 .env

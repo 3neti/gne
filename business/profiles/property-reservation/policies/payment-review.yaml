@@ -1,0 +1,6 @@
+identifier: POLICY-PAYMENT-REVIEW
+title: Manual payment review
+rules:
+  - Payment evidence never constitutes approval by itself.
+  - A named control-plane authority records approval as a new accepted artifact.
+  - Settlement execution remains outside GNE core.

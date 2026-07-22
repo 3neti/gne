@@ -1,0 +1,11 @@
+identifier: ARTIFACT-PAYMENT-EVIDENCE-000001
+type: PaymentEvidence
+revision: 1
+status: submitted
+occurred_at: 2026-07-02T09:00:00+08:00
+profile: PROFILE-PROPERTY-RESERVATION
+scenario: SCENARIO-MANUAL-PAYMENT-RESERVATION
+references:
+  - { relationship: payment_evidence_for, identifier: ARTIFACT-INVOICE-000001, revision: 2 }
+payload: { reference: SYNTHETIC-TRANSFER-001, amount: 50000 }
+provenance: { source: synthetic-bootstrap-example, actor: applicant-example, recorded_by: repository }

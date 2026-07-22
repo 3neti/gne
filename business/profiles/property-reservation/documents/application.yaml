@@ -1,0 +1,4 @@
+identifier: DOCUMENT-APPLICATION
+title: Reservation application
+projection_of: [Application]
+drivers: [browser, x-document-deferred]

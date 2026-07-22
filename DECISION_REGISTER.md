@@ -1,0 +1,55 @@
+# Decision Register
+
+Each accepted decision is durable until superseded by another recorded decision.
+
+## ADR-001 — Repository is canonical; database is projection
+**Status:** Accepted · **Date:** 2026-07-22  
+**Context:** Operational schemas obscure authored business meaning. **Decision:** Repository files are canonical and database rows rebuildable. **Rationale:** Human/AI readability and deterministic recovery. **Consequences:** Materializers retain stable identifiers and support replacement. **Rejected:** Database-first domain truth.
+
+## ADR-002 — Standalone Laravel application
+**Status:** Accepted · **Date:** 2026-07-22  
+**Context:** GNE needs a control plane and compiler runtime. **Decision:** GNE is an application, not a reusable domain package. **Rationale:** Cohesive operations without constraining external packages. **Consequences:** Reusable seams remain explicit. **Rejected:** Monolithic reusable package.
+
+## ADR-003 — Accepted artifacts are immutable
+**Status:** Accepted · **Date:** 2026-07-22  
+**Context:** Silent edits destroy evidence. **Decision:** Corrections add revisions and supersession links. **Rationale:** Auditability. **Consequences:** Prior revisions persist. **Rejected:** In-place updates.
+
+## ADR-004 — Identity is repository-native
+**Status:** Accepted · **Date:** 2026-07-22  
+**Context:** Database IDs disappear on rebuild. **Decision:** Stable business identifiers originate in source. **Rationale:** Durable references. **Consequences:** Numeric IDs are projection details. **Rejected:** Primary-key identity.
+
+## ADR-005 — Generated projections are disposable
+**Status:** Accepted · **Date:** 2026-07-22  
+**Context:** Indexes and caches are derived. **Decision:** Generated state lives under `.gne/` or projection tables and is rebuildable. **Rationale:** Prevent authority drift. **Consequences:** Evidence paths are required. **Rejected:** Hand-maintained indexes.
+
+## ADR-006 — GeNEi is provider-independent
+**Status:** Accepted · **Date:** 2026-07-22  
+**Context:** Reasoning engines change. **Decision:** GeNEi is a repository role and perspectives, not a model. **Rationale:** Portability. **Consequences:** Future adapters preserve traceability. **Rejected:** Provider-specific core.
+
+## ADR-007 — Browser and document outputs are peers
+**Status:** Accepted · **Date:** 2026-07-22  
+**Context:** Neither UI nor PDF is business truth. **Decision:** Both consume a resolved document projection. **Rationale:** Driver neutrality. **Consequences:** No Adobe logic in core. **Rejected:** Browser-as-template authority.
+
+## ADR-008 — x-document and x-change stay optional
+**Status:** Accepted · **Date:** 2026-07-22  
+**Context:** Their contracts are external and not installed. **Decision:** Integrate later through adapters only. **Rationale:** Preserve independent use and non-settlement workflows. **Consequences:** Drivers report unavailable honestly. **Rejected:** Bootstrap hard dependencies.
+
+## ADR-009 — Native Laravel authentication protects control plane
+**Status:** Accepted · **Date:** 2026-07-22  
+**Context:** Administration and approval need access control. **Decision:** Retain starter-kit authentication. **Rationale:** Established secure boundary. **Consequences:** Workbench routes require auth and verification. **Rejected:** Custom authentication.
+
+## ADR-010 — Public ceremonies need not require accounts
+**Status:** Accepted · **Date:** 2026-07-22  
+**Context:** Customers may interact once. **Decision:** Future ceremonies may use signed links, OTP, or transaction credentials. **Rationale:** Fit identity to ceremony. **Consequences:** No customer-account assumption. **Rejected:** Mandatory accounts.
+
+## ADR-011 — Laravel teams are not organizations
+**Status:** Accepted · **Date:** 2026-07-22  
+**Context:** Generic teams would pre-empt business semantics. **Decision:** Do not enable team support. **Rationale:** Organization must be explicit. **Consequences:** No tenancy scaffold now. **Rejected:** Starter-kit teams.
+
+## ADR-012 — Membership modeling is deferred
+**Status:** Accepted · **Date:** 2026-07-22  
+**Context:** Organization, repository, membership, role, and authority need deliberate semantics. **Decision:** Defer them. **Rationale:** Avoid premature tenancy. **Consequences:** Bootstrap is single-repository. **Rejected:** Generic multi-tenancy.
+
+## ADR-013 — Validate one vertical scenario first
+**Status:** Accepted · **Date:** 2026-07-22  
+**Context:** Broad generalization can hide weak semantics. **Decision:** Prove manual-payment property reservation first. **Rationale:** Concrete evidence tests boundaries. **Consequences:** General engines remain deferred. **Rejected:** Universal ERP/workflow schema.

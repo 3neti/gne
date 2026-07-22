@@ -1,0 +1,4 @@
+identifier: DOCUMENT-RESERVATION-CERTIFICATE
+title: Reservation certificate
+projection_of: [ReservationCertificate, Receipt]
+drivers: [browser, x-document-deferred]
