@@ -22,3 +22,9 @@ it('rebuilds the manual-payment reservation profile without changing accepted ar
         ->and(DB::table('gne_artifact_relationships')->count())->toBeGreaterThanOrEqual(8)
         ->and(json_decode(file_get_contents(base_path('.gne/semantic/glossary.json')), true))->not->toBeEmpty();
 });
+
+it('validates profiles from their declarations instead of reservation-specific filenames', function () {
+    $this->artisan('gne:validate --json')->assertSuccessful()
+        ->expectsOutputToContain('PROFILE-CIVIC-PERMIT-DEMO')
+        ->doesntExpectOutputToContain('profile.baseline_missing');
+});

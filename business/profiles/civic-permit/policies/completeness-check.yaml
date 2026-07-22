@@ -1,0 +1,4 @@
+identifier: POLICY-CIVIC-COMPLETENESS
+title: Completeness check
+rules:
+  - Acknowledgement records receipt and does not imply approval.

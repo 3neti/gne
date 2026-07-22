@@ -5,6 +5,24 @@ description: A repository-native demonstration of a manually reviewed reservatio
 version: 1
 canonical: true
 vocabulary: vocabulary.yaml
-lifecycle: lifecycles/reservation.yaml
+lifecycles:
+  - lifecycles/reservation.yaml
 scenarios:
   - scenarios/manual-payment-reservation.yaml
+policies:
+  - policies/payment-review.yaml
+  - policies/artifact-immutability.yaml
+documents:
+  - documents/brochure.yaml
+  - documents/application.yaml
+  - documents/invoice.yaml
+  - documents/receipt.yaml
+  - documents/reservation-certificate.yaml
+schemas:
+  - schemas/application.schema.json
+  - schemas/assessment.schema.json
+  - schemas/invoice.schema.json
+  - schemas/payment-evidence.schema.json
+  - schemas/payment-approval.schema.json
+  - schemas/receipt.schema.json
+  - schemas/reservation-certificate.schema.json

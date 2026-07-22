@@ -1,0 +1,4 @@
+identifier: DOCUMENT-CIVIC-ACKNOWLEDGEMENT
+title: Submission acknowledgement note
+projection_of: [Acknowledgement]
+drivers: [browser, x-document-deferred]

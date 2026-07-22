@@ -3,7 +3,7 @@
 Each accepted decision is durable until superseded by another recorded decision.
 
 ## ADR-001 — Repository is canonical; database is projection
-**Status:** Accepted · **Date:** 2026-07-22  
+**Status:** Accepted · **Date:** 2026-07-22
 **Context:** Operational schemas obscure authored business meaning. **Decision:** Repository files are canonical and database rows rebuildable. **Rationale:** Human/AI readability and deterministic recovery. **Consequences:** Materializers retain stable identifiers and support replacement. **Rejected:** Database-first domain truth.
 
 ## ADR-002 — Standalone Laravel application
@@ -53,3 +53,7 @@ Each accepted decision is durable until superseded by another recorded decision.
 ## ADR-013 — Validate one vertical scenario first
 **Status:** Accepted · **Date:** 2026-07-22  
 **Context:** Broad generalization can hide weak semantics. **Decision:** Prove manual-payment property reservation first. **Rationale:** Concrete evidence tests boundaries. **Consequences:** General engines remain deferred. **Rejected:** Universal ERP/workflow schema.
+
+## ADR-014 — Repository evidence is portable and byte-fingerprinted
+**Status:** Accepted · **Date:** 2026-07-22
+**Context:** Laravel-root-relative paths and metadata-only hashes could hide canonical changes. **Decision:** Resolve all evidence relative to the supplied repository root and fingerprint ordered canonical relative paths plus raw bytes. Profiles declare their own supporting files. **Rationale:** Portable discovery, reliable drift detection, and profile neutrality. **Consequences:** Any canonical byte change produces a new fingerprint, while inventory remains a separate concern. **Rejected:** `base_path()` addressing, example-specific validation, and inventory-derived fingerprints.

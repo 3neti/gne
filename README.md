@@ -2,7 +2,7 @@
 
 GNE is a repository-native **Business Compiler**: the business belongs to version-controlled files, while databases, browser views, documents, APIs, reports, and analytics are rebuildable projections.
 
-This repository is at the **Repository-Native Architecture Bootstrap** milestone. It demonstrates discovery, validation, semantic indexing, database materialization, deterministic explanation, compilation planning, and one synthetic property-reservation scenario. It is not a production ERP, workflow engine, or canonical artifact editor.
+The repository-native bootstrap and its portability hardening are complete. GNE demonstrates discovery, declaration-driven validation, semantic indexing, byte-complete canonical fingerprinting, database materialization, deterministic explanation, compilation planning, one synthetic property-reservation scenario, and a tiny profile-neutrality fixture. It is not a production ERP, workflow engine, or canonical artifact editor.
 
 ## Install and develop
 

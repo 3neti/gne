@@ -1,0 +1,4 @@
+profile: PROFILE-CIVIC-PERMIT-DEMO
+terms:
+  - term: Permit Submission
+    definition: A synthetic demonstration submission presented for a completeness check.

@@ -17,6 +17,8 @@ flowchart TD
 
 Discovery reads `gne.yaml` without a database, validates safe paths, inventories profiles, scenarios, and artifacts, and emits findings. Semantic indexing writes deterministic evidence-linked JSON. Materialization replaces projection rows transactionally and records a fingerprinted run. Rebuild deletes only disposable semantic output and projection rows after confirmation. Failures leave canonical files untouched.
 
+Every evidence path is normalized relative to the repository root supplied to discovery; the Laravel application root has no special meaning. Profiles declare their vocabulary, lifecycles, scenarios, policies, documents, and schemas, and validation resolves those declarations without imposing example-specific filenames. The canonical repository fingerprint hashes each ordered relative path together with its raw bytes for `gne.yaml`, `GENEI.md`, and every non-placeholder file under the configured business path.
+
 Accepted artifacts are immutable and use stable repository identifiers plus revisions. Numeric IDs are implementation details. Canonical removal is reflected by projection replacement without erasing Git history.
 
 ## Integration seams

@@ -1,0 +1,17 @@
+identifier: PROFILE-CIVIC-PERMIT-DEMO
+slug: civic-permit-demo
+title: Civic Permit Demonstration
+description: A deliberately tiny profile proving that validation follows declarations rather than property-reservation filenames.
+version: 1
+canonical: true
+vocabulary: civic-terms.yaml
+lifecycles:
+  - lifecycles/permit-progress.yaml
+scenarios:
+  - scenarios/counter-handoff.yaml
+policies:
+  - policies/completeness-check.yaml
+documents:
+  - documents/acknowledgement-note.yaml
+schemas:
+  - schemas/submission-envelope.schema.json

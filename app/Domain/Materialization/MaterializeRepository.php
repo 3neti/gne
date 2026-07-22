@@ -15,7 +15,7 @@ final readonly class MaterializeRepository
     public function handle(RepositoryManifest $manifest): array
     {
         $startedAt = Carbon::now();
-        $fingerprint = hash('sha256', json_encode([$manifest->profiles, $manifest->scenarios, $manifest->artifacts], JSON_THROW_ON_ERROR));
+        $fingerprint = $manifest->fingerprint;
         $runId = $this->database->table('gne_materialization_runs')->insertGetId(['repository_fingerprint' => $fingerprint, 'status' => 'running', 'started_at' => $startedAt, 'created_at' => $startedAt, 'updated_at' => $startedAt]);
 
         try {

@@ -26,7 +26,7 @@ final readonly class BuildSemanticIndex
             return ['from' => $artifact['identifier'], 'from_revision' => $artifact['revision'], 'relationship' => $reference['relationship'] ?? 'references', 'to' => $reference['identifier'] ?? $reference['artifact'] ?? null, 'to_revision' => $reference['revision'] ?? null, 'evidence_path' => $artifact['path']];
         })->all())->sortBy([['from', 'asc'], ['relationship', 'asc'], ['to', 'asc']])->values()->all();
         $glossary = $this->glossary($repositoryRoot, $profiles);
-        $repository = ['notice' => 'Generated, non-canonical projection. Rebuild from repository evidence.', 'version' => 1, 'business_path' => (string) $manifest->businessPath, 'generated_path' => (string) $manifest->generatedPath, 'counts' => ['profiles' => count($profiles), 'scenarios' => count($scenarios), 'artifacts' => count($artifacts)], 'evidence' => ['gne.yaml', 'GENEI.md']];
+        $repository = ['notice' => 'Generated, non-canonical projection. Rebuild from repository evidence.', 'version' => 1, 'fingerprint' => $manifest->fingerprint, 'business_path' => (string) $manifest->businessPath, 'generated_path' => (string) $manifest->generatedPath, 'counts' => ['profiles' => count($profiles), 'scenarios' => count($scenarios), 'artifacts' => count($artifacts)], 'evidence' => $manifest->canonicalFiles];
 
         foreach (compact('repository', 'profiles', 'scenarios', 'artifacts', 'glossary', 'relationships') as $name => $data) {
             $this->files->put($directory.'/'.$name.'.json', json_encode($data, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES | JSON_THROW_ON_ERROR).PHP_EOL);
@@ -45,7 +45,11 @@ final readonly class BuildSemanticIndex
     private function glossary(string $repositoryRoot, array $profiles): array
     {
         return collect($profiles)->flatMap(function (array $profile) use ($repositoryRoot): array {
-            $path = dirname($repositoryRoot.'/'.$profile['path']).'/vocabulary.yaml';
+            $vocabularyPath = $profile['declarations']['vocabulary'][0] ?? null;
+            if (! is_string($vocabularyPath)) {
+                return [];
+            }
+            $path = dirname($repositoryRoot.'/'.$profile['path']).'/'.$vocabularyPath;
             if (! is_file($path)) {
                 return [];
             }

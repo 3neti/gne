@@ -1,15 +1,15 @@
 # GNE Compass
 
-**Current milestone:** GNE Repository-Native Architecture Bootstrap  
+**Current milestone:** Repository Integrity and Portability Hardening
 **North star:** The business belongs to the repository. Everything operational is a projection.
 
 ## Completed
 
-Canonical cognition, grammar, decisions, configuration, repository boundaries, discovery/validation, semantic indexing, database materialization, rebuild/explain/compile commands, an immutable property-reservation chain, and an authenticated repository workbench are established with automated coverage.
+Canonical cognition, grammar, decisions, configuration, repository boundaries, discovery/validation, semantic indexing, database materialization, rebuild/explain/compile commands, an immutable property-reservation chain, and an authenticated repository workbench are established. Discovery is repository-portable, profile validation is declaration-driven, canonical fingerprints cover source bytes, and projected artifact metadata retains payloads. A civic-permit demonstration proves profile neutrality.
 
 ## Immediate direction
 
-Verify the bootstrap continuously against the property-reservation scenario, improve finding locations/schema validation only when backed by concrete needs, and preserve deterministic source-to-projection behavior.
+Begin the Resolved Document Vertical Slice while preserving deterministic source-to-projection behavior and repository-relative evidence.
 
 ## Explicit deferrals
 

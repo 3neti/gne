@@ -17,7 +17,7 @@ it('shows repository-derived status to an authenticated user', function () {
         ->component('RepositoryWorkbench')
         ->where('repository.canonical_source_path', 'business')
         ->where('repository.generated_projection_path', '.gne')
-        ->has('repository.profiles', 1)
-        ->has('repository.scenarios', 1)
+        ->has('repository.profiles', 2)
+        ->has('repository.scenarios', 2)
     );
 });

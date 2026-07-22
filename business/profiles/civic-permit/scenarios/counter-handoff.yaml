@@ -1,0 +1,7 @@
+identifier: SCENARIO-CIVIC-COUNTER-HANDOFF
+slug: counter-handoff
+profile: PROFILE-CIVIC-PERMIT-DEMO
+title: Civic Counter Handoff
+description: A tiny non-reservation scenario used only to prove profile-neutral discovery and validation.
+lifecycle: LIFECYCLE-CIVIC-PERMIT-DEMO
+steps: [submission, completeness_check, acknowledgement]

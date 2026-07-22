@@ -10,6 +10,8 @@ Begin here for durable cognition, `GRAMMAR.md` for vocabulary, `ARCHITECTURE.md`
 
 Every important concept has a stable repository identity. Relationships, lifecycle transitions, scenarios, provenance, revisions, and supersession are explicit. Accepted facts are immutable: correction adds an artifact or revision and retains prior evidence. Generated semantic facts require a source path and must never invent unsupported meaning.
 
+Repository evidence is addressed relative to the repository being interpreted, never relative to the host application. Each profile declares its own vocabulary, lifecycles, scenarios, policies, documents, and schemas. Canonical fingerprints represent ordered source paths and raw source bytes; inventory summaries and semantic indexes do not substitute for that evidence.
+
 ## Business cognition and GeNEi
 
 GNE reasons from profile vocabulary, schemas, policies, lifecycles, scenarios, document definitions, decisions, and immutable artifacts. Discovery establishes what exists; validation whether it is acceptable; interpretation resolves expressed meaning; compilation prepares projections; materialization produces disposable operational state. Git supplies provenance, replication, history, and review, but does not define semantics.

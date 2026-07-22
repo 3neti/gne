@@ -24,13 +24,14 @@ it('materializes idempotent projections with stable repository identities', func
     $this->artisan('gne:materialize')->assertSuccessful();
     expect(DB::table('gne_artifacts')->count())->toBe($count)
         ->and(DB::table('gne_artifacts')->where('repository_identifier', 'ARTIFACT-APPLICATION-000001')->exists())->toBeTrue()
-        ->and(DB::table('gne_materialization_runs')->count())->toBe(2);
+        ->and(DB::table('gne_materialization_runs')->count())->toBe(2)
+        ->and(json_decode(DB::table('gne_artifacts')->where('repository_identifier', 'ARTIFACT-INVOICE-000001')->where('revision', '2')->value('metadata'), true)['payload']['amount'])->toBe(50000);
 });
 
 it('rebuilds disposable projections non-interactively', function () {
     $this->artisan('gne:rebuild --force')->assertSuccessful();
     expect(base_path('.gne/semantic/repository.json'))->toBeFile()
-        ->and(DB::table('gne_profiles')->count())->toBe(1);
+        ->and(DB::table('gne_profiles')->count())->toBe(2);
 });
 
 it('explains and plans compilation honestly', function () {
