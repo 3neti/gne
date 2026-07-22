@@ -53,9 +53,10 @@
 | Document Readiness | Derived ability to resolve a definition from the selected accepted Artifact Chain. |
 | Resolved | Readiness state in which all directly required accepted evidence exists and a Resolved Document was produced. |
 | Pending | Readiness state in which a valid applicable definition lacks directly required accepted evidence as an ordinary lifecycle condition. |
-| Unavailable | Readiness state in which a valid definition cannot currently resolve because the subject chain is incompatible or ambiguous, rather than merely incomplete. |
+| Unavailable | Reserved readiness state for a valid applicable document intentionally withheld by a future explicit, trustworthy policy or capability rule; never a label for ambiguous or contaminated evidence. |
 | Not Applicable | Reserved readiness state for a valid definition excluded by future explicit applicability declarations; never inferred from missing evidence. |
 | Missing Evidence | Structured description of repository evidence directly required by a definition but absent from the selected chain. |
+| Evidence-Integrity Failure | Ambiguous, cross-subject, or otherwise untrustworthy evidence that validation or compilation rejects rather than classifying as document readiness. |
 | Lifecycle Position | Read-only derivation of contiguous completed, next, future, and gap stages from a declared lifecycle and selected accepted evidence. |
 | Semantic Index | Disposable AI-readable metadata linked to source evidence. |
 | Repository Agent | Human or software actor operating under repository constraints. |

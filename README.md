@@ -8,6 +8,8 @@ Repository validation now checks accepted payloads against explicit profile-owne
 
 Structured validation JSON always includes every counted finding: warning-only repositories remain `valid: true`, report their warning count, and include the corresponding warning objects in `findings`. Expected malformed source becomes a finding; unexpected validator or compiler defects propagate.
 
+Document readiness represents trustworthy business conditions: ordinary absent accepted evidence is `pending`, while ambiguous selection or cross-subject contamination fails validation or compilation. `Unavailable` and `not_applicable` are reserved for future explicit repository rules. Missing-evidence inventory currently reports the first unresolved direct source.
+
 ## Install and develop
 
 ```bash

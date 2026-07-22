@@ -31,8 +31,6 @@ final readonly class BuildResolvedDocumentSet
             } catch (DocumentEvidenceNotFound $exception) {
                 $missing = new MissingDocumentEvidence($exception->artifactType, $exception->getMessage());
                 $entries[] = new DocumentInventoryEntry($definition['identifier'], $definition['revision'], $definition['title'], $definition['path'], DocumentReadiness::Pending, $subject, null, [$missing], "Pending accepted {$exception->artifactType} evidence.", ['definition_source_fingerprint' => $definition['source_fingerprint']]);
-            } catch (AmbiguousArtifactSelection|CrossSubjectReferenceViolation $exception) {
-                $entries[] = new DocumentInventoryEntry($definition['identifier'], $definition['revision'], $definition['title'], $definition['path'], DocumentReadiness::Unavailable, $subject, null, [], $exception->getMessage(), ['definition_source_fingerprint' => $definition['source_fingerprint']]);
             }
         }
 

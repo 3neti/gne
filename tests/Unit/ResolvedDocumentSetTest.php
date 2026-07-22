@@ -1,7 +1,9 @@
 <?php
 
+use App\Domain\Compilation\AmbiguousArtifactSelection;
 use App\Domain\Compilation\BuildResolvedDocumentSet;
 use App\Domain\Compilation\CompilationSubject;
+use App\Domain\Compilation\CrossSubjectReferenceViolation;
 use App\Domain\Compilation\DocumentReadiness;
 use App\Domain\Compilation\ResolvedDocumentSet;
 use App\Domain\Compilation\ResolveDocument;
@@ -98,3 +100,25 @@ it('reports accepted evidence beyond a missing lifecycle stage as a gap', functi
         ->and($set->lifecyclePosition->nextStage)->toBe('assessment_completed')
         ->and($set->lifecyclePosition->gaps)->toContain('invoice_accepted');
 });
+
+it('propagates ambiguous evidence instead of classifying it as unavailable', function () {
+    [$root, $manifest, $builder] = documentSetTestContext();
+    $invoice = collect($manifest->artifacts)->firstWhere('identifier', 'ARTIFACT-INVOICE-000001');
+    $invoice['identifier'] = 'ARTIFACT-INVOICE-ALTERNATE';
+    $invoice['revision'] = 1;
+    $invoice['status'] = 'accepted';
+    $ambiguous = new RepositoryManifest($manifest->businessPath, $manifest->generatedPath, $manifest->profiles, $manifest->scenarios, [...$manifest->artifacts, $invoice], $manifest->fingerprint, $manifest->canonicalFiles, $manifest->findings, $manifest->lifecycles);
+
+    $builder->handle($root, $ambiguous, new CompilationSubject('RESERVATION-000001', 'PropertyReservation'));
+})->throws(AmbiguousArtifactSelection::class);
+
+it('propagates cross-subject contamination instead of producing an inventory', function () {
+    [$root, $manifest, $builder] = documentSetTestContext();
+    $invoice = collect($manifest->artifacts)->firstWhere('identifier', 'ARTIFACT-INVOICE-000001');
+    $invoice['revision'] = 3;
+    $invoice['status'] = 'accepted';
+    $invoice['references'] = [['identifier' => 'ARTIFACT-APPLICATION-000002', 'revision' => 1]];
+    $contaminated = new RepositoryManifest($manifest->businessPath, $manifest->generatedPath, $manifest->profiles, $manifest->scenarios, [...$manifest->artifacts, $invoice], $manifest->fingerprint, $manifest->canonicalFiles, $manifest->findings, $manifest->lifecycles);
+
+    $builder->handle($root, $contaminated, new CompilationSubject('RESERVATION-000001', 'PropertyReservation'));
+})->throws(CrossSubjectReferenceViolation::class);

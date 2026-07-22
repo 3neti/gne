@@ -53,7 +53,7 @@ The primary artifact anchors the document but does not define its identity alone
 
 ## Resolved document set and lifecycle inventory
 
-`BuildResolvedDocumentSet` selects one subject's coherent chain, evaluates every valid document definition owned by that profile and scenario through the existing `ResolveDocument`, and emits a driver-neutral inventory. Successful resolution is `resolved`; directly required but absent accepted evidence is `pending`; classified chain incompatibility is `unavailable`. Unexpected failures propagate. The `not_applicable` state is reserved for future explicit applicability declarations and is not inferred.
+`BuildResolvedDocumentSet` selects one subject's coherent chain, evaluates every valid document definition owned by that profile and scenario through the existing `ResolveDocument`, and emits a driver-neutral inventory. Successful resolution is `resolved`; directly required but absent accepted evidence is `pending`. `Unavailable` is reserved for a future explicit, trustworthy restriction. Ambiguous artifact selection and cross-subject contamination are evidence-integrity failures and propagate instead of becoming inventory entries. The `not_applicable` state is reserved for future explicit applicability declarations and is not inferred.
 
 ```mermaid
 flowchart TD
@@ -68,6 +68,8 @@ flowchart TD
 ```
 
 Lifecycle position is read from the scenario's declared lifecycle and compared with accepted artifact types in the selected chain. The highest contiguous evidenced stage is current, the first missing stage is next, and later evidence beyond that absence is reported as a gap. This is an explanation of repository evidence, not a state machine. Set identity hashes only the subject, selected evidence, applicable definition sources, lifecycle source and resulting statuses; unrelated repository changes cannot alter it.
+
+Missing-evidence reporting currently reflects the first unresolved direct source encountered by `ResolveDocument`. Aggregating every absent direct source is deferred. This limitation does not permit ambiguous or contaminated evidence to enter the normal inventory.
 
 `ResolvedDocument` is the compiler intermediate representation: it contains business meaning but no HTML, Vue, Inertia, Tailwind, browser layout, PDF, or Adobe concepts. `BrowserProjectionDriver` maps that IR into a disposable structural browser projection without evaluating fields or adding business meaning. Future browser, PDF, Markdown, JSON, API, and mobile drivers are peers over the same IR.
 

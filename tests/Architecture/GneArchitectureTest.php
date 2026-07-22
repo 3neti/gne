@@ -119,6 +119,13 @@ arch('document readiness catches no unclassified implementation failures')
     ->expect('App\Domain\Compilation\BuildResolvedDocumentSet')
     ->not->toUse('Throwable');
 
+it('classifies only missing evidence as ordinary document readiness', function () {
+    $source = file_get_contents(dirname(__DIR__, 2).'/app/Domain/Compilation/BuildResolvedDocumentSet.php');
+
+    expect($source)->toContain('catch (DocumentEvidenceNotFound $exception)')
+        ->not->toContain('catch (AmbiguousArtifactSelection', 'catch (CrossSubjectReferenceViolation');
+});
+
 it('derives document set identity from direct inputs rather than the repository fingerprint', function () {
     $source = file_get_contents(dirname(__DIR__, 2).'/app/Domain/Compilation/BuildResolvedDocumentSet.php');
 

@@ -5,7 +5,7 @@
 
 ## Completed
 
-Canonical cognition, portable discovery, declaration-driven profiles, byte-complete fingerprints, immutable artifacts, semantic/database projections, and the authenticated workbench are established. Resolved documents are anchored to an explicit Compilation Subject and coherent chain. Accepted payloads and strict document definitions validate before compilation. Each subject now exposes a deterministic document-readiness set and read-only lifecycle position.
+Canonical cognition, portable discovery, declaration-driven profiles, byte-complete fingerprints, immutable artifacts, semantic/database projections, and the authenticated workbench are established. Resolved documents are anchored to an explicit Compilation Subject and coherent chain. Accepted payloads and strict document definitions validate before compilation. Each subject exposes a deterministic document-readiness set and read-only lifecycle position, while ambiguous or contaminated evidence fails outside the readiness model.
 
 ## Immediate direction
 
@@ -17,7 +17,7 @@ Autonomous GeNEi execution; AI provider adapters; LLM tool calling; embeddings/v
 
 ## Known risks
 
-Validation supports the implemented document grammar and JSON Schema 2020-12 but not expressions, arrays in field paths, or calculated fields; lifecycle position assumes required ordered stages and artifact-type evidence; explicit applicability and optional stages are not modeled; the example is synthetic and narrow.
+Validation supports the implemented document grammar and JSON Schema 2020-12 but not expressions, arrays in field paths, or calculated fields; missing-evidence inventory reports the first unresolved direct source; lifecycle position assumes required ordered stages and artifact-type evidence; explicit applicability and optional stages are not modeled; the example is synthetic and narrow.
 
 ## Recommended next task
 
