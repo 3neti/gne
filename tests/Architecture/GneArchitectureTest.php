@@ -66,6 +66,13 @@ arch('authoring validators remain outside artifact chain selection')
         'Opis\JsonSchema',
     ]);
 
+arch('authoring validators catch only classified source and schema failures')
+    ->expect([
+        'App\Domain\Repository\ValidateArtifactPayloads',
+        'App\Domain\Repository\ValidateDocumentDefinitions',
+    ])
+    ->not->toUse('Throwable');
+
 arch('browser driver does not discover or validate repository source')
     ->expect('App\Domain\Compilation\BrowserProjectionDriver')
     ->not->toUse([

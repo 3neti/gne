@@ -2,13 +2,17 @@
 
 namespace App\Domain\Repository;
 
+use JsonException;
 use Opis\JsonSchema\Errors\ErrorFormatter;
+use Opis\JsonSchema\Exceptions\SchemaException;
 use Opis\JsonSchema\Validator;
-use Throwable;
 
 final readonly class ValidateArtifactPayloads
 {
-    public function __construct(private Validator $validator = new Validator(max_errors: 20, stop_at_first_error: false)) {}
+    public function __construct(
+        private RepositorySourceLoader $sourceLoader,
+        private Validator $validator = new Validator(max_errors: 20, stop_at_first_error: false),
+    ) {}
 
     /** @return list<ValidationFinding> */
     public function handle(string $repositoryRoot, RepositoryManifest $manifest): array
@@ -32,19 +36,33 @@ final readonly class ValidateArtifactPayloads
             $schemaRepositoryPath = dirname($profile['path']).'/'.$schemaRelative;
             $schemaPath = $repository->absolute($schemaRepositoryPath);
             try {
-                $schema = json_decode(file_get_contents($schemaPath), false, flags: JSON_THROW_ON_ERROR);
-                $payload = json_decode(json_encode($artifact['payload'], JSON_THROW_ON_ERROR), false, flags: JSON_THROW_ON_ERROR);
-                $result = $this->validator->validate($payload, $schema);
-                if ($result->isValid()) {
-                    continue;
-                }
-                foreach ((new ErrorFormatter)->format($result->error()) as $pointer => $messages) {
-                    foreach ((array) $messages as $message) {
-                        $findings[] = $this->finding('ARTIFACT_PAYLOAD_SCHEMA_VIOLATION', "{$artifact['identifier']}@{$artifact['revision']}: {$message}", $artifact, $pointer === '/' ? '' : $pointer, 'Change the payload or its canonical artifact schema.', ['schema_path' => $schemaRepositoryPath, 'schema_location' => '#']);
-                    }
-                }
-            } catch (Throwable $exception) {
+                $schema = $this->sourceLoader->jsonObject($schemaPath);
+            } catch (RepositorySourceException $exception) {
                 $findings[] = $this->finding('ARTIFACT_SCHEMA_INVALID', "Schema {$schemaRepositoryPath} cannot validate {$artifact['identifier']}: {$exception->getMessage()}", $artifact, null, 'Correct the declared JSON Schema.', ['schema_path' => $schemaRepositoryPath]);
+
+                continue;
+            }
+            try {
+                $payload = json_decode(json_encode($artifact['payload'], JSON_THROW_ON_ERROR), false, flags: JSON_THROW_ON_ERROR);
+            } catch (JsonException $exception) {
+                $findings[] = $this->finding('ARTIFACT_PAYLOAD_SCHEMA_VIOLATION', "{$artifact['identifier']}@{$artifact['revision']}: {$exception->getMessage()}", $artifact, null, 'Use JSON-compatible values in the artifact payload.', ['schema_path' => $schemaRepositoryPath]);
+
+                continue;
+            }
+            try {
+                $result = $this->validator->validate($payload, $schema);
+            } catch (SchemaException $exception) {
+                $findings[] = $this->finding('ARTIFACT_SCHEMA_INVALID', "Schema {$schemaRepositoryPath} cannot validate {$artifact['identifier']}: {$exception->getMessage()}", $artifact, null, 'Correct the declared JSON Schema.', ['schema_path' => $schemaRepositoryPath]);
+
+                continue;
+            }
+            if ($result->isValid()) {
+                continue;
+            }
+            foreach ((new ErrorFormatter)->format($result->error()) as $pointer => $messages) {
+                foreach ((array) $messages as $message) {
+                    $findings[] = $this->finding('ARTIFACT_PAYLOAD_SCHEMA_VIOLATION', "{$artifact['identifier']}@{$artifact['revision']}: {$message}", $artifact, $pointer === '/' ? '' : $pointer, 'Change the payload or its canonical artifact schema.', ['schema_path' => $schemaRepositoryPath, 'schema_location' => '#']);
+                }
             }
         }
 

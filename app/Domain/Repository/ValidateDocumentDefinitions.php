@@ -4,12 +4,13 @@ namespace App\Domain\Repository;
 
 use Opis\JsonSchema\Errors\ErrorFormatter;
 use Opis\JsonSchema\Validator;
-use Symfony\Component\Yaml\Yaml;
-use Throwable;
 
 final readonly class ValidateDocumentDefinitions
 {
-    public function __construct(private Validator $validator = new Validator(max_errors: 20, stop_at_first_error: false)) {}
+    public function __construct(
+        private RepositorySourceLoader $sourceLoader,
+        private Validator $validator = new Validator(max_errors: 20, stop_at_first_error: false),
+    ) {}
 
     /** @return list<ValidationFinding> */
     public function handle(string $repositoryRoot, RepositoryManifest $manifest): array
@@ -26,29 +27,30 @@ final readonly class ValidateDocumentDefinitions
                 $absolutePath = $profileRoot.'/'.$declaredPath;
                 $sourcePath = $repository->relative($absolutePath);
                 try {
-                    $definition = Yaml::parseFile($absolutePath);
-                    if (! is_array($definition)) {
-                        throw new \RuntimeException('Document definition must be a mapping.');
-                    }
-                    $documentObject = json_decode(json_encode($definition, JSON_THROW_ON_ERROR), false, flags: JSON_THROW_ON_ERROR);
-                    $result = $this->validator->validate($documentObject, $languageSchema);
-                    if (! $result->isValid()) {
-                        foreach ((new ErrorFormatter)->format($result->error()) as $pointer => $messages) {
-                            foreach ((array) $messages as $message) {
-                                $findings[] = new ValidationFinding(ValidationSeverity::Error, 'DOCUMENT_DEFINITION_INVALID', $message, $sourcePath, $pointer, 'Conform the definition to resources/gne/schemas/document-definition.schema.json.', ['document_identifier' => $definition['identifier'] ?? null, 'grammar_schema' => 'resources/gne/schemas/document-definition.schema.json']);
-                            }
-                        }
-                    }
-                    $findings = [...$findings, ...$this->contextualFindings($repositoryRoot, $manifest, $profile, $definition, $sourcePath)];
-                    $identifier = $definition['identifier'] ?? null;
-                    if (is_string($identifier)) {
-                        if (isset($identifiers[$identifier])) {
-                            $findings[] = new ValidationFinding(ValidationSeverity::Error, 'DOCUMENT_IDENTIFIER_DUPLICATE', "Document identifier {$identifier} is declared more than once.", $sourcePath, '/identifier');
-                        }
-                        $identifiers[$identifier] = true;
-                    }
-                } catch (Throwable $exception) {
+                    $definition = $this->sourceLoader->yamlMapping($absolutePath);
+                } catch (RepositorySourceException $exception) {
                     $findings[] = new ValidationFinding(ValidationSeverity::Error, 'DOCUMENT_DEFINITION_INVALID', $exception->getMessage(), $sourcePath, remediation: 'Correct the authored YAML and document grammar.');
+
+                    continue;
+                }
+                $documentObject = json_decode(json_encode($definition, JSON_THROW_ON_ERROR), false, flags: JSON_THROW_ON_ERROR);
+                $result = $this->validator->validate($documentObject, $languageSchema);
+                if (! $result->isValid()) {
+                    foreach ((new ErrorFormatter)->format($result->error()) as $pointer => $messages) {
+                        foreach ((array) $messages as $message) {
+                            $findings[] = new ValidationFinding(ValidationSeverity::Error, 'DOCUMENT_DEFINITION_INVALID', $message, $sourcePath, $pointer, 'Conform the definition to resources/gne/schemas/document-definition.schema.json.', ['document_identifier' => $definition['identifier'] ?? null, 'grammar_schema' => 'resources/gne/schemas/document-definition.schema.json']);
+                        }
+                    }
+
+                    continue;
+                }
+                $findings = [...$findings, ...$this->contextualFindings($repositoryRoot, $manifest, $profile, $definition, $sourcePath)];
+                $identifier = $definition['identifier'] ?? null;
+                if (is_string($identifier)) {
+                    if (isset($identifiers[$identifier])) {
+                        $findings[] = new ValidationFinding(ValidationSeverity::Error, 'DOCUMENT_IDENTIFIER_DUPLICATE', "Document identifier {$identifier} is declared more than once.", $sourcePath, '/identifier');
+                    }
+                    $identifiers[$identifier] = true;
                 }
             }
         }
@@ -95,7 +97,14 @@ final readonly class ValidateDocumentDefinitions
 
                 continue;
             }
-            if (! is_string($path) || ! $this->schemaHasPath($repositoryRoot, $profile, $artifactType, $path)) {
+            try {
+                $pathExists = is_string($path) && $this->schemaHasPath($repositoryRoot, $profile, $artifactType, $path);
+            } catch (RepositorySourceException $exception) {
+                $findings[] = new ValidationFinding(ValidationSeverity::Error, 'ARTIFACT_SCHEMA_INVALID', $exception->getMessage(), $sourcePath, '/sections/*/fields/source/path', 'Correct the declared artifact schema.');
+
+                continue;
+            }
+            if (! $pathExists) {
                 $findings[] = new ValidationFinding(ValidationSeverity::Error, 'DOCUMENT_FIELD_PATH_UNKNOWN', "Field {$field['identifier']} references unknown schema path {$path} on {$artifactType}.", $sourcePath, '/sections/*/fields/source/path', 'Use a payload.* path declared by the artifact type schema.', ['document_identifier' => $identifier, 'field_identifier' => $field['identifier'], 'artifact_type' => $artifactType]);
             }
         }
@@ -136,7 +145,8 @@ final readonly class ValidateDocumentDefinitions
             return false;
         }
         $schemaPath = dirname($profile['path']).'/'.$schemaRelative;
-        $schema = json_decode(file_get_contents((new RepositoryAddress($repositoryRoot))->absolute($schemaPath)), true, flags: JSON_THROW_ON_ERROR);
+        $schemaObject = $this->sourceLoader->jsonObject((new RepositoryAddress($repositoryRoot))->absolute($schemaPath));
+        $schema = json_decode(json_encode($schemaObject, JSON_THROW_ON_ERROR), true, flags: JSON_THROW_ON_ERROR);
         $node = $schema;
         foreach (array_slice(explode('.', $path), 1) as $segment) {
             if (($node['type'] ?? null) !== 'object' || ! is_array($node['properties'][$segment] ?? null)) {

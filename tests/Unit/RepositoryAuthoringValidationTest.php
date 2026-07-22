@@ -40,6 +40,37 @@ it('reports malformed artifact schemas precisely', function () {
     }
 });
 
+it('reports malformed document YAML without running contextual validation', function () {
+    $root = validationRepositoryFixture();
+    $files = new Filesystem;
+    $path = $root.'/business/profiles/property-reservation/documents/invoice.yaml';
+    $files->put($path, "identifier: DOCUMENT-INVOICE\nsections: [\n");
+
+    try {
+        $findings = collect(app(ValidateRepository::class)->handle($root)->findings)->filter(fn ($finding): bool => $finding->sourcePath === 'business/profiles/property-reservation/documents/invoice.yaml');
+
+        expect($findings->where('code', 'DOCUMENT_DEFINITION_INVALID'))->toHaveCount(1)
+            ->and($findings->pluck('code'))->not->toContain('DOCUMENT_FIELD_PATH_UNKNOWN', 'DOCUMENT_ARTIFACT_TYPE_UNKNOWN');
+    } finally {
+        $files->deleteDirectory($root);
+    }
+});
+
+it('reports a missing declared schema as an authoring finding', function () {
+    $root = validationRepositoryFixture();
+    $files = new Filesystem;
+    $files->delete($root.'/business/profiles/property-reservation/schemas/invoice.schema.json');
+
+    try {
+        $finding = collect(app(ValidateRepository::class)->handle($root)->findings)->first(fn ($finding): bool => $finding->code === 'ARTIFACT_SCHEMA_INVALID' && isset($finding->context['schema_path']));
+
+        expect($finding)->not->toBeNull()
+            ->and($finding->context['schema_path'])->toEndWith('invoice.schema.json');
+    } finally {
+        $files->deleteDirectory($root);
+    }
+});
+
 it('rejects duplicate fields, unknown artifact types, and unknown payload paths', function () {
     $root = validationRepositoryFixture();
     $files = new Filesystem;

@@ -1,5 +1,10 @@
 <?php
 
+use App\Domain\Repository\DiscoverRepository;
+use App\Domain\Repository\RepositorySourceLoader;
+use App\Domain\Repository\ValidateArtifactPayloads;
+use App\Domain\Repository\ValidateDocumentDefinitions;
+use App\Domain\Repository\ValidateRepository;
 use App\Models\User;
 use Illuminate\Filesystem\Filesystem;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -27,7 +32,10 @@ it('fails validation and refuses compilation for invalid authored payloads', fun
     $files->put($path, str_replace('amount: 75000', 'amount: wrong', $files->get($path)));
 
     try {
-        expect(Artisan::call('gne:validate', ['--repository' => $root, '--json' => true]))->toBe(1)
+        expect(Artisan::call('gne:validate', ['--repository' => $root, '--json' => true]))->toBe(1);
+        $output = Artisan::output();
+        expect(json_decode($output, true, flags: JSON_THROW_ON_ERROR)['findings'][0]['code'])->toBe('ARTIFACT_PAYLOAD_SCHEMA_VIOLATION')
+            ->and($output)->not->toContain('trace')->not->toContain('LogicException')
             ->and(Artisan::call('gne:compile', ['--repository' => $root]))->toBe(1);
     } finally {
         $files->deleteDirectory($root);
@@ -47,4 +55,22 @@ it('shows structured validation findings in the authenticated workbench', functi
             ->where('findings.0.source_path', 'business/profiles/civic-permit/documents/acknowledgement-note.yaml')
             ->where('findings.0.location', '/primary_artifact_type')
         );
+});
+
+it('allows unexpected validator failures to escape compilation', function () {
+    $files = new Filesystem;
+    $loader = new class($files) extends RepositorySourceLoader
+    {
+        public function jsonObject(string $path): object
+        {
+            throw new LogicException('simulated compiler defect');
+        }
+    };
+    $this->app->instance(ValidateRepository::class, new ValidateRepository(
+        app(DiscoverRepository::class),
+        new ValidateArtifactPayloads($loader),
+        app(ValidateDocumentDefinitions::class),
+    ));
+
+    expect(fn (): int => Artisan::call('gne:compile'))->toThrow(LogicException::class, 'simulated compiler defect');
 });

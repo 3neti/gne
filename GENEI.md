@@ -16,6 +16,8 @@ Business artifacts are facts rather than documents. Repository-authored document
 
 Canonical source must validate before compilation. Profiles explicitly map artifact types to business-owned schemas; accepted payloads must satisfy those schemas. GNE owns the document-definition language schema. An authoring error blocks compilation, valid but absent subject evidence produces an unresolved document, and unexpected implementation failures propagate.
 
+Validation must never disguise a compiler defect as bad business source. Only expected source-loading and schema-parsing failures become findings; programming and internal-invariant failures remain exceptions.
+
 ## Business cognition and GeNEi
 
 GNE reasons from profile vocabulary, schemas, policies, lifecycles, scenarios, document definitions, decisions, and immutable artifacts. Discovery establishes what exists; validation whether it is acceptable; interpretation resolves expressed meaning; compilation prepares projections; materialization produces disposable operational state. Git supplies provenance, replication, history, and review, but does not define semantics.
