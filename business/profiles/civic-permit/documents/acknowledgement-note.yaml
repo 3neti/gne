@@ -1,4 +1,11 @@
 identifier: DOCUMENT-CIVIC-ACKNOWLEDGEMENT
-title: Submission acknowledgement note
-projection_of: [Acknowledgement]
+revision: 1
+title: Submission Acknowledgement Note
+scenario: SCENARIO-CIVIC-COUNTER-HANDOFF
+audience: [submitter]
+primary_artifact_type: Acknowledgement
+artifacts: [Acknowledgement]
+sections: []
+actions: []
+attachments: []
 drivers: [browser, x-document-deferred]

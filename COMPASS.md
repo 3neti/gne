@@ -1,15 +1,15 @@
 # GNE Compass
 
-**Current milestone:** Repository Integrity and Portability Hardening
+**Current milestone:** Resolved Document Vertical Slice
 **North star:** The business belongs to the repository. Everything operational is a projection.
 
 ## Completed
 
-Canonical cognition, grammar, decisions, configuration, repository boundaries, discovery/validation, semantic indexing, database materialization, rebuild/explain/compile commands, an immutable property-reservation chain, and an authenticated repository workbench are established. Discovery is repository-portable, profile validation is declaration-driven, canonical fingerprints cover source bytes, and projected artifact metadata retains payloads. A civic-permit demonstration proves profile neutrality.
+Canonical cognition, portable discovery, declaration-driven profiles, byte-complete fingerprints, immutable artifacts, semantic/database projections, and the authenticated workbench are established. Repository-authored definitions can now compile Application, Invoice, Receipt, and Reservation Certificate artifacts into deterministic evidence-bearing `ResolvedDocument` IR and then into a peer browser projection.
 
 ## Immediate direction
 
-Begin the Resolved Document Vertical Slice while preserving deterministic source-to-projection behavior and repository-relative evidence.
+Stabilize multi-chain document selection and document-definition validation against a second accepted artifact chain before introducing an external document driver.
 
 ## Explicit deferrals
 
@@ -21,4 +21,4 @@ Validation is intentionally structural rather than a complete JSON Schema engine
 
 ## Recommended next task
 
-**Resolved Document Vertical Slice** — resolve accepted property-reservation artifacts into one canonical `ResolvedDocument`, render it through the browser projection, and establish the adapter seam for future x-document integration.
+**Resolved Document Contract Hardening** — validate the authored document-definition grammar and resolve one of multiple artifact chains explicitly, preserving deterministic evidence before future x-document integration.

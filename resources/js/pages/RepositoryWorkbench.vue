@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { Head } from '@inertiajs/vue3';
+import { Head, Link } from '@inertiajs/vue3';
 import { Badge } from '@/components/ui/badge';
 import {
     Card,
@@ -9,6 +9,7 @@ import {
     CardTitle,
 } from '@/components/ui/card';
 import { dashboard } from '@/routes';
+import { show as showDocument } from '@/routes/documents';
 
 type InventoryItem = {
     identifier: string;
@@ -45,6 +46,12 @@ defineProps<{
         code: string;
         message: string;
         source_path?: string;
+    }>;
+    documents: Array<{
+        identifier: string;
+        status: 'resolved' | 'unresolved';
+        resolved_document?: string;
+        reason?: string;
     }>;
 }>();
 
@@ -191,6 +198,43 @@ defineOptions({
                 </CardContent>
             </Card>
         </section>
+
+        <Card>
+            <CardHeader>
+                <CardTitle>Resolved Documents</CardTitle>
+                <CardDescription
+                    >Compiler IR available from accepted repository
+                    artifacts.</CardDescription
+                >
+            </CardHeader>
+            <CardContent class="grid gap-3 md:grid-cols-2">
+                <div
+                    v-for="document in documents"
+                    :key="document.identifier"
+                    class="flex items-center justify-between gap-4 rounded-lg border p-3"
+                >
+                    <div class="min-w-0">
+                        <p class="truncate font-mono text-sm">
+                            {{ document.identifier }}
+                        </p>
+                        <p
+                            v-if="document.reason"
+                            class="mt-1 text-xs text-muted-foreground"
+                        >
+                            {{ document.reason }}
+                        </p>
+                    </div>
+                    <Link
+                        v-if="document.status === 'resolved'"
+                        :href="showDocument(document.identifier)"
+                        class="text-sm font-medium text-primary hover:underline"
+                    >
+                        View
+                    </Link>
+                    <Badge v-else variant="outline">Deferred evidence</Badge>
+                </div>
+            </CardContent>
+        </Card>
 
         <Card v-if="findings.length"
             ><CardHeader><CardTitle>Validation findings</CardTitle></CardHeader

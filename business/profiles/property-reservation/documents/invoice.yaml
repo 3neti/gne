@@ -1,4 +1,30 @@
 identifier: DOCUMENT-INVOICE
-title: Reservation invoice
-projection_of: [Invoice]
+revision: 1
+title: Reservation Invoice
+scenario: SCENARIO-MANUAL-PAYMENT-RESERVATION
+audience: [applicant, billing-operator]
+primary_artifact_type: Invoice
+artifacts: [Application, Invoice]
+sections:
+  - identifier: reservation
+    title: Reservation
+    fields:
+      - identifier: applicant_alias
+        label: Applicant
+        source: { artifact: Application, path: payload.applicant_alias }
+      - identifier: lot_identifier
+        label: Property
+        source: { artifact: Application, path: payload.lot_identifier }
+  - identifier: charges
+    title: Charges
+    fields:
+      - identifier: amount
+        label: Invoice amount
+        source: { artifact: Invoice, path: payload.amount }
+      - identifier: currency
+        label: Currency
+        source: { artifact: Invoice, path: payload.currency }
+actions:
+  - { identifier: submit_payment_evidence, label: Submit payment evidence, intent: submit_evidence }
+attachments: []
 drivers: [browser, x-document-deferred]

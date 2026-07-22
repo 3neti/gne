@@ -1,4 +1,32 @@
 identifier: DOCUMENT-RECEIPT
-title: Reservation receipt
-projection_of: [Receipt, PaymentApproval]
+revision: 1
+title: Reservation Receipt
+scenario: SCENARIO-MANUAL-PAYMENT-RESERVATION
+audience: [applicant, billing-operator]
+primary_artifact_type: Receipt
+artifacts: [Application, PaymentApproval, Receipt]
+sections:
+  - identifier: reservation
+    title: Reservation
+    fields:
+      - identifier: applicant_alias
+        label: Applicant
+        source: { artifact: Application, path: payload.applicant_alias }
+      - identifier: lot_identifier
+        label: Property
+        source: { artifact: Application, path: payload.lot_identifier }
+  - identifier: payment
+    title: Accepted Payment
+    fields:
+      - identifier: amount
+        label: Amount received
+        source: { artifact: Receipt, path: payload.amount }
+      - identifier: currency
+        label: Currency
+        source: { artifact: Receipt, path: payload.currency }
+      - identifier: approval
+        label: Review outcome
+        source: { artifact: PaymentApproval, path: payload.outcome }
+actions: []
+attachments: []
 drivers: [browser, x-document-deferred]

@@ -1,0 +1,51 @@
+<?php
+
+use App\Domain\Compilation\ResolveDocument;
+use App\Domain\Repository\ValidateRepository;
+use App\Models\User;
+use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Facades\Artisan;
+use Inertia\Testing\AssertableInertia as Assert;
+
+uses(RefreshDatabase::class);
+
+it('resolves the supported property-reservation documents', function (string $identifier, int $revision, string $expectedField) {
+    $manifest = app(ValidateRepository::class)->handle(base_path());
+    $document = app(ResolveDocument::class)->handle(base_path(), $manifest, $identifier);
+    $fieldIdentifiers = collect($document->sections)->flatMap(fn ($section) => $section->fields)->map(fn ($field) => $field->identifier);
+
+    expect($document->revision)->toBe($revision)
+        ->and($document->profile)->toBe('PROFILE-PROPERTY-RESERVATION')
+        ->and($fieldIdentifiers)->toContain($expectedField)
+        ->and($document->evidence)->not->toBeEmpty();
+})->with([
+    'application' => ['DOCUMENT-APPLICATION', 1, 'applicant_alias'],
+    'invoice' => ['DOCUMENT-INVOICE', 2, 'amount'],
+    'receipt' => ['DOCUMENT-RECEIPT', 1, 'approval'],
+    'reservation certificate' => ['DOCUMENT-RESERVATION-CERTIFICATE', 1, 'receipt_amount'],
+]);
+
+it('reports resolved documents and browser projections during compilation', function () {
+    expect(Artisan::call('gne:compile', ['--json' => true]))->toBe(0);
+    $plan = json_decode(Artisan::output(), true, flags: JSON_THROW_ON_ERROR);
+
+    expect($plan['resolved_documents'])->toBe(4)
+        ->and($plan['browser_projections'])->toBe(4)
+        ->and($plan['drivers']['document']['reason'])->toBe('x-document is not installed');
+});
+
+it('protects and displays a browser projection with field evidence', function () {
+    $this->get(route('documents.show', 'DOCUMENT-INVOICE'))->assertRedirect(route('login'));
+
+    $this->withoutVite();
+    $this->actingAs(User::factory()->create(['email_verified_at' => now()]))
+        ->get(route('documents.show', 'DOCUMENT-INVOICE'))
+        ->assertSuccessful()
+        ->assertInertia(fn (Assert $page) => $page
+            ->component('ResolvedDocumentWorkbench')
+            ->where('projection.title', 'Reservation Invoice')
+            ->where('projection.sections.1.fields.0.value', 50000)
+            ->where('projection.sections.1.fields.0.evidence.artifact_revision', 2)
+            ->where('projection.sections.1.fields.0.evidence.value_path', 'payload.amount')
+        );
+});

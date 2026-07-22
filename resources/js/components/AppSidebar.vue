@@ -3,6 +3,7 @@ import { Link } from '@inertiajs/vue3';
 import {
     Boxes,
     FileCheck2,
+    FileText,
     FolderGit2,
     LayoutGrid,
     PlaySquare,
@@ -24,6 +25,7 @@ import {
 import {
     artifacts,
     dashboard,
+    documents,
     materialization,
     profiles,
     repository,
@@ -41,6 +43,7 @@ const mainNavItems: NavItem[] = [
     { title: 'Profiles', href: profiles(), icon: Boxes },
     { title: 'Scenarios', href: scenarios(), icon: PlaySquare },
     { title: 'Artifacts', href: artifacts(), icon: ScrollText },
+    { title: 'Resolved Documents', href: documents(), icon: FileText },
     { title: 'Materialization', href: materialization(), icon: FileCheck2 },
 ];
 

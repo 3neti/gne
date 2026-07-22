@@ -57,3 +57,7 @@ Each accepted decision is durable until superseded by another recorded decision.
 ## ADR-014 — Repository evidence is portable and byte-fingerprinted
 **Status:** Accepted · **Date:** 2026-07-22
 **Context:** Laravel-root-relative paths and metadata-only hashes could hide canonical changes. **Decision:** Resolve all evidence relative to the supplied repository root and fingerprint ordered canonical relative paths plus raw bytes. Profiles declare their own supporting files. **Rationale:** Portable discovery, reliable drift detection, and profile neutrality. **Consequences:** Any canonical byte change produces a new fingerprint, while inventory remains a separate concern. **Rejected:** `base_path()` addressing, example-specific validation, and inventory-derived fingerprints.
+
+## ADR-015 — ResolvedDocument is the document compiler IR
+**Status:** Accepted · **Date:** 2026-07-22
+**Context:** Business artifacts are facts, while browser and PDF outputs are projections. **Decision:** Resolve repository-authored document definitions and accepted artifact revisions into a deterministic, evidence-bearing `ResolvedDocument` before invoking any driver. **Rationale:** One explainable business representation can support peer outputs without making presentation canonical. **Consequences:** Every resolved field cites artifact evidence; browser code contains no field-resolution logic; PDF and x-document remain deferred. **Rejected:** Vue-authored business documents, HTML as canonical form, and direct artifact-to-PDF compilation.

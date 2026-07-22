@@ -1,4 +1,21 @@
 identifier: DOCUMENT-APPLICATION
-title: Reservation application
-projection_of: [Application]
+revision: 1
+title: Reservation Application
+scenario: SCENARIO-MANUAL-PAYMENT-RESERVATION
+audience: [reservation-reviewer, applicant]
+primary_artifact_type: Application
+artifacts: [Application]
+sections:
+  - identifier: application
+    title: Application
+    fields:
+      - identifier: applicant_alias
+        label: Applicant
+        source: { artifact: Application, path: payload.applicant_alias }
+      - identifier: lot_identifier
+        label: Property
+        source: { artifact: Application, path: payload.lot_identifier }
+actions:
+  - { identifier: review_application, label: Review application, intent: review }
+attachments: []
 drivers: [browser, x-document-deferred]

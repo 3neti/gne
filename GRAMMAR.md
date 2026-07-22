@@ -25,8 +25,11 @@
 | Compilation | Resolving repository meaning into a projection plan or output. |
 | Compiler | Services that discover, validate, interpret, and project source. |
 | Document Definition | Authored declaration of a document projection. |
-| Resolved Document | Driver-neutral content resolved from accepted artifacts. |
-| Document Driver | Adapter rendering a resolved document into a peer projection. |
+| Resolved Document | Deterministic driver-neutral compiler intermediate representation resolved from accepted artifacts, with ordered semantic content and evidence. |
+| Resolved Field | Named value in a resolved document carrying direct artifact, revision, path, and value-path evidence. |
+| Document Resolver | Compiler service that interprets an authored document definition and accepted artifacts into a Resolved Document. |
+| Document Driver | Adapter projecting a resolved document without introducing business meaning. |
+| Browser Projection | Disposable browser-consumable structure produced from a Resolved Document; never canonical. |
 | Semantic Index | Disposable AI-readable metadata linked to source evidence. |
 | Repository Agent | Human or software actor operating under repository constraints. |
 | Runtime State | Sessions, queues, locks, caches, OTPs, and temporary tokens. |

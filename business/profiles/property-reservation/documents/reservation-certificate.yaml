@@ -1,4 +1,23 @@
 identifier: DOCUMENT-RESERVATION-CERTIFICATE
-title: Reservation certificate
-projection_of: [ReservationCertificate, Receipt]
+revision: 1
+title: Reservation Certificate
+scenario: SCENARIO-MANUAL-PAYMENT-RESERVATION
+audience: [applicant, reservation-authority]
+primary_artifact_type: ReservationCertificate
+artifacts: [Application, Receipt, ReservationCertificate]
+sections:
+  - identifier: certificate
+    title: Certified Reservation
+    fields:
+      - identifier: applicant_alias
+        label: Applicant
+        source: { artifact: Application, path: payload.applicant_alias }
+      - identifier: lot_identifier
+        label: Reserved property
+        source: { artifact: ReservationCertificate, path: payload.lot_identifier }
+      - identifier: receipt_amount
+        label: Accepted reservation payment
+        source: { artifact: Receipt, path: payload.amount }
+actions: []
+attachments: []
 drivers: [browser, x-document-deferred]

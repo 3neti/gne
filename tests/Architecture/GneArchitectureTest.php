@@ -36,3 +36,18 @@ it('does not couple core source to external settlement or PDF implementations', 
         ->and($core)->not->toContain('Pay Code')
         ->and($core)->not->toContain('Wallet');
 });
+
+arch('resolved document IR has no browser or framework dependencies')
+    ->expect([
+        'App\Domain\Compilation\ResolvedDocument',
+        'App\Domain\Compilation\ResolvedSection',
+        'App\Domain\Compilation\ResolvedField',
+        'App\Domain\Compilation\ResolvedAction',
+        'App\Domain\Compilation\DocumentEvidence',
+    ])
+    ->not->toUse(['Illuminate', 'Inertia', 'Vue', 'Tailwind', 'App\Http']);
+
+arch('browser projection driver consumes the resolved document IR')
+    ->expect('App\Domain\Compilation\BrowserProjectionDriver')
+    ->toUse('App\Domain\Compilation\ResolvedDocument')
+    ->not->toUse(['App\Http', 'Inertia', 'Vue']);
