@@ -179,6 +179,16 @@ it('keeps repository machinery rendering and PDF semantics out of the external c
 });
 
 it('versions the x-document contract schema in its repository path', function () {
-    expect(dirname(__DIR__, 2).'/resources/gne/contracts/x-document/1.0/compilation-request.schema.json')->toBeFile()
-        ->and(dirname(__DIR__, 2).'/resources/gne/contracts/x-document/1.0/compilation-result.schema.json')->toBeFile();
+    $root = dirname(__DIR__, 2).'/resources/gne/contracts/x-document/1.0';
+    $request = json_decode(file_get_contents($root.'/compilation-request.schema.json'), true, flags: JSON_THROW_ON_ERROR);
+    $document = json_decode(file_get_contents($root.'/resolved-document.schema.json'), true, flags: JSON_THROW_ON_ERROR);
+    $result = json_decode(file_get_contents($root.'/compilation-result.schema.json'), true, flags: JSON_THROW_ON_ERROR);
+
+    expect($root.'/compilation-request.schema.json')->toBeFile()
+        ->and($root.'/compilation-result.schema.json')->toBeFile()
+        ->and($request['$id'])->toBe('https://3neti.dev/contracts/x-document/1.0/compilation-request.schema.json')
+        ->and($document['$id'])->toBe('https://3neti.dev/contracts/x-document/1.0/resolved-document.schema.json')
+        ->and($result['$id'])->toBe('https://3neti.dev/contracts/x-document/1.0/compilation-result.schema.json')
+        ->and($request['properties']['document'])->toBe(['$ref' => $document['$id']])
+        ->and($request)->not->toHaveKey('$defs');
 });

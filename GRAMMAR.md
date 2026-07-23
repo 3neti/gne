@@ -71,8 +71,12 @@
 | Contract Version | Identifier for the external transfer schema; version `1.0` is distinct from document, definition, driver, and output revisions. |
 | XDocument Compilation Request | Versioned external document payload plus requested driver, capabilities, options, correlation identity, and deterministic request fingerprint. |
 | XDocument Compilation Result | Future external response describing success, unsupported behavior, or failure and an optional output; never document readiness. |
-| Request Fingerprint | Deterministic hash of contract version, external resolved meaning, requested driver, capabilities, and normalized options. |
+| Request Fingerprint | Deterministic hash of contract version, external resolved meaning, requested driver, capabilities, and normalized options after recursive map-key canonicalization. |
 | Driver Request | Non-authoritative label naming the desired future projection driver without claiming availability. |
 | Capability | Named external-contract semantic requested from a future driver, currently limited to actions, attachments, and evidence. |
 | Output Reference | Portable output metadata or content reference that never requires an absolute local filesystem path. |
 | Anti-Corruption Layer | Boundary that prevents an external system from depending on GNE's internal compiler and repository models. |
+| Canonical Contract Schema | Independently enforceable, versioned JSON Schema that authoritatively defines one external contract concept. |
+| Canonical Serialization | Transfer encoding that recursively sorts map keys while preserving list order, providing stable cross-language bytes and fingerprints. |
+| Source Reference | Opaque, non-executable provenance or content reference; it is not a filesystem instruction and cannot be an absolute local path or `file:` URI. |
+| Schema Closure | State in which producer DTOs, fixtures, standalone schemas, references, recursive values, and result invariants enforce the same versioned semantics. |

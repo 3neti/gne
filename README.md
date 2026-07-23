@@ -24,6 +24,8 @@ php artisan test
 
 Repository operations: `php artisan gne:validate`, `gne:index`, `gne:materialize`, `gne:rebuild --force`, `gne:explain`, `gne:compile`, `gne:documents`, and `gne:x-document:request`. Use `php artisan gne:documents --subject=RESERVATION-000001 --json` for a deterministic subject inventory. Use `php artisan gne:x-document:request --document=DOCUMENT-INVOICE --subject=RESERVATION-000001 --json` to inspect the versioned external transfer payload for one fully resolved document; it does not invoke x-document or render output.
 
+The pre-release x-document contract `1.0` is closed under `resources/gne/contracts/x-document/1.0/`. Its standalone resolved-document schema is authoritative and referenced by the request schema through stable versioned IDs. Compatibility fixtures under `tests/Fixtures/XDocument/` are canonicalized examples for independent package bootstrap. Once an external package adopts `1.0`, incompatible contract changes require a new version.
+
 `business/` is canonical source, `app/` interprets and projects it, and `.gne/` is disposable generated state. Configuration version 1 requires relative canonical/generated paths and an optional enabled-profile list in `gne.yaml`.
 
 Canonical orientation: [GENEI.md](GENEI.md), [ARCHITECTURE.md](ARCHITECTURE.md), [GRAMMAR.md](GRAMMAR.md), [DECISION_REGISTER.md](DECISION_REGISTER.md), [COMPASS.md](COMPASS.md), and [IMPLEMENTATION_STATUS.md](IMPLEMENTATION_STATUS.md).

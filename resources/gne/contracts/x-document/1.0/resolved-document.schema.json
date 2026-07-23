@@ -1,8 +1,142 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://3neti.dev/gne/contracts/x-document/1.0/resolved-document",
+  "$id": "https://3neti.dev/contracts/x-document/1.0/resolved-document.schema.json",
   "title": "x-document resolved document transfer 1.0",
-  "description": "The document member defined by compilation-request.schema.json. This schema is published separately for future package compatibility; request validation remains authoritative during preparation.",
+  "description": "The authoritative, presentation-neutral document transfer contract. Source references are opaque provenance and must not be executed or assumed locally accessible.",
   "type": "object",
-  "required": ["identifier", "definition_identifier", "definition_revision", "resolution_fingerprint", "title", "status", "audience", "subject", "primary_artifact", "sections", "actions", "attachments", "evidence", "metadata"]
+  "additionalProperties": false,
+  "required": ["identifier", "definition_identifier", "definition_revision", "resolution_fingerprint", "title", "status", "audience", "subject", "primary_artifact", "sections", "actions", "attachments", "evidence", "metadata"],
+  "properties": {
+    "identifier": {"type": "string", "minLength": 1},
+    "definition_identifier": {"type": "string", "minLength": 1},
+    "definition_revision": {"$ref": "#/$defs/revision"},
+    "resolution_fingerprint": {"$ref": "#/$defs/fingerprint"},
+    "title": {"type": "string", "minLength": 1},
+    "status": {"type": "string", "minLength": 1},
+    "audience": {"type": "array", "items": {"type": "string", "minLength": 1}, "uniqueItems": true},
+    "subject": {"$ref": "#/$defs/subject"},
+    "primary_artifact": {"$ref": "#/$defs/primary_artifact"},
+    "sections": {"type": "array", "items": {"$ref": "#/$defs/section"}},
+    "actions": {"type": "array", "items": {"$ref": "#/$defs/action"}},
+    "attachments": {"type": "array", "items": {"$ref": "#/$defs/attachment"}},
+    "evidence": {"type": "array", "items": {"$ref": "#/$defs/evidence"}},
+    "metadata": {"$ref": "#/$defs/document_metadata"}
+  },
+  "$defs": {
+    "fingerprint": {"type": "string", "pattern": "^[a-f0-9]{64}$"},
+    "revision": {
+      "oneOf": [
+        {"type": "integer", "minimum": 1},
+        {"type": "string", "minLength": 1}
+      ]
+    },
+    "source_reference": {
+      "type": "string",
+      "minLength": 1,
+      "pattern": "^(?!/|\\\\|[A-Za-z]:[\\\\/]|[Ff][Ii][Ll][Ee]:).+$",
+      "description": "Opaque, non-executable provenance or content reference. Absolute Unix paths, Windows paths, UNC paths, and file URIs are prohibited."
+    },
+    "subject": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["identifier", "type"],
+      "properties": {
+        "identifier": {"type": "string", "minLength": 1},
+        "type": {"type": "string", "minLength": 1}
+      }
+    },
+    "primary_artifact": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["identifier", "revision", "type", "source_reference"],
+      "properties": {
+        "identifier": {"type": "string", "minLength": 1},
+        "revision": {"$ref": "#/$defs/revision"},
+        "type": {"type": "string", "minLength": 1},
+        "source_reference": {"$ref": "#/$defs/source_reference"}
+      }
+    },
+    "evidence": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["artifact_identifier", "artifact_revision", "artifact_type", "subject_identifier", "source_reference", "payload_path"],
+      "properties": {
+        "artifact_identifier": {"type": "string", "minLength": 1},
+        "artifact_revision": {"$ref": "#/$defs/revision"},
+        "artifact_type": {"type": "string", "minLength": 1},
+        "subject_identifier": {"type": "string", "minLength": 1},
+        "source_reference": {"$ref": "#/$defs/source_reference"},
+        "payload_path": {"type": ["string", "null"]}
+      }
+    },
+    "normalized_value": {
+      "oneOf": [
+        {"type": "object", "additionalProperties": false, "required": ["type", "value"], "properties": {"type": {"const": "null"}, "value": {"type": "null"}}},
+        {"type": "object", "additionalProperties": false, "required": ["type", "value"], "properties": {"type": {"const": "string"}, "value": {"type": "string"}}},
+        {"type": "object", "additionalProperties": false, "required": ["type", "value"], "properties": {"type": {"const": "integer"}, "value": {"type": "integer"}}},
+        {"type": "object", "additionalProperties": false, "required": ["type", "value"], "properties": {"type": {"const": "boolean"}, "value": {"type": "boolean"}}},
+        {"type": "object", "additionalProperties": false, "required": ["type", "value"], "properties": {"type": {"const": "list"}, "value": {"type": "array", "items": {"$ref": "#/$defs/normalized_value"}}}},
+        {"type": "object", "additionalProperties": false, "required": ["type", "value"], "properties": {"type": {"const": "map"}, "value": {"type": "object", "additionalProperties": {"$ref": "#/$defs/normalized_value"}}}}
+      ]
+    },
+    "field": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["identifier", "label", "value", "evidence", "metadata"],
+      "properties": {
+        "identifier": {"type": "string", "minLength": 1},
+        "label": {"type": "string", "minLength": 1},
+        "value": {"$ref": "#/$defs/normalized_value"},
+        "evidence": {"type": "array", "items": {"$ref": "#/$defs/evidence"}},
+        "metadata": {"type": "object"}
+      }
+    },
+    "section": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["identifier", "title", "fields"],
+      "properties": {
+        "identifier": {"type": "string", "minLength": 1},
+        "title": {"type": "string", "minLength": 1},
+        "fields": {"type": "array", "items": {"$ref": "#/$defs/field"}}
+      }
+    },
+    "action": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["identifier", "label", "type", "enabled", "metadata"],
+      "properties": {
+        "identifier": {"type": "string", "minLength": 1},
+        "label": {"type": "string", "minLength": 1},
+        "type": {"type": "string", "minLength": 1},
+        "enabled": {"type": "boolean"},
+        "metadata": {"type": "object"}
+      },
+      "description": "Host-owned affordance metadata. x-document does not execute business actions."
+    },
+    "attachment": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["identifier", "name", "media_type", "byte_length", "checksum", "source_reference", "disposition", "metadata"],
+      "properties": {
+        "identifier": {"type": "string", "minLength": 1},
+        "name": {"type": "string", "minLength": 1},
+        "media_type": {"oneOf": [{"type": "null"}, {"type": "string", "pattern": "^[^\\s/]+/[^\\s/]+$"}]},
+        "byte_length": {"oneOf": [{"type": "null"}, {"type": "integer", "minimum": 0}]},
+        "checksum": {"oneOf": [{"type": "null"}, {"type": "string", "pattern": "^(?:sha256:)?[a-f0-9]{64}$"}]},
+        "source_reference": {"oneOf": [{"type": "null"}, {"$ref": "#/$defs/source_reference"}]},
+        "disposition": {"type": "string", "minLength": 1},
+        "metadata": {"type": "object"}
+      },
+      "description": "Metadata only; this contract does not transport attachment bytes."
+    },
+    "document_metadata": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "definition_source_fingerprint": {"$ref": "#/$defs/fingerprint"},
+        "selected_evidence_count": {"type": "integer", "minimum": 0}
+      }
+    }
+  }
 }

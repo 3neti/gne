@@ -1,19 +1,49 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://3neti.dev/gne/contracts/x-document/1.0/compilation-result",
+  "$id": "https://3neti.dev/contracts/x-document/1.0/compilation-result.schema.json",
+  "title": "x-document compilation result 1.0",
   "type": "object",
   "additionalProperties": false,
   "required": ["contract_version", "request_identifier", "document_identifier", "resolution_fingerprint", "driver", "status", "output", "warnings", "capabilities", "metadata"],
   "properties": {
     "contract_version": {"const": "1.0"},
-    "request_identifier": {"type": "string"},
-    "document_identifier": {"type": "string"},
+    "request_identifier": {"type": "string", "pattern": "^XDOC-REQUEST@[a-f0-9]{64}$"},
+    "document_identifier": {"type": "string", "minLength": 1},
     "resolution_fingerprint": {"type": "string", "pattern": "^[a-f0-9]{64}$"},
-    "driver": {"type": "string"},
+    "driver": {"type": "string", "minLength": 1},
     "status": {"enum": ["succeeded", "unsupported", "failed"]},
-    "output": {"type": ["object", "null"]},
+    "output": {"oneOf": [{"type": "null"}, {"$ref": "#/$defs/output"}]},
     "warnings": {"type": "array", "items": {"type": "string"}},
-    "capabilities": {"type": "array", "items": {"type": "string"}},
+    "capabilities": {"type": "array", "items": {"type": "string", "minLength": 1}, "uniqueItems": true},
     "metadata": {"type": "object"}
+  },
+  "allOf": [
+    {"if": {"properties": {"status": {"const": "succeeded"}}, "required": ["status"]}, "then": {"properties": {"output": {"$ref": "#/$defs/output"}}}},
+    {"if": {"properties": {"status": {"enum": ["unsupported", "failed"]}}, "required": ["status"]}, "then": {"properties": {"output": {"type": "null"}}}}
+  ],
+  "$defs": {
+    "source_reference": {
+      "type": "string",
+      "minLength": 1,
+      "pattern": "^(?!/|\\\\|[A-Za-z]:[\\\\/]|[Ff][Ii][Ll][Ee]:).+$"
+    },
+    "output": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["media_type", "filename", "checksum", "byte_length", "inline_content", "content_reference", "metadata"],
+      "properties": {
+        "media_type": {"type": "string", "pattern": "^[^\\s/]+/[^\\s/]+$"},
+        "filename": {"oneOf": [{"type": "null"}, {"type": "string", "minLength": 1}]},
+        "checksum": {"oneOf": [{"type": "null"}, {"type": "string", "pattern": "^(?:sha256:)?[a-f0-9]{64}$"}]},
+        "byte_length": {"oneOf": [{"type": "null"}, {"type": "integer", "minimum": 0}]},
+        "inline_content": {"type": ["string", "null"]},
+        "content_reference": {"oneOf": [{"type": "null"}, {"$ref": "#/$defs/source_reference"}]},
+        "metadata": {"type": "object"}
+      },
+      "oneOf": [
+        {"properties": {"inline_content": {"type": "string"}, "content_reference": {"type": "null"}}},
+        {"properties": {"inline_content": {"type": "null"}, "content_reference": {"$ref": "#/$defs/source_reference"}}}
+      ]
+    }
   }
 }

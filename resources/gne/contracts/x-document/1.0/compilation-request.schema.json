@@ -1,6 +1,7 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://3neti.dev/gne/contracts/x-document/1.0/compilation-request",
+  "$id": "https://3neti.dev/contracts/x-document/1.0/compilation-request.schema.json",
+  "title": "x-document compilation request 1.0",
   "type": "object",
   "additionalProperties": false,
   "required": ["contract_version", "request_identifier", "request_fingerprint", "correlation_identifier", "requested_driver", "requested_capabilities", "options", "document"],
@@ -10,19 +11,17 @@
     "request_fingerprint": {"type": "string", "pattern": "^[a-f0-9]{64}$"},
     "correlation_identifier": {"type": "string", "minLength": 1},
     "requested_driver": {"type": "string", "minLength": 1},
-    "requested_capabilities": {"type": "array", "items": {"enum": ["actions", "attachments", "evidence"]}, "uniqueItems": true},
-    "options": {"type": "object", "additionalProperties": false, "required": ["include_evidence"], "properties": {"include_evidence": {"type": "boolean"}}},
-    "document": {"$ref": "#/$defs/document"}
-  },
-  "$defs": {
-    "subject": {"type": "object", "additionalProperties": false, "required": ["identifier", "type"], "properties": {"identifier": {"type": "string", "minLength": 1}, "type": {"type": "string", "minLength": 1}}},
-    "evidence": {"type": "object", "additionalProperties": false, "required": ["artifact_identifier", "artifact_revision", "artifact_type", "subject_identifier", "source_reference", "payload_path"], "properties": {"artifact_identifier": {"type": "string"}, "artifact_revision": {"type": ["integer", "string"]}, "artifact_type": {"type": "string"}, "subject_identifier": {"type": "string"}, "source_reference": {"type": "string"}, "payload_path": {"type": ["string", "null"]}}},
-    "value": {"type": "object", "additionalProperties": false, "required": ["type", "value"], "properties": {"type": {"enum": ["null", "string", "integer", "boolean", "list", "map"]}, "value": {}}},
-    "field": {"type": "object", "additionalProperties": false, "required": ["identifier", "label", "value", "evidence", "metadata"], "properties": {"identifier": {"type": "string"}, "label": {"type": "string"}, "value": {"$ref": "#/$defs/value"}, "evidence": {"type": "array", "items": {"$ref": "#/$defs/evidence"}}, "metadata": {"type": "object"}}},
-    "section": {"type": "object", "additionalProperties": false, "required": ["identifier", "title", "fields"], "properties": {"identifier": {"type": "string"}, "title": {"type": "string"}, "fields": {"type": "array", "items": {"$ref": "#/$defs/field"}}}},
-    "action": {"type": "object", "additionalProperties": false, "required": ["identifier", "label", "type", "enabled", "metadata"], "properties": {"identifier": {"type": "string"}, "label": {"type": "string"}, "type": {"type": "string"}, "enabled": {"type": "boolean"}, "metadata": {"type": "object"}}},
-    "attachment": {"type": "object", "additionalProperties": false, "required": ["identifier", "name", "media_type", "byte_length", "checksum", "source_reference", "disposition", "metadata"], "properties": {"identifier": {"type": "string"}, "name": {"type": "string"}, "media_type": {"type": ["string", "null"]}, "byte_length": {"type": ["integer", "null"]}, "checksum": {"type": ["string", "null"]}, "source_reference": {"type": ["string", "null"], "pattern": "^(?!/).*$"}, "disposition": {"type": "string"}, "metadata": {"type": "object"}}},
-    "primary_artifact": {"type": "object", "additionalProperties": false, "required": ["identifier", "revision", "type", "source_reference"], "properties": {"identifier": {"type": "string"}, "revision": {"type": ["integer", "string"]}, "type": {"type": "string"}, "source_reference": {"type": "string"}}},
-    "document": {"type": "object", "additionalProperties": false, "required": ["identifier", "definition_identifier", "definition_revision", "resolution_fingerprint", "title", "status", "audience", "subject", "primary_artifact", "sections", "actions", "attachments", "evidence", "metadata"], "properties": {"identifier": {"type": "string"}, "definition_identifier": {"type": "string"}, "definition_revision": {"type": ["integer", "string"]}, "resolution_fingerprint": {"type": "string", "pattern": "^[a-f0-9]{64}$"}, "title": {"type": "string"}, "status": {"type": "string"}, "audience": {"type": "array", "items": {"type": "string"}}, "subject": {"$ref": "#/$defs/subject"}, "primary_artifact": {"$ref": "#/$defs/primary_artifact"}, "sections": {"type": "array", "items": {"$ref": "#/$defs/section"}}, "actions": {"type": "array", "items": {"$ref": "#/$defs/action"}}, "attachments": {"type": "array", "items": {"$ref": "#/$defs/attachment"}}, "evidence": {"type": "array", "items": {"$ref": "#/$defs/evidence"}}, "metadata": {"type": "object", "additionalProperties": false, "properties": {"definition_source_fingerprint": {"type": "string"}, "selected_evidence_count": {"type": "integer"}}}}}
+    "requested_capabilities": {
+      "type": "array",
+      "items": {"enum": ["actions", "attachments", "evidence"]},
+      "uniqueItems": true
+    },
+    "options": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["include_evidence"],
+      "properties": {"include_evidence": {"type": "boolean"}}
+    },
+    "document": {"$ref": "https://3neti.dev/contracts/x-document/1.0/resolved-document.schema.json"}
   }
 }

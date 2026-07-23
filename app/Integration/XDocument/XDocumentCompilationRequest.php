@@ -18,6 +18,6 @@ final readonly class XDocumentCompilationRequest
 
     public function toJson(): string
     {
-        return json_encode($this->toArray(), JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE | JSON_THROW_ON_ERROR).PHP_EOL;
+        return (new XDocumentCanonicalJson)->encode($this->toArray(), pretty: true).PHP_EOL;
     }
 }

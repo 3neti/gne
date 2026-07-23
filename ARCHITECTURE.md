@@ -49,7 +49,11 @@ flowchart LR
   X -. future .-> O[Driver output]
 ```
 
-The contract contains no repository manifest, selected chain, lifecycle model, database identity, HTTP object, or executable callback. Actions declare host-owned affordances. Attachments are metadata-only and reject absolute paths. Evidence uses `source_reference` as non-operative provenance and may be omitted. Version 1 supports tagged null, string, integer, boolean, list, and string-keyed map values; floats and arbitrary objects fail rather than being coerced. A requested driver is a request label, not a claim that a driver exists.
+The contract contains no repository manifest, selected chain, lifecycle model, database identity, HTTP object, or executable callback. Actions declare host-owned affordances. Attachments are metadata-only. Evidence uses `source_reference` as non-operative provenance and may be omitted. Source references are opaque: consumers cannot assume filesystem access, while GNE and the schemas reject Unix absolute paths, Windows drive paths, UNC paths, and `file:` URIs. Version 1 supports tagged null, string, integer, boolean, list, and string-keyed map values; floats and arbitrary objects fail rather than being coerced. A requested driver is a request label, not a claim that a driver exists.
+
+Contract `1.0` uses stable `https://3neti.dev/contracts/x-document/1.0/*.schema.json` identifiers. `resolved-document.schema.json` is authoritative for the complete transferred document; the request schema references it through an explicitly registered Opis resolver. Recursive `oneOf` definitions couple every normalized-value discriminator to its value type. The result schema requires output for success, prohibits output for failed or unsupported results, and permits exactly one inline-content or content-reference form. Core objects reject unknown properties.
+
+Request serialization recursively sorts map keys while preserving list order. Both JSON output and request fingerprints use that canonical representation, so semantically identical maps have identical transfer identity across producers. Version `1.0` remains pre-release until x-document consumes it; after adoption, incompatible changes require a new version.
 
 During phase 1 GNE owns these preparatory DTOs and schemas. A future x-document package should own its canonical input contract, after which this adapter targets that package-owned shape. A shared lightweight contract package remains an option only if demonstrated necessary. The current GNE browser driver is unchanged.
 

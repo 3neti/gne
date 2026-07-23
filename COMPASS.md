@@ -1,15 +1,15 @@
 # GNE Compass
 
-**Current milestone:** x-document Adapter Contract Preparation
+**Current milestone:** x-document Contract Schema Closure Hardening
 **North star:** The business belongs to the repository. Everything operational is a projection.
 
 ## Completed
 
-Canonical cognition, portable discovery, declaration-driven profiles, byte-complete fingerprints, immutable artifacts, semantic/database projections, and the authenticated workbench are established. Resolved documents are anchored to an explicit Compilation Subject and coherent chain. Accepted payloads and strict document definitions validate before compilation. Each subject exposes a deterministic document-readiness set and read-only lifecycle position. Fully resolved documents can now be mapped into a portable, schema-validated x-document contract without exposing repository machinery.
+Canonical cognition, portable discovery, declaration-driven profiles, byte-complete fingerprints, immutable artifacts, semantic/database projections, and the authenticated workbench are established. Fully resolved documents map into a closed, portable x-document contract without exposing repository machinery. The standalone document schema is authoritative, request references resolve through stable IDs, recursive values and results are independently enforced, and canonical serialization stabilizes fingerprints across map insertion order.
 
 ## Immediate direction
 
-Use the reviewed version-1 fixtures and schemas to bootstrap x-document's independent input contract while keeping GNE repository interpretation outside that package.
+Bootstrap the independent `3neti/x-document` package against the closed version `1.0` schemas and compatibility fixtures while keeping GNE repository interpretation outside that package.
 
 ## Explicit deferrals
 
@@ -17,8 +17,8 @@ Autonomous GeNEi execution; AI provider adapters; LLM tool calling; embeddings/v
 
 ## Known risks
 
-Validation supports the implemented document grammar and JSON Schema 2020-12 but not expressions, arrays in field paths, or calculated fields; missing-evidence inventory reports the first unresolved direct source; lifecycle position assumes required ordered stages and artifact-type evidence; explicit applicability and optional stages are not modeled. Contract 1.0 supports tagged scalar/list/map values, metadata-only attachments, descriptive evidence, and declared action affordances; it does not negotiate or execute drivers.
+Validation supports the implemented document grammar and JSON Schema 2020-12 but not expressions, arrays in field paths, or calculated fields; missing-evidence inventory reports the first unresolved direct source; lifecycle position assumes required ordered stages and artifact-type evidence; explicit applicability and optional stages are not modeled. Contract 1.0 supports tagged null/string/integer/boolean/list/map values, metadata-only attachments, descriptive evidence, and declared action affordances; decimal, money, binary transport, capability negotiation, and driver execution remain deferred.
 
 ## Recommended next task
 
-**x-document Package Bootstrap** — establish the independent package around the reviewed `1.0` schemas and compatibility fixtures, without adding PDF behavior or repository access.
+**3neti/x-document Package Bootstrap** — establish the independent package around the closed `1.0` schemas and compatibility fixtures, without adding PDF behavior or repository access.
