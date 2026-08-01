@@ -45,8 +45,15 @@ it('rebuilds disposable projections non-interactively', function () {
 });
 
 it('explains and plans compilation honestly', function () {
-    $this->artisan('gne:explain --profile=property-reservation')->assertSuccessful()->expectsOutputToContain('The business belongs to the repository');
-    $this->artisan('gne:compile')->assertSuccessful()->expectsOutputToContain('x-document not installed')->expectsOutputToContain('x-change not configured');
+    $this->artisan('gne:explain --profile=property-reservation')
+        ->assertSuccessful()
+        ->expectsOutputToContain('The business belongs to the repository')
+        ->expectsOutputToContain('x-document installed: yes')
+        ->expectsOutputToContain('HTTP delivery available: yes');
+    $this->artisan('gne:compile')
+        ->assertSuccessful()
+        ->expectsOutputToContain('x-document browser composition runtime available')
+        ->expectsOutputToContain('x-change not configured');
 });
 
 it('compiles one explicitly requested subject', function () {

@@ -29,13 +29,13 @@ flowchart LR
   S --> R[ResolvedDocument]
   R --> D{DocumentProjectionDriver}
   D --> B[Browser]
-  D -. optional .-> P[x-document / Adobe PDF]
+  D --> P[x-document browser representation]
   A -. request projection .-> X[GNE-to-x-change adapter]
   X -. optional .-> XC[x-change]
   E[Repository evidence] -. provider-independent context .-> G[GeNEi role]
 ```
 
-Browser and PDF are peer projections. GNE knows no Adobe details; future x-document consumes `ResolvedDocument`. Settlement remains outside core and x-change optional. GeNEi may use different engines and must cite evidence.
+Browser and PDF are peer projections. GNE knows no Adobe details; x-document consumes only the external contract derived from `ResolvedDocument`. Settlement remains outside core and x-change optional. GeNEi may use different engines and must cite evidence.
 
 ## x-document anti-corruption contract
 
@@ -45,8 +45,8 @@ Browser and PDF are peer projections. GNE knows no Adobe details; future x-docum
 flowchart LR
   IR[GNE ResolvedDocument] --> A[Prepare x-document request]
   A --> C[Contract 1.0 DTO + JSON Schema]
-  C -. future .-> X[3neti/x-document]
-  X -. future .-> O[Driver output]
+  C --> X[3neti/x-document contract loader]
+  X --> O[Styled browser composition]
 ```
 
 The contract contains no repository manifest, selected chain, lifecycle model, database identity, HTTP object, or executable callback. Actions declare host-owned affordances. Attachments are metadata-only. Evidence uses `source_reference` as non-operative provenance and may be omitted. Source references are opaque: consumers cannot assume filesystem access, while GNE and the schemas reject Unix absolute paths, Windows drive paths, UNC paths, and `file:` URIs. Version 1 supports tagged null, string, integer, boolean, list, and string-keyed map values; floats and arbitrary objects fail rather than being coerced. A requested driver is a request label, not a claim that a driver exists.
@@ -55,7 +55,9 @@ Contract `1.0` uses stable `https://3neti.dev/contracts/x-document/1.0/*.schema.
 
 Request serialization recursively sorts map keys while preserving list order. Both JSON output and request fingerprints use that canonical representation, so semantically identical maps have identical transfer identity across producers. Version `1.0` remains pre-release until x-document consumes it; after adoption, incompatible changes require a new version.
 
-During phase 1 GNE owns these preparatory DTOs and schemas. A future x-document package should own its canonical input contract, after which this adapter targets that package-owned shape. A shared lightweight contract package remains an option only if demonstrated necessary. The current GNE browser driver is unchanged.
+GNE retains its preparatory DTOs and schemas as the producer boundary. `ResolveXDocumentBrowserRepresentation` is the only runtime service that knows both the GNE adapter and x-document representation APIs. It validates repository source, resolves one explicit subject/document, prepares canonical contract JSON, reloads it through x-document's `ValidateDocumentCompilationRequest`, and delegates mechanical expression to `ResolveBrowserRepresentation`. It returns `BrowserHostResponse` without reading HTTP input or invoking the Laravel delivery adapter. The current GNE-local browser driver remains an independent peer.
+
+Development uses symlinked Composer path repositories for `3neti/x-document` and `3neti/x-document-laravel`. Reviewed source baselines are recorded separately from their `dev-main` labels. Package source is never copied into GNE. HTTP delivery is installed and discoverable but intentionally remains outside this first runtime-wiring slice.
 
 ## Resolved document intermediate representation
 

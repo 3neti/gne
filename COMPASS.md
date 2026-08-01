@@ -1,19 +1,19 @@
 # GNE Compass
 
-**Current milestone:** x-document Contract Schema Closure Hardening
+**Current milestone:** GNE → x-document Runtime Package Wiring
 **North star:** The business belongs to the repository. Everything operational is a projection.
 
 ## Completed
 
-Canonical cognition, portable discovery, declaration-driven profiles, byte-complete fingerprints, immutable artifacts, semantic/database projections, and the authenticated workbench are established. Fully resolved documents map into a closed, portable x-document contract without exposing repository machinery. The standalone document schema is authoritative, request references resolve through stable IDs, recursive values and results are independently enforced, and canonical serialization stabilizes fingerprints across map insertion order.
+Canonical cognition, portable discovery, declaration-driven profiles, byte-complete fingerprints, immutable artifacts, semantic/database projections, and the authenticated workbench are established. Fully resolved documents now cross the closed contract as canonical JSON into the real x-document package and deterministically produce styled browser composition without exposing repository machinery. The x-document-laravel delivery binding is installed and discovered but is not yet exposed by a GNE HTTP route.
 
 ## Immediate direction
 
-Bootstrap the independent `3neti/x-document` package against the closed version `1.0` schemas and compatibility fixtures while keeping GNE repository interpretation outside that package.
+Deliver the existing real browser-host response through a thin authenticated GNE route using x-document-laravel, preserving authorization and HTTP concerns outside the runtime compiler service.
 
 ## Explicit deferrals
 
-Autonomous GeNEi execution; AI provider adapters; LLM tool calling; embeddings/vector search; installing or invoking x-document; x-change integration; PDF, Adobe, browser-driver migration, binary attachment transport, output storage, synchronization, retries, queues, webhooks, contract downgrade negotiation, batch compilation, Git commit automation; repository federation; enterprise governance; multi-organization membership; arbitrary profile inheritance; generalized policy/workflow engines; distributed materialization; database-vendor certification; production audit/compliance controls.
+Autonomous GeNEi execution; AI provider adapters; LLM tool calling; embeddings/vector search; x-change integration; PDF, Adobe, binary attachment transport, output storage, background synchronization, retries, queues, webhooks, contract downgrade negotiation, batch compilation, Git commit automation; repository federation; enterprise governance; multi-organization membership; arbitrary profile inheritance; generalized policy/workflow engines; distributed materialization; database-vendor certification; production audit/compliance controls.
 
 ## Known risks
 
@@ -21,4 +21,4 @@ Validation supports the implemented document grammar and JSON Schema 2020-12 but
 
 ## Recommended next task
 
-**3neti/x-document Package Bootstrap** — establish the independent package around the closed `1.0` schemas and compatibility fixtures, without adding PDF behavior or repository access.
+**Authenticated GNE Browser Delivery through x-document-laravel** — expose one allowlisted styled composition through a thin authenticated route with GET, HEAD, and conditional ETag delivery.

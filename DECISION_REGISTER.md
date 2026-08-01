@@ -31,8 +31,8 @@ Each accepted decision is durable until superseded by another recorded decision.
 **Context:** Neither UI nor PDF is business truth. **Decision:** Both consume a resolved document projection. **Rationale:** Driver neutrality. **Consequences:** No Adobe logic in core. **Rejected:** Browser-as-template authority.
 
 ## ADR-008 — x-document and x-change stay optional
-**Status:** Accepted · **Date:** 2026-07-22  
-**Context:** Their contracts are external and not installed. **Decision:** Integrate later through adapters only. **Rationale:** Preserve independent use and non-settlement workflows. **Consequences:** Drivers report unavailable honestly. **Rejected:** Bootstrap hard dependencies.
+**Status:** Superseded in part by ADR-023 · **Date:** 2026-07-22
+**Context:** Their contracts were external and not installed. **Decision:** Integrate later through adapters only. **Rationale:** Preserve independent use and non-settlement workflows. **Consequences:** x-document is now installed through the ADR-023 anti-corruption seam; x-change remains optional and unavailable. **Rejected:** Bootstrap hard dependencies.
 
 ## ADR-009 — Native Laravel authentication protects control plane
 **Status:** Accepted · **Date:** 2026-07-22  
@@ -89,3 +89,7 @@ Each accepted decision is durable until superseded by another recorded decision.
 ## ADR-022 — x-document contract 1.0 schemas are closed and independently enforceable
 
 **Status:** Accepted — 2026-07-23. **Context:** A permissive standalone document schema and duplicated request grammar could not independently protect future consumers. **Decision:** Make the stable-ID `resolved-document.schema.json` authoritative and reference it from the request through an explicit local Opis registry. Enforce recursive discriminator-correct values, closed core objects, trustworthy source references, result/output combinations, and canonical recursively sorted map serialization. **Rationale:** Consumers must trust the published machine contract without booting GNE. **Consequences:** Compatibility fixtures validate against both schemas; malformed nested values and state combinations fail; version `1.0` is closed before external adoption, after which incompatible changes require a new version. **Rejected:** Duplicated grammars, example-only schemas, byte-order-sensitive maps, permissive output objects, and executable filesystem references.
+
+## ADR-023 — GNE invokes x-document only through canonical contract JSON
+
+**Status:** Accepted — 2026-08-01. **Context:** The independent packages were technically complete, but GNE only prepared future transfer DTOs and did not exercise the real representation runtime. **Decision:** Install reviewed x-document and x-document-laravel baselines through symlinked development path repositories. Resolve repository evidence inside GNE, serialize the existing contract `1.0` request, reload and validate that JSON through x-document, and request an allowlisted browser representation through one focused runtime adapter. **Rationale:** This makes the cross-package boundary real without allowing package classes to inspect GNE internals. **Consequences:** Styled composition is available to CLI and future HTTP delivery; pending evidence remains blocked; exact package Git commits are recorded separately from `dev-main`; PHP 8.4 becomes the truthful GNE floor. **Rejected:** Copying package source, directly constructing external DTOs from GNE domain objects, fixture substitution, controller-owned compilation, and moving business resolution into x-document.

@@ -15,7 +15,7 @@ use Illuminate\Console\Attributes\Signature;
 use Illuminate\Console\Command;
 
 #[Signature('gne:x-document:request {--repository= : Repository root} {--document= : Document definition identifier} {--subject= : Compilation subject identifier} {--driver=json : Requested future x-document driver} {--include-evidence=1 : Include descriptive provenance} {--json : Emit the complete request JSON}')]
-#[Description('Prepare and inspect a versioned x-document contract request without invoking x-document')]
+#[Description('Prepare and inspect the versioned request consumed by the installed x-document runtime')]
 class GneXDocumentRequestCommand extends Command
 {
     public function handle(ValidateRepository $validator, ResolveDocument $resolver, PrepareXDocumentCompilationRequest $adapter): int
@@ -60,7 +60,7 @@ class GneXDocumentRequestCommand extends Command
         $this->line("Subject: {$request->document->subject->identifier}");
         $this->line("Requested driver: {$request->requestedDriver}");
         $this->line("Request fingerprint: {$request->requestFingerprint}");
-        $this->warn('Inspection only: x-document is not installed or invoked.');
+        $this->line('Inspection only: use gne:x-document:compile to invoke the installed runtime.');
 
         return self::SUCCESS;
     }

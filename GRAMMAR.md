@@ -80,3 +80,7 @@
 | Canonical Serialization | Transfer encoding that recursively sorts map keys while preserving list order, providing stable cross-language bytes and fingerprints. |
 | Source Reference | Opaque, non-executable provenance or content reference; it is not a filesystem instruction and cannot be an absolute local path or `file:` URI. |
 | Schema Closure | State in which producer DTOs, fixtures, standalone schemas, references, recursive values, and result invariants enforce the same versioned semantics. |
+| x-document Runtime Adapter | GNE integration service that resolves repository meaning, crosses contract `1.0` as canonical JSON, loads it into real x-document DTOs, and requests one allowlisted browser representation. |
+| Browser Host Response | Framework-neutral x-document result carrying exact representation bytes, format, media type, checksum, byte length, filename, disposition, and strong ETag. |
+| Styled Browser Composition | Read-only `browser-composition-html-styled/1.0` expression combining resolved document content and inert interaction declarations without JavaScript, forms, or action execution. |
+| Runtime Package Baseline | Exact reviewed Git commit recorded alongside a Composer development version so local path integration never disguises a moving dependency. |

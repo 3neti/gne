@@ -5,6 +5,7 @@ namespace App\Console\Commands;
 use App\Domain\Compilation\PrepareCompilationPlan;
 use App\Domain\Repository\ValidateRepository;
 use App\Domain\Semantics\BuildSemanticIndex;
+use App\Integration\XDocument\XDocumentRuntimeDiagnostics;
 use Illuminate\Console\Command;
 
 class GneCompileCommand extends Command
@@ -13,7 +14,7 @@ class GneCompileCommand extends Command
 
     protected $description = 'Validate, index, and prepare an honest GNE compilation plan';
 
-    public function handle(ValidateRepository $validator, BuildSemanticIndex $indexer, PrepareCompilationPlan $planner): int
+    public function handle(ValidateRepository $validator, BuildSemanticIndex $indexer, PrepareCompilationPlan $planner, XDocumentRuntimeDiagnostics $runtime): int
     {
         $repositoryRoot = is_string($this->option('repository')) ? $this->option('repository') : base_path();
         $manifest = $validator->handle($repositoryRoot);
@@ -31,6 +32,7 @@ class GneCompileCommand extends Command
             return self::FAILURE;
         }
         $plan = $planner->handle($repositoryRoot, $manifest, is_string($document) ? $document : null, is_string($subject) ? $subject : null);
+        $plan['x_document_runtime'] = $runtime->toArray();
         if ($document !== null && $plan['documents'] === []) {
             $this->components->error('The requested document definition or compilation subject was not found.');
 
@@ -48,7 +50,8 @@ class GneCompileCommand extends Command
                 $reason = isset($document['reason']) ? " — {$document['reason']}" : '';
                 $this->line("{$document['subject']['identifier']} · {$document['identifier']}: {$document['status']}{$reason}");
             }
-            $this->warn('Document driver unavailable: x-document not installed.');
+            $this->components->info('x-document browser composition runtime available.');
+            $this->components->info('x-document-laravel HTTP delivery binding available.');
             $this->warn('Settlement driver unavailable: x-change not configured.');
             $this->components->info('Compilation plan completed.');
         }

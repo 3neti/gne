@@ -2,11 +2,11 @@
 
 use Illuminate\Support\Facades\Artisan;
 
-it('prepares human and JSON invoice requests without invoking an external package', function () {
+it('prepares human and JSON invoice requests for the installed runtime', function () {
     $this->artisan('gne:x-document:request --document=DOCUMENT-INVOICE --subject=RESERVATION-000001')
         ->assertSuccessful()
         ->expectsOutputToContain('Contract version: 1.0')
-        ->expectsOutputToContain('x-document is not installed or invoked');
+        ->expectsOutputToContain('use gne:x-document:compile to invoke the installed runtime');
 
     expect(Artisan::call('gne:x-document:request', ['--document' => 'DOCUMENT-INVOICE', '--subject' => 'RESERVATION-000001', '--json' => true]))->toBe(0);
     $payload = json_decode(Artisan::output(), true, flags: JSON_THROW_ON_ERROR);

@@ -22,9 +22,18 @@ npm run build
 php artisan test
 ```
 
-Repository operations: `php artisan gne:validate`, `gne:index`, `gne:materialize`, `gne:rebuild --force`, `gne:explain`, `gne:compile`, `gne:documents`, and `gne:x-document:request`. Use `php artisan gne:documents --subject=RESERVATION-000001 --json` for a deterministic subject inventory. Use `php artisan gne:x-document:request --document=DOCUMENT-INVOICE --subject=RESERVATION-000001 --json` to inspect the versioned external transfer payload for one fully resolved document; it does not invoke x-document or render output.
+Repository operations: `php artisan gne:validate`, `gne:index`, `gne:materialize`, `gne:rebuild --force`, `gne:explain`, `gne:compile`, `gne:documents`, `gne:x-document:request`, and `gne:x-document:compile`. Use `php artisan gne:documents --subject=RESERVATION-000001 --json` for a deterministic subject inventory. Use `php artisan gne:x-document:request --document=DOCUMENT-INVOICE --subject=RESERVATION-000001 --json` to inspect the producer payload. Invoke the real runtime with:
 
-The pre-release x-document contract `1.0` is closed under `resources/gne/contracts/x-document/1.0/`. Its standalone resolved-document schema is authoritative and referenced by the request schema through stable versioned IDs. Compatibility fixtures under `tests/Fixtures/XDocument/` are canonicalized examples for independent package bootstrap. Once an external package adopts `1.0`, incompatible contract changes require a new version.
+```bash
+php artisan gne:x-document:compile \
+  --document=DOCUMENT-INVOICE \
+  --subject=RESERVATION-000001 \
+  --representation=browser-composition-html-styled
+```
+
+Local development resolves `3neti/x-document` and `3neti/x-document-laravel` from sibling `../packages/` path repositories with symlinks. Reviewed integration baselines are recorded in `IMPLEMENTATION_STATUS.md`; package source is never copied into GNE.
+
+The x-document contract `1.0` is closed under `resources/gne/contracts/x-document/1.0/`. Its standalone resolved-document schema is authoritative and referenced by the request schema through stable versioned IDs. GNE's runtime adapter crosses this boundary as canonical JSON and lets the real x-document package validate and express it; no repository service or internal IR is passed to the package.
 
 `business/` is canonical source, `app/` interprets and projects it, and `.gne/` is disposable generated state. Configuration version 1 requires relative canonical/generated paths and an optional enabled-profile list in `gne.yaml`.
 

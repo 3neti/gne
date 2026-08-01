@@ -33,7 +33,7 @@ it('reports resolved documents and browser projections during compilation', func
 
     expect($plan['resolved_documents'])->toBe(6)
         ->and($plan['browser_projections'])->toBe(6)
-        ->and($plan['drivers']['document']['reason'])->toBe('x-document is not installed');
+        ->and($plan['drivers']['document']['available'])->toBeTrue();
 });
 
 it('protects and displays a browser projection with field evidence', function () {

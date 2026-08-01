@@ -44,7 +44,8 @@ final readonly class PrepareCompilationPlan
             'documents' => $documents,
             'drivers' => [
                 'browser' => ['available' => true, 'scope' => 'ResolvedDocument projection'],
-                'document' => ['available' => false, 'reason' => 'x-document is not installed'],
+                'document' => ['available' => true, 'scope' => 'x-document browser composition runtime'],
+                'http_delivery' => ['available' => true, 'scope' => 'x-document-laravel response adapter'],
                 'settlement' => ['available' => false, 'reason' => 'x-change is not configured'],
             ],
             'notice' => 'Document readiness is derived per Compilation Subject; drivers consume resolved IR only.',

@@ -9,7 +9,9 @@
     ],
     "license": "MIT",
     "require": {
-        "php": "^8.3",
+        "php": "^8.4",
+        "3neti/x-document": "dev-main",
+        "3neti/x-document-laravel": "dev-main",
         "inertiajs/inertia-laravel": "^3.0",
         "laravel/chisel": "^0.1.0",
         "laravel/fortify": "^1.37.2",
@@ -43,6 +45,28 @@
             "Tests\\": "tests/"
         }
     },
+    "repositories": [
+        {
+            "type": "path",
+            "url": "../packages/x-document",
+            "options": {
+                "symlink": true,
+                "versions": {
+                    "3neti/x-document": "dev-main"
+                }
+            }
+        },
+        {
+            "type": "path",
+            "url": "../packages/x-document-laravel",
+            "options": {
+                "symlink": true,
+                "versions": {
+                    "3neti/x-document-laravel": "dev-main"
+                }
+            }
+        }
+    ],
     "scripts": {
         "setup": [
             "composer install",

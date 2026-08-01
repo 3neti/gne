@@ -19,6 +19,7 @@ arch('commands delegate repository behavior')
         'Illuminate\Console',
         'Illuminate\Filesystem',
         'Illuminate\Support',
+        'LBHurtado\XDocument\Browser\Host',
         'JsonException',
         'base_path',
         'collect',
@@ -166,7 +167,7 @@ arch('only the x-document adapter maps the internal compiler IR')
         'App\Domain\Compilation\BrowserProjectionDriver',
     ]);
 
-it('keeps repository machinery rendering and PDF semantics out of the external contract', function () {
+it('keeps repository machinery and PDF semantics out of the external transfer contract', function () {
     $root = dirname(__DIR__, 2);
     $contract = collect((new RecursiveIteratorIterator(new RecursiveDirectoryIterator($root.'/app/Integration/XDocument'))))
         ->filter(fn (SplFileInfo $file): bool => $file->isFile())
@@ -174,8 +175,32 @@ it('keeps repository machinery rendering and PDF semantics out of the external c
         ->implode("\n");
     $composer = file_get_contents($root.'/composer.json');
 
-    expect($contract)->not->toContain('RepositoryManifest', 'SelectedArtifactChain', 'LifecyclePosition', 'render(', 'Adobe', 'AcroForm')
-        ->and($composer)->not->toContain('3neti/x-document');
+    expect($contract)->not->toContain('RepositoryManifest', 'SelectedArtifactChain', 'LifecyclePosition', 'Adobe', 'AcroForm')
+        ->and($composer)->toContain('3neti/x-document', '3neti/x-document-laravel');
+});
+
+arch('the runtime adapter is the only GNE service coupled to x-document representation APIs')
+    ->expect('App\Integration\XDocument\ResolveXDocumentBrowserRepresentation')
+    ->toUse([
+        'App\Domain\Compilation\ResolveDocument',
+        'App\Integration\XDocument\PrepareXDocumentCompilationRequest',
+        'LBHurtado\XDocument\Contract\ValidateDocumentCompilationRequest',
+        'LBHurtado\XDocument\Browser\Host\ResolveBrowserRepresentation',
+    ])
+    ->not->toUse([
+        'Illuminate\Http',
+        'Illuminate\Database',
+        'App\Models',
+        'LBHurtado\XDocumentLaravel',
+        'Throwable',
+    ]);
+
+it('records exact reviewed runtime package baselines', function () {
+    $diagnostics = file_get_contents(dirname(__DIR__, 2).'/app/Integration/XDocument/XDocumentRuntimeDiagnostics.php');
+
+    expect($diagnostics)
+        ->toContain('29853fae23939cba0b440db3ae04e351c499a78e')
+        ->toContain('b299d5bfbe7bdf93ecaf840431349804b676a6c7');
 });
 
 it('versions the x-document contract schema in its repository path', function () {
