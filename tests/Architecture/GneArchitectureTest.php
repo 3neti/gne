@@ -19,7 +19,9 @@ arch('commands delegate repository behavior')
         'Illuminate\Console',
         'Illuminate\Filesystem',
         'Illuminate\Support',
+        'Illuminate\Contracts',
         'LBHurtado\XDocument\Browser\Host',
+        'LBHurtado\XDocumentLaravel\Contracts',
         'JsonException',
         'base_path',
         'collect',
@@ -196,12 +198,56 @@ arch('the runtime adapter is the only GNE service coupled to x-document represen
     ]);
 
 it('records exact reviewed runtime package baselines', function () {
-    $diagnostics = file_get_contents(dirname(__DIR__, 2).'/app/Integration/XDocument/XDocumentRuntimeDiagnostics.php');
+    $attestor = file_get_contents(dirname(__DIR__, 2).'/app/Integration/XDocument/XDocumentPackageBaselineAttestor.php');
 
-    expect($diagnostics)
+    expect($attestor)
         ->toContain('29853fae23939cba0b440db3ae04e351c499a78e')
         ->toContain('b299d5bfbe7bdf93ecaf840431349804b676a6c7');
 });
+
+arch('the HTTP controller coordinates GNE resolution and x-document-laravel delivery only')
+    ->expect('App\Http\Controllers\ShowCompiledBrowserDocumentController')
+    ->toUse([
+        'App\Integration\XDocument\BrowserDocumentRepresentationResolver',
+        'LBHurtado\XDocumentLaravel\Contracts\DocumentHttpResponseFactory',
+        'LBHurtado\XDocumentLaravel\Data\DocumentHttpRequestContext',
+    ])
+    ->not->toUse([
+        'App\Domain\Repository',
+        'App\Domain\Compilation\ResolveDocument',
+        'App\Integration\XDocument\PrepareXDocumentCompilationRequest',
+        'Symfony\Component\Process',
+        'Illuminate\Database',
+        'Inertia',
+    ]);
+
+it('keeps rendering, serialization, entity-tag construction, and Git execution out of request handling', function () {
+    $controller = file_get_contents(dirname(__DIR__, 2).'/app/Http/Controllers/ShowCompiledBrowserDocumentController.php');
+
+    expect($controller)
+        ->not->toContain('<html', 'json_encode', 'Content-Disposition', 'Content-Length', "hash('sha256'", 'new Process', 'git ')
+        ->and($controller)->toContain('DocumentHttpResponseFactory', 'DocumentHttpRequestContext::fromLaravelRequest');
+});
+
+it('keeps browser workbench navigation readiness-driven and free of representation rendering', function () {
+    $root = dirname(__DIR__, 2);
+    $workbench = file_get_contents($root.'/resources/js/pages/DocumentSetWorkbench.vue');
+
+    expect($workbench)
+        ->toContain("entry.readiness === 'resolved'", 'showBrowserDocument.url', 'Open Unified Browser Document')
+        ->not->toContain('v-html', '<iframe', 'fetch(');
+});
+
+arch('dependency baseline attestation remains outside the browser request path')
+    ->expect([
+        'App\Http\Controllers\ShowCompiledBrowserDocumentController',
+        'App\Integration\XDocument\ResolveXDocumentBrowserRepresentation',
+    ])
+    ->not->toUse([
+        'App\Integration\XDocument\XDocumentPackageBaselineAttestor',
+        'App\Integration\XDocument\ResolveInstalledPackageGitHead',
+        'Symfony\Component\Process',
+    ]);
 
 it('versions the x-document contract schema in its repository path', function () {
     $root = dirname(__DIR__, 2).'/resources/gne/contracts/x-document/1.0';

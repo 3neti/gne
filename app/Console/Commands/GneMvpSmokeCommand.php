@@ -1,0 +1,79 @@
+<?php
+
+namespace App\Console\Commands;
+
+use App\Domain\Repository\ValidateRepository;
+use App\Integration\XDocument\PackageBaselineMismatch;
+use App\Integration\XDocument\XDocumentContractSmokeCheck;
+use App\Integration\XDocument\XDocumentPackageBaselineAttestor;
+use Illuminate\Console\Attributes\Description;
+use Illuminate\Console\Attributes\Signature;
+use Illuminate\Console\Command;
+use Illuminate\Contracts\Container\Container;
+use Illuminate\Support\Facades\Route;
+use LBHurtado\XDocumentLaravel\Contracts\DocumentHttpResponseFactory;
+
+#[Signature('gne:mvp:smoke {--json : Emit structured smoke diagnostics}')]
+#[Description('Verify the Property Reservation MVP runtime and delivery seams')]
+final class GneMvpSmokeCommand extends Command
+{
+    public function handle(
+        ValidateRepository $validator,
+        XDocumentPackageBaselineAttestor $baselines,
+        XDocumentContractSmokeCheck $contractSmoke,
+        Container $container,
+    ): int {
+        $manifest = $validator->handle(base_path());
+        if ($manifest->hasErrors()) {
+            $this->components->error('MVP smoke stopped because repository validation failed.');
+
+            return self::FAILURE;
+        }
+
+        try {
+            $attestations = $baselines->assertMatches();
+        } catch (PackageBaselineMismatch $exception) {
+            $this->components->error($exception->getMessage());
+
+            return self::FAILURE;
+        }
+
+        $profileAvailable = collect($manifest->profiles)->contains('identifier', 'PROFILE-PROPERTY-RESERVATION');
+        $subjectAvailable = collect($manifest->artifacts)->contains(
+            fn (array $artifact): bool => ($artifact['subject']['identifier'] ?? null) === 'RESERVATION-000001',
+        );
+        $smoke = $contractSmoke->handle(base_path());
+        $result = [
+            'passed' => $profileAvailable
+                && $subjectAvailable
+                && $smoke->passed
+                && $container->bound(DocumentHttpResponseFactory::class)
+                && Route::has('documents.browser'),
+            'repository_valid' => true,
+            'property_reservation_profile_available' => $profileAvailable,
+            'completed_subject_available' => $subjectAvailable,
+            'package_baselines' => array_map(
+                fn ($attestation): array => $attestation->toArray(),
+                $attestations,
+            ),
+            'contract_smoke' => $smoke->toArray(),
+            'http_factory_bound' => $container->bound(DocumentHttpResponseFactory::class),
+            'authenticated_route_available' => Route::has('documents.browser'),
+        ];
+
+        if ($this->option('json')) {
+            $this->line(json_encode($result, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES | JSON_THROW_ON_ERROR));
+        } else {
+            $this->components->info('Property Reservation MVP smoke diagnostics');
+            $this->line('Repository valid: yes');
+            $this->line('Package baselines match: yes');
+            $this->line('Contract smoke passed: '.($smoke->passed ? 'yes' : 'no'));
+            $this->line('HTTP response factory bound: '.($result['http_factory_bound'] ? 'yes' : 'no'));
+            $this->line('Authenticated browser route available: '.($result['authenticated_route_available'] ? 'yes' : 'no'));
+            $this->line('Checksum: '.$smoke->checksum);
+            $this->line('ETag: '.$smoke->etag);
+        }
+
+        return $result['passed'] ? self::SUCCESS : self::FAILURE;
+    }
+}

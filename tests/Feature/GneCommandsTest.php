@@ -49,10 +49,13 @@ it('explains and plans compilation honestly', function () {
         ->assertSuccessful()
         ->expectsOutputToContain('The business belongs to the repository')
         ->expectsOutputToContain('x-document installed: yes')
-        ->expectsOutputToContain('HTTP delivery available: yes');
+        ->expectsOutputToContain('x-document baseline matches: yes')
+        ->expectsOutputToContain('Contract smoke passed: yes')
+        ->expectsOutputToContain('Authenticated browser route available: yes');
     $this->artisan('gne:compile')
         ->assertSuccessful()
-        ->expectsOutputToContain('x-document browser composition runtime available')
+        ->expectsOutputToContain('x-document contract smoke passed')
+        ->expectsOutputToContain('Authenticated HTTP delivery available')
         ->expectsOutputToContain('x-change not configured');
 });
 

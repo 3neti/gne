@@ -22,7 +22,7 @@ npm run build
 php artisan test
 ```
 
-Repository operations: `php artisan gne:validate`, `gne:index`, `gne:materialize`, `gne:rebuild --force`, `gne:explain`, `gne:compile`, `gne:documents`, `gne:x-document:request`, and `gne:x-document:compile`. Use `php artisan gne:documents --subject=RESERVATION-000001 --json` for a deterministic subject inventory. Use `php artisan gne:x-document:request --document=DOCUMENT-INVOICE --subject=RESERVATION-000001 --json` to inspect the producer payload. Invoke the real runtime with:
+Repository operations: `php artisan gne:validate`, `gne:index`, `gne:materialize`, `gne:rebuild --force`, `gne:explain`, `gne:compile`, `gne:documents`, `gne:x-document:request`, `gne:x-document:compile`, and `gne:mvp:smoke`. Use `php artisan gne:documents --subject=RESERVATION-000001 --json` for a deterministic subject inventory. Use `php artisan gne:x-document:request --document=DOCUMENT-INVOICE --subject=RESERVATION-000001 --json` to inspect the producer payload. Invoke the real runtime with:
 
 ```bash
 php artisan gne:x-document:compile \
@@ -32,6 +32,10 @@ php artisan gne:x-document:compile \
 ```
 
 Local development resolves `3neti/x-document` and `3neti/x-document-laravel` from sibling `../packages/` path repositories with symlinks. Reviewed integration baselines are recorded in `IMPLEMENTATION_STATUS.md`; package source is never copied into GNE.
+
+Authenticated and verified GNE users can open `GET|HEAD /subjects/{subject}/documents/{document}/browser`. The default representation is `browser-composition-html-styled`; the two unstyled composition forms are also allowlisted through the `representation` query parameter. GNE resolves current repository evidence, x-document produces the representation, and x-document-laravel owns exact HTTP bytes, media type, inline filename, content length, strong ETag, weak `If-None-Match` comparison, HEAD, and bodyless 304 responses. Resolved workbench entries link to this route; pending entries never do. The MVP authorization rule currently permits every authenticated local GNE user to view repository-authored demonstration subjects. See [Property Reservation MVP](docs/mvp/PROPERTY_RESERVATION_MVP.md).
+
+`php artisan gne:mvp:smoke` attests the actual Git HEAD of each local package against its reviewed commit and compiles the canonical invoice through the real contract and browser runtime. Attestation runs only in diagnostics, smoke checks, and tests—not on browser requests.
 
 The x-document contract `1.0` is closed under `resources/gne/contracts/x-document/1.0/`. Its standalone resolved-document schema is authoritative and referenced by the request schema through stable versioned IDs. GNE's runtime adapter crosses this boundary as canonical JSON and lets the real x-document package validate and express it; no repository service or internal IR is passed to the package.
 

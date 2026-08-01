@@ -1,15 +1,15 @@
 # GNE Compass
 
-**Current milestone:** GNE → x-document Runtime Package Wiring
+**Current milestone:** Authenticated Browser Delivery through x-document-laravel
 **North star:** The business belongs to the repository. Everything operational is a projection.
 
 ## Completed
 
-Canonical cognition, portable discovery, declaration-driven profiles, byte-complete fingerprints, immutable artifacts, semantic/database projections, and the authenticated workbench are established. Fully resolved documents now cross the closed contract as canonical JSON into the real x-document package and deterministically produce styled browser composition without exposing repository machinery. The x-document-laravel delivery binding is installed and discovered but is not yet exposed by a GNE HTTP route.
+Canonical cognition, portable discovery, declaration-driven profiles, byte-complete fingerprints, immutable artifacts, semantic/database projections, and the authenticated workbench are established. Fully resolved documents cross canonical contract JSON into x-document and are delivered unchanged through x-document-laravel at an authenticated GET/HEAD route. Strong and weak ETag refresh, bodyless 304, exact length and media type, readiness-driven workbench navigation, real contract smoke, and exact dependency attestation are established.
 
 ## Immediate direction
 
-Deliver the existing real browser-host response through a thin authenticated GNE route using x-document-laravel, preserving authorization and HTTP concerns outside the runtime compiler service.
+Prove the complete Property Reservation acceptance progression from repository-authored evidence through lifecycle readiness and authenticated unified document delivery.
 
 ## Explicit deferrals
 
@@ -21,4 +21,4 @@ Validation supports the implemented document grammar and JSON Schema 2020-12 but
 
 ## Recommended next task
 
-**Authenticated GNE Browser Delivery through x-document-laravel** — expose one allowlisted styled composition through a thin authenticated route with GET, HEAD, and conditional ETag delivery.
+**End-to-End Property Reservation Acceptance Flow** — demonstrate one complete operator-facing progression while keeping accepted facts immutable and actions non-executable until explicitly designed.

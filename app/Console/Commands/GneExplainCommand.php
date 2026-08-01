@@ -35,10 +35,13 @@ class GneExplainCommand extends Command
             $this->table(['Canonical source', 'Generated state', 'Validation', 'Profiles', 'Scenarios', 'Artifacts'], [[$explanation['canonical_source_path'], $explanation['generated_projection_path'], $explanation['validation']['valid'] ? 'valid' : 'invalid', count($explanation['profiles']), count($explanation['scenarios']), $explanation['artifact_count']]]);
             $this->line('Materialization: '.$explanation['materialization']['status']);
             $this->line('x-document installed: '.($explanation['x_document_runtime']['x_document_installed'] ? 'yes' : 'no'));
-            $this->line('x-document contract compatible: '.($explanation['x_document_runtime']['x_document_contract_compatible'] ? 'yes' : 'no'));
+            $this->line('x-document baseline matches: '.($explanation['x_document_runtime']['x_document_baseline_matches'] ? 'yes' : 'no'));
             $this->line('x-document-laravel installed: '.($explanation['x_document_runtime']['x_document_laravel_installed'] ? 'yes' : 'no'));
+            $this->line('x-document-laravel baseline matches: '.($explanation['x_document_runtime']['x_document_laravel_baseline_matches'] ? 'yes' : 'no'));
+            $this->line('Contract smoke passed: '.($explanation['x_document_runtime']['contract_smoke_passed'] ? 'yes' : 'no'));
             $this->line('Browser composition available: '.($explanation['x_document_runtime']['browser_composition_available'] ? 'yes' : 'no'));
-            $this->line('HTTP delivery available: '.($explanation['x_document_runtime']['http_delivery_available'] ? 'yes' : 'no'));
+            $this->line('HTTP response factory bound: '.($explanation['x_document_runtime']['http_factory_bound'] ? 'yes' : 'no'));
+            $this->line('Authenticated browser route available: '.($explanation['x_document_runtime']['authenticated_http_route_available'] ? 'yes' : 'no'));
         }
 
         return $manifest->hasErrors() ? self::FAILURE : self::SUCCESS;

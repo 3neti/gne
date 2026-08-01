@@ -14,7 +14,7 @@ use LBHurtado\XDocument\Browser\Host\BrowserRepresentation;
 use LBHurtado\XDocument\Browser\Host\ResolveBrowserRepresentation;
 use LBHurtado\XDocument\Contract\ValidateDocumentCompilationRequest;
 
-final readonly class ResolveXDocumentBrowserRepresentation
+final readonly class ResolveXDocumentBrowserRepresentation implements BrowserDocumentRepresentationResolver
 {
     public function __construct(
         private ValidateRepository $validateRepository,

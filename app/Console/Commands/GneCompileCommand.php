@@ -50,8 +50,10 @@ class GneCompileCommand extends Command
                 $reason = isset($document['reason']) ? " — {$document['reason']}" : '';
                 $this->line("{$document['subject']['identifier']} · {$document['identifier']}: {$document['status']}{$reason}");
             }
-            $this->components->info('x-document browser composition runtime available.');
-            $this->components->info('x-document-laravel HTTP delivery binding available.');
+            $this->components->info('x-document baseline '.($plan['x_document_runtime']['x_document_baseline_matches'] ? 'matches.' : 'does not match.'));
+            $this->components->info('x-document contract smoke '.($plan['x_document_runtime']['contract_smoke_passed'] ? 'passed.' : 'failed.'));
+            $this->components->info('x-document-laravel baseline '.($plan['x_document_runtime']['x_document_laravel_baseline_matches'] ? 'matches.' : 'does not match.'));
+            $this->components->info('Authenticated HTTP delivery '.($plan['x_document_runtime']['authenticated_http_route_available'] ? 'available.' : 'unavailable.'));
             $this->warn('Settlement driver unavailable: x-change not configured.');
             $this->components->info('Compilation plan completed.');
         }

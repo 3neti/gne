@@ -57,7 +57,22 @@ Request serialization recursively sorts map keys while preserving list order. Bo
 
 GNE retains its preparatory DTOs and schemas as the producer boundary. `ResolveXDocumentBrowserRepresentation` is the only runtime service that knows both the GNE adapter and x-document representation APIs. It validates repository source, resolves one explicit subject/document, prepares canonical contract JSON, reloads it through x-document's `ValidateDocumentCompilationRequest`, and delegates mechanical expression to `ResolveBrowserRepresentation`. It returns `BrowserHostResponse` without reading HTTP input or invoking the Laravel delivery adapter. The current GNE-local browser driver remains an independent peer.
 
-Development uses symlinked Composer path repositories for `3neti/x-document` and `3neti/x-document-laravel`. Reviewed source baselines are recorded separately from their `dev-main` labels. Package source is never copied into GNE. HTTP delivery is installed and discoverable but intentionally remains outside this first runtime-wiring slice.
+Development uses symlinked Composer path repositories for `3neti/x-document` and `3neti/x-document-laravel`. Reviewed source baselines are recorded separately from their `dev-main` labels. Package source is never copied into GNE.
+
+## Authenticated browser delivery
+
+```mermaid
+flowchart LR
+  U[Authenticated verified user] --> H[GNE delivery controller]
+  H --> R[GNE runtime resolver]
+  R --> X[x-document BrowserHostResponse]
+  X --> L[x-document-laravel response factory]
+  L --> B[Exact browser representation]
+```
+
+`GET|HEAD /subjects/{subject}/documents/{document}/browser` is protected by the existing `auth` and `verified` middleware and an explicit MVP demonstration-document gate. The controller allowlists the three composition representations, maps known repository absence truthfully, and delegates the untouched `BrowserHostResponse` plus `DocumentHttpRequestContext` to `DocumentHttpResponseFactory`. It contains no renderer, serializer, ETag calculation, disposition logic, or Git process. The Laravel adapter owns exact bytes and HTTP metadata, including strong ETags, weak conditional comparison, HEAD, and 304.
+
+`XDocumentPackageBaselineAttestor` resolves Composer install paths and reads local Git HEAD only for diagnostics, tests, and `gne:mvp:smoke`. Browser request handling does not depend on Git. The attested reviewed baselines are x-document `29853fae23939cba0b440db3ae04e351c499a78e` and x-document-laravel `b299d5bfbe7bdf93ecaf840431349804b676a6c7`; the latter includes the earlier `ff915e56` HTTP corrections and the Laravel 12/13 matrix.
 
 ## Resolved document intermediate representation
 

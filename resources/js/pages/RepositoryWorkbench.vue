@@ -9,7 +9,10 @@ import {
     CardTitle,
 } from '@/components/ui/card';
 import { dashboard } from '@/routes';
-import { show as showDocument } from '@/routes/documents';
+import {
+    browser as showBrowserDocument,
+    show as showDocument,
+} from '@/routes/documents';
 
 type InventoryItem = {
     identifier: string;
@@ -230,13 +233,23 @@ defineOptions({
                             {{ document.reason }}
                         </p>
                     </div>
-                    <Link
+                    <div
                         v-if="document.status === 'resolved'"
-                        :href="showDocument({ document: document.identifier, subject: document.subject.identifier })"
-                        class="text-sm font-medium text-primary hover:underline"
+                        class="flex shrink-0 flex-col items-end gap-2"
                     >
-                        View
-                    </Link>
+                        <a
+                            :href="showBrowserDocument.url({ document: document.identifier, subject: document.subject.identifier })"
+                            class="text-sm font-medium text-primary hover:underline"
+                        >
+                            Open Unified Browser Document
+                        </a>
+                        <Link
+                            :href="showDocument({ document: document.identifier, subject: document.subject.identifier })"
+                            class="text-xs text-muted-foreground hover:underline"
+                        >
+                            Inspect compiler IR
+                        </Link>
+                    </div>
                     <Badge v-else variant="outline">Deferred evidence</Badge>
                 </div>
             </CardContent>

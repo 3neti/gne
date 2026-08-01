@@ -84,3 +84,7 @@
 | Browser Host Response | Framework-neutral x-document result carrying exact representation bytes, format, media type, checksum, byte length, filename, disposition, and strong ETag. |
 | Styled Browser Composition | Read-only `browser-composition-html-styled/1.0` expression combining resolved document content and inert interaction declarations without JavaScript, forms, or action execution. |
 | Runtime Package Baseline | Exact reviewed Git commit recorded alongside a Composer development version so local path integration never disguises a moving dependency. |
+| Authenticated Browser Representation Route | Stable GNE GET/HEAD seam that authorizes one subject/document and selects one allowlisted composition representation without rendering it. |
+| HTTP Response Factory | x-document-laravel contract that expresses an existing Browser Host Response as exact HTTP bytes and metadata. |
+| Package Baseline Attestation | Diagnostic comparison of an installed local package's actual Git HEAD with its expected reviewed commit. |
+| Contract Smoke Proof | Real known-subject compilation through GNE preparation, x-document validation, and browser expression; stronger than class-existence diagnostics. |

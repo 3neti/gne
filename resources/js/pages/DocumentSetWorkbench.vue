@@ -3,7 +3,7 @@ import { Head, Link } from '@inertiajs/vue3';
 import { Badge } from '@/components/ui/badge';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { index as documentSetsIndex, show as showDocumentSet } from '@/routes/document_sets';
-import { show as showDocument } from '@/routes/documents';
+import { browser as showBrowserDocument, show as showDocument } from '@/routes/documents';
 
 type DocumentSet = {
     identifier: string;
@@ -73,7 +73,10 @@ defineOptions({ layout: { breadcrumbs: [{ title: 'Document Sets', href: document
                             <p class="mt-2 text-sm text-muted-foreground">{{ entry.explanation }}</p>
                             <p v-if="entry.missing_evidence.length" class="mt-1 text-xs text-muted-foreground">Missing: {{ entry.missing_evidence.map((item) => item.artifact_type).join(', ') }}</p>
                         </div>
-                        <Link v-if="entry.readiness === 'resolved'" :href="showDocument({ document: entry.definition_identifier, subject: set.subject.identifier })" class="shrink-0 text-sm font-medium text-primary hover:underline">View</Link>
+                        <div v-if="entry.readiness === 'resolved'" class="flex shrink-0 flex-col items-end gap-2">
+                            <a :href="showBrowserDocument.url({ document: entry.definition_identifier, subject: set.subject.identifier })" class="text-sm font-medium text-primary hover:underline">Open Unified Browser Document</a>
+                            <Link :href="showDocument({ document: entry.definition_identifier, subject: set.subject.identifier })" class="text-xs text-muted-foreground hover:underline">Inspect compiler IR</Link>
+                        </div>
                     </div>
                 </section>
                 <p class="break-all font-mono text-xs text-muted-foreground">Set fingerprint: {{ set.fingerprint }}</p>
