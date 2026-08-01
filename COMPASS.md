@@ -5,7 +5,7 @@
 
 ## Completed
 
-Canonical cognition, portable discovery, declaration-driven profiles, byte-complete fingerprints, immutable artifacts, semantic/database projections, and the authenticated workbench are established. Fully resolved documents cross canonical contract JSON into x-document and are delivered unchanged through x-document-laravel at an authenticated GET/HEAD route. Strong and weak ETag refresh, bodyless 304, exact length and media type, readiness-driven workbench navigation, real contract smoke, and exact dependency attestation are established.
+Canonical cognition, portable discovery, declaration-driven profiles, byte-complete fingerprints, immutable artifacts, semantic/database projections, and the authenticated workbench are established. Fully resolved documents cross canonical contract JSON into x-document and are delivered unchanged through x-document-laravel at an authenticated GET/HEAD route. Strong and weak ETag refresh, bodyless 304, exact length and media type, readiness-driven workbench navigation, real contract smoke, exact dependency attestation, and Herd-accurate environment guidance with host-neutral routing are established.
 
 ## Immediate direction
 

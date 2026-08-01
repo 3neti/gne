@@ -2,6 +2,32 @@
 
 The MVP demonstrates that accepted Property Reservation evidence can be resolved by GNE, expressed by x-document, and delivered unchanged by x-document-laravel to an authenticated browser user.
 
+## Local installation with Laravel Herd
+
+1. Confirm this repository directory is parked or linked through Laravel Herd.
+2. Confirm the site resolves as `gne.test`.
+3. Copy `.env.example` to `.env` and set `APP_URL=http://gne.test`. If the Herd site is secured, use `APP_URL=https://gne.test` instead.
+4. Install PHP and frontend dependencies with `composer install` and `npm install`.
+5. Generate the application key, migrate the database, and build the frontend with `php artisan key:generate`, `php artisan migrate`, and `npm run build`.
+6. Run `php artisan gne:mvp:smoke` and confirm the repository, package baselines, contract, response factory, and route pass.
+7. Register or use a local account, then log in through the configured Herd URL.
+8. Open the Property Reservation workbench.
+9. Follow **Open Unified Browser Document** for a resolved entry.
+
+The completed invoice route is host-neutral:
+
+```text
+/subjects/RESERVATION-000001/documents/DOCUMENT-INVOICE/browser
+```
+
+With the standard unsecured Herd configuration, open:
+
+```text
+http://gne.test/subjects/RESERVATION-000001/documents/DOCUMENT-INVOICE/browser
+```
+
+A secured Herd site uses `https://gne.test`. Running `php artisan serve` is supported only as an alternative environment; if used, set `APP_URL` to that server's actual URL.
+
 ## Browser route
 
 ```text
@@ -34,7 +60,7 @@ php artisan gne:mvp:smoke
 php artisan gne:mvp:smoke --json
 ```
 
-The smoke check validates repository source, confirms the required profile and subject, attests actual local package Git HEAD values, compiles the known invoice through the real x-document validator and styled browser runtime, checks the Laravel response-factory binding, and confirms route registration.
+The smoke check validates repository source, confirms the required profile and subject, attests actual local package Git HEAD values, compiles the known invoice through the real x-document validator and styled browser runtime, checks the Laravel response-factory binding, and confirms route registration. It also reports the configured application URL, the named route's relative path, and a configuration-derived example document URL. Those values are informational; smoke success never depends on a particular host or scheme.
 
 Reviewed baselines:
 

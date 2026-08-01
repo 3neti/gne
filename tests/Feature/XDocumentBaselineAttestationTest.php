@@ -35,5 +35,8 @@ it('passes the deployment-oriented MVP smoke command', function () {
         ->and($result['package_baselines']['x_document_laravel']['matches'])->toBeTrue()
         ->and($result['contract_smoke']['passed'])->toBeTrue()
         ->and($result['http_factory_bound'])->toBeTrue()
-        ->and($result['authenticated_route_available'])->toBeTrue();
+        ->and($result['authenticated_route_available'])->toBeTrue()
+        ->and($result['application_url'])->toBe((string) config('app.url'))
+        ->and($result['browser_route_path'])->toBe('/subjects/RESERVATION-000001/documents/DOCUMENT-INVOICE/browser')
+        ->and($result['browser_route_url'])->toStartWith((string) config('app.url'));
 });
