@@ -8,7 +8,7 @@ The MVP demonstrates that accepted Property Reservation evidence can be resolved
 GET|HEAD /subjects/{subject}/documents/{document}/browser
 ```
 
-The route uses the existing `auth` and `verified` middleware. Its temporary MVP gate permits authenticated local GNE users to view repository-authored demonstration subjects. It does not implement organization ownership, customer access, or multi-tenant isolation.
+The route uses the existing `auth` and `verified` middleware group. The current `User` model does not implement Laravel's email-verification contract, so authentication is enforced while email verification is not yet an active additional check. Its temporary MVP gate permits authenticated local GNE users to view repository-authored demonstration subjects. It does not implement organization ownership, customer access, or multi-tenant isolation.
 
 The default representation is `browser-composition-html-styled`. The strict query allowlist also accepts `browser-composition-html` and `browser-composition`. Unknown representations return 400. Unknown subjects or definitions return 404. Valid definitions with missing accepted evidence return 422.
 
