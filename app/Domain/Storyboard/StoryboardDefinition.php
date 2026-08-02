@@ -30,7 +30,13 @@ final readonly class StoryboardDefinition
             throw new InvalidArgumentException('Storyboard frame sequences must be contiguous and ordered.');
         }
         foreach ($frames as $frame) {
-            if (! in_array($frame->persona, $personas, true) || ! str_starts_with($frame->route, '/')) {
+            if (! in_array($frame->persona, $personas, true)
+                || ! str_starts_with($frame->displayRoute, '/')
+                || ! str_starts_with($frame->captureRoute, '/')
+                || ! str_starts_with($frame->expectedFinalRoute, '/')
+                || ! in_array($frame->captureType, ['application', 'document', 'evidence', 'explanation'], true)
+                || ($frame->captureType === 'explanation' && $frame->productionSurface)
+            ) {
                 throw new InvalidArgumentException("Storyboard frame {$frame->identifier} has an invalid persona or route.");
             }
         }

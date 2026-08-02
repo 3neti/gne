@@ -27,8 +27,11 @@ final readonly class LoadStoryboardDefinition
         }
         $frames = array_map(fn (array $frame): StoryboardFrame => new StoryboardFrame(
             (int) $frame['sequence'], (string) $frame['identifier'], (string) $frame['act'],
-            (string) $frame['title'], (string) $frame['persona'], (string) $frame['route'],
+            (string) $frame['title'], (string) $frame['persona'], (string) $frame['display_route'],
             (string) $frame['stage'], (string) $frame['expected'], (string) $frame['action'],
+            (string) $frame['capture']['type'], (string) $frame['capture']['route'],
+            (bool) $frame['capture']['requires_authentication'], (string) $frame['capture']['expected_final_route'],
+            (bool) $frame['capture']['production_surface'],
         ), array_values($source['frames']));
 
         return new StoryboardDefinition(

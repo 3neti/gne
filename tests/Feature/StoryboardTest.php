@@ -3,10 +3,13 @@
 use App\Application\Storyboard\BuildStoryboard;
 use App\Application\Storyboard\LoadStoryboardDefinition;
 use App\Application\Storyboard\PropertyReservationStoryboardStateProvider;
+use App\Application\Storyboard\ResolveStoryboardRepositoryRoot;
 use App\Infrastructure\Storyboard\StoryboardArtifactException;
 use App\Infrastructure\Storyboard\StoryboardHtmlRenderer;
 use App\Models\User;
 use Illuminate\Filesystem\Filesystem;
+use Illuminate\Http\Request;
+use Inertia\Testing\AssertableInertia as Assert;
 
 function storyboardBusinessChecksum(): string
 {
@@ -36,6 +39,10 @@ it('builds a deterministic draft manifest without claiming final renditions', fu
 
     expect($manifest['frames'])->toHaveCount(25)
         ->and($manifest['frames'][24]['snapshot']['lifecycle']['current_stage'])->toBe('reservation_certified')
+        ->and(collect($manifest['frames'])->where('production_surface', true))->toHaveCount(22)
+        ->and(collect($manifest['frames'])->where('capture_type', 'explanation'))->toHaveCount(3)
+        ->and($manifest['authentication']['mode'])->toBe('interactive_login')
+        ->and($manifest['authentication']['login_submitted'])->toBeFalse()
         ->and($root.'/narration.md')->toBeFile()
         ->and($root.'/movie/manifest.json')->toBeFile()
         ->and($manifest['capture_status'])->toBe('not_requested')
@@ -55,9 +62,13 @@ it('renders a deterministic offline HTML site only from finalized captured frame
     foreach ($manifest['frames'] as &$frame) {
         $path = $root.'/'.$frame['capture_filename'];
         file_put_contents($path, 'fictional captured frame '.$frame['sequence'].' '.$frame['expected']);
-        $frame['capture_status'] = 'captured';
+        $frame['capture_status'] = 'captured_and_verified';
         $frame['capture_checksum'] = hash_file('sha256', $path);
         $frame['capture_byte_length'] = filesize($path);
+        $frame['application_status'] = 'captured_and_verified';
+        $frame['application_final_route'] = $frame['expected_final_route'];
+        $frame['application_http_status'] = 200;
+        $frame['application_expected_marker_verified'] = true;
     }
     unset($frame);
     $manifest['finalized_frame_fingerprint'] = hash('sha256', 'test-finalized-frame-inventory');
@@ -101,17 +112,48 @@ it('renders a deterministic offline HTML site only from finalized captured frame
     }
 });
 
-it('serves generated storyboard observations only to authenticated users', function () {
+it('labels authenticated storyboard explanations as non-production surfaces', function () {
     $definition = app(LoadStoryboardDefinition::class)->handle(base_path(), 'property-reservation-mvp');
     app(BuildStoryboard::class)->handle(base_path(), $definition, 'http://gne.test');
-    $path = '/storyboards/property-reservation-mvp/frames/invoice-r2';
+    $path = '/storyboards/property-reservation-mvp/frames/proof-submitted';
 
     $this->get($path)->assertRedirect('/login');
     $this->actingAs(User::factory()->create())->get($path)
         ->assertSuccessful()
-        ->assertSee('51000', escape: false)
-        ->assertSee('invoice_accepted', escape: false)
-        ->assertSee('Storyboard observation only', escape: false);
+        ->assertSee('payment_evidence_submitted', escape: false)
+        ->assertSee('Not a production application screen', escape: false)
+        ->assertSee('Narrative persona', escape: false)
+        ->assertSee('Authenticated user', escape: false);
+});
+
+it('exposes isolated storyboard state only to an authenticated local capture request', function () {
+    $definition = app(LoadStoryboardDefinition::class)->handle(base_path(), 'property-reservation-mvp');
+    app(BuildStoryboard::class)->handle(base_path(), $definition, 'http://gne.test');
+    $headers = [
+        'X-GNE-Storyboard' => 'property-reservation-mvp',
+        'X-GNE-Storyboard-Stage' => 'invoice-r2',
+    ];
+
+    $this->withHeaders($headers)->get('/document-sets')->assertRedirect('/login');
+
+    $user = User::factory()->create();
+    $this->actingAs($user)->withHeaders($headers)->get('/document-sets')
+        ->assertSuccessful()
+        ->assertInertia(fn (Assert $page): Assert => $page
+            ->component('DocumentSetWorkbench')
+            ->where('documentSets.0.subject.identifier', 'PROPERTY-RESERVATION-MVP-ACCEPTANCE-000001'));
+
+    expect(app(ResolveStoryboardRepositoryRoot::class)->handle(Request::create('/document-sets')))->toBe(base_path());
+});
+
+it('keeps the capture runner on one interactive browser context without session injection', function () {
+    $script = file_get_contents(base_path('scripts/gne-storyboard-capture.mjs'));
+
+    expect(substr_count($script, 'browser.newContext('))->toBe(1)
+        ->and($script)->toContain('loginFrame.capture_route')
+        ->and($script)->toContain("page.locator('[data-test=\"login-button\"]').click()")
+        ->and($script)->toContain("status: 'captured_and_verified'")
+        ->and($script)->not->toContain('storageState', 'laravel_session', 'session cookie', 'csrf');
 });
 
 it('keeps storyboard definitions out of canonical business source and generated outputs disposable', function () {

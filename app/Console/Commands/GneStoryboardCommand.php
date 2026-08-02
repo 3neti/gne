@@ -35,7 +35,7 @@ final class GneStoryboardCommand extends Command
         $captureStatus = 'not_requested';
         if ($this->option('capture')) {
             $captureStatus = $capture->handle($this, $baseUrl, $root, $manifest);
-            if ($captureStatus === 'captured') {
+            if ($captureStatus === 'captured_and_verified') {
                 $manifest['capture_status'] = $captureStatus;
                 $manifest['finalized_frame_fingerprint'] = $this->frameFingerprint($manifest['frames']);
                 $builder->persist(base_path(), $manifest);
@@ -48,17 +48,18 @@ final class GneStoryboardCommand extends Command
         $builder->persist(base_path(), $manifest);
         $screenshotCount = 0;
         foreach ($manifest['frames'] as $frame) {
-            if ($frame['capture_status'] === 'captured') {
+            if ($frame['capture_status'] === 'captured_and_verified') {
                 $screenshotCount++;
             }
         }
         $report = [
-            'passed' => ! $this->option('capture') || $captureStatus === 'captured',
+            'passed' => ! $this->option('capture') || $captureStatus === 'captured_and_verified',
             'storyboard' => $identifier,
             'base_url' => $baseUrl,
             'frame_count' => count($manifest['frames']),
             'screenshot_count' => $screenshotCount,
             'capture_status' => $captureStatus,
+            'authentication' => $manifest['authentication'] ?? null,
             'manifest' => $root.'/manifest.json',
             'html' => $manifest['outputs']['html']['entrypoint'] ?? null,
             'html_pages' => $manifest['outputs']['html']['page_count'] ?? 0,

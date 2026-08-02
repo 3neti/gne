@@ -22,6 +22,7 @@ final class CaptureStoryboard
         $user = User::query()->create(['name' => 'Fictional Storyboard Operator', 'email' => $email, 'password' => $password]);
         $userId = $user->getKey();
         DB::disconnect();
+        $captureStatus = 'capture_failed';
         try {
             $result = Process::timeout(180)->env([
                 'GNE_STORYBOARD_MANIFEST' => $root.'/manifest.json', 'GNE_STORYBOARD_BASE_URL' => $baseUrl,
@@ -33,25 +34,39 @@ final class CaptureStoryboard
 
                 return 'capture_failed';
             }
+            $captureReport = json_decode($result->output(), true, flags: JSON_THROW_ON_ERROR);
+            if (! is_array($captureReport) || ! is_array($captureReport['frames'] ?? null) || ! is_array($captureReport['authentication'] ?? null)) {
+                throw new \RuntimeException('Browser capture returned an invalid verification report.');
+            }
+            $results = collect($captureReport['frames'])->keyBy('identifier');
             foreach ($manifest['frames'] as &$frame) {
                 $path = $root.'/'.$frame['capture_filename'];
-                if (is_file($path)) {
-                    $frame['capture_status'] = 'captured';
+                $verification = $results->get($frame['identifier']);
+                if (is_file($path) && is_array($verification) && ($verification['status'] ?? null) === 'captured_and_verified') {
+                    $frame['capture_status'] = 'captured_and_verified';
                     $frame['capture_checksum'] = hash_file('sha256', $path);
                     $frame['capture_byte_length'] = filesize($path);
+                    $frame['application_status'] = 'captured_and_verified';
+                    $frame['application_final_route'] = $verification['final_route'];
+                    $frame['application_http_status'] = $verification['http_status'];
+                    $frame['application_expected_marker_verified'] = $verification['expected_marker_verified'];
                 }
             }
             unset($frame);
 
             foreach ($manifest['frames'] as $frame) {
-                if ($frame['capture_status'] !== 'captured') {
+                if ($frame['capture_status'] !== 'captured_and_verified') {
                     return 'capture_incomplete';
                 }
             }
-
-            return 'captured';
+            $manifest['authentication'] = $captureReport['authentication'];
+            $captureStatus = 'captured_and_verified';
         } finally {
             User::query()->whereKey($userId)->delete();
+            $removed = ! User::query()->whereKey($userId)->exists();
+            $manifest['authentication']['ephemeral_user_removed'] = $removed;
         }
+
+        return $captureStatus;
     }
 }

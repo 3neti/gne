@@ -20,18 +20,32 @@ final readonly class BuildStoryboard
         $this->files->ensureDirectoryExists($output.'/pdf');
         $this->files->ensureDirectoryExists($output.'/movie');
         $this->files->ensureDirectoryExists($output.'/reports');
+        $this->files->deleteDirectory($output.'/states');
+        $stateRoot = storage_path('framework/gne-storyboards/'.$definition->identifier.'/states');
+        $this->files->deleteDirectory($stateRoot);
+        $this->files->ensureDirectoryExists($stateRoot);
         $this->files->deleteDirectory($output.'/html');
         $snapshots = [];
         $frames = [];
         foreach ($definition->frames as $frame) {
-            $snapshot = $snapshots[$frame->stage] ??= $this->states->snapshot($repositoryRoot, $frame->stage);
+            $snapshot = $snapshots[$frame->stage] ??= $this->states->prepareSnapshot(
+                $repositoryRoot,
+                $frame->stage,
+                $stateRoot.'/'.$frame->stage,
+            );
             $filename = sprintf('%03d-%s.png', $frame->sequence, $frame->identifier);
             $frames[] = [
                 ...$frame->toArray(),
                 'method' => 'GET',
                 'subject_identifier' => $definition->subject,
                 'capture_filename' => 'frames/'.$filename,
-                'capture_route' => $frame->identifier === 'login' ? '/login' : '/storyboards/'.$definition->identifier.'/frames/'.$frame->identifier,
+                'application_route' => $frame->captureRoute,
+                'application_status' => 'planned',
+                'application_final_route' => null,
+                'application_http_status' => null,
+                'application_expected_marker_verified' => false,
+                'authenticated_user' => $frame->requiresAuthentication ? 'Fictional Storyboard Operator' : null,
+                'session_identity' => $frame->requiresAuthentication ? 'ephemeral-demo-operator-session' : null,
                 'capture_status' => 'planned',
                 'capture_checksum' => null,
                 'capture_byte_length' => null,
@@ -47,6 +61,16 @@ final readonly class BuildStoryboard
             'base_url' => rtrim($baseUrl, '/'),
             'subject_identifier' => $definition->subject,
             'personas' => $definition->personas,
+            'authentication' => [
+                'mode' => 'interactive_login',
+                'login_route' => '/login',
+                'login_submitted' => false,
+                'authenticated_redirect' => null,
+                'session_preserved' => false,
+                'protected_frame_count' => 0,
+                'unexpected_login_redirects' => 0,
+                'ephemeral_user_removed' => null,
+            ],
             'frames' => $frames,
             'outputs' => [
                 'html' => ['format' => 'gne-storyboard-html/1.0', 'status' => 'planned'],

@@ -4,7 +4,7 @@
 
 GNE is a repository-native Business Compiler. Its north star is: **The business belongs to the repository. Everything operational is a projection.** The accepted business representation must remain understandable to humans, compilers, runtime systems, and capable AI without first querying an operational database.
 
-Storyboard definitions under `docs/mvp/storyboards/` choreograph demonstrations only. They observe isolated repository/compiler states and never define business truth; generated captures and static HTML/PDF/movie renditions under `.gne/storyboards/` are disposable. Final renditions require a finalized 25-frame capture inventory; planned placeholders are draft evidence only.
+Storyboard definitions under `docs/mvp/storyboards/` choreograph demonstrations only. They observe isolated repository/compiler states and never define business truth; generated captures and static HTML/PDF/movie renditions under `.gne/storyboards/` are disposable. Final renditions require a finalized 25-frame capture inventory; planned placeholders are draft evidence only. A final capture uses one interactive login and one continuing authenticated browser context. Production surfaces are captured from their real application or x-document routes; explanation frames are explicitly non-production annotations.
 
 ## How to read this repository
 

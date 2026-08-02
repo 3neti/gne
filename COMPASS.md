@@ -1,6 +1,6 @@
 # GNE Compass
 
-**Current milestone:** Storyboard HTML Rendition and Screenshot-Bearing Artifact Closure
+**Current milestone:** Authenticated Lifecycle Storyboard Capture Closure
 **North star:** The business belongs to the repository. Everything operational is a projection.
 
 ## Completed

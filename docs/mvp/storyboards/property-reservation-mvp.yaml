@@ -2,35 +2,257 @@ format: gne-storyboard/1.0
 identifier: property-reservation-mvp
 title: Property Reservation MVP
 subject: PROPERTY-RESERVATION-MVP-ACCEPTANCE-000001
-personas:
-  - buyer
-  - sales-representative
-  - payment-reviewer
-  - reservation-approver
-  - operator
+authenticated_user: Fictional Storyboard Operator
+authentication_mode: interactive_login
+personas: [buyer, sales-representative, payment-reviewer, reservation-approver, operator]
 frames:
-  - { sequence: 1, identifier: login, act: entering-system, title: Login, persona: operator, route: /login, stage: public, expected: Log in, action: Authenticate with an ephemeral fictional demonstration account. }
-  - { sequence: 2, identifier: authenticated-dashboard, act: entering-system, title: Authenticated landing page, persona: operator, route: /dashboard, stage: application, expected: Repository Workbench, action: Enter the authenticated workbench. }
-  - { sequence: 3, identifier: property-reservation-workspace, act: entering-system, title: Property Reservation workspace, persona: sales-representative, route: /profiles, stage: application, expected: Property Reservation, action: Inspect the repository-owned profile. }
-  - { sequence: 4, identifier: subject-inventory, act: entering-system, title: Reservation subject inventory, persona: sales-representative, route: /document-sets, stage: application, expected: PROPERTY-RESERVATION-MVP-ACCEPTANCE-000001, action: Review compilation subjects. }
-  - { sequence: 5, identifier: select-demonstration-subject, act: entering-system, title: Select demonstration subject, persona: sales-representative, route: /document-sets/PROPERTY-RESERVATION-MVP-ACCEPTANCE-000001, stage: application, expected: PROPERTY-RESERVATION-MVP-ACCEPTANCE-000001, action: Select the fictional reservation. }
-  - { sequence: 6, identifier: property-offering, act: starting-process, title: Property offering context, persona: buyer, route: /storyboards/property-reservation-mvp/frames/property-offering, stage: application, expected: LOT-DEMO-101, action: Review the offered lot. }
-  - { sequence: 7, identifier: application, act: starting-process, title: Application, persona: buyer, route: /storyboards/property-reservation-mvp/frames/application, stage: application, expected: Alicia Demonstration, action: Inspect the authored application. }
-  - { sequence: 8, identifier: application-accepted, act: starting-process, title: Application accepted, persona: sales-representative, route: /storyboards/property-reservation-mvp/frames/application-accepted, stage: application, expected: application_accepted, action: Observe accepted repository evidence. }
-  - { sequence: 9, identifier: assessment, act: starting-process, title: Assessment stage, persona: reservation-approver, route: /storyboards/property-reservation-mvp/frames/assessment, stage: assessment, expected: assessment_completed, action: Inspect the assessment evidence. }
-  - { sequence: 10, identifier: assessment-completed, act: starting-process, title: Assessment completed, persona: reservation-approver, route: /storyboards/property-reservation-mvp/frames/assessment-completed, stage: assessment, expected: approved, action: Confirm the approved assessment. }
-  - { sequence: 11, identifier: invoice-r1, act: commercial-commitment, title: Invoice revision 1, persona: sales-representative, route: /storyboards/property-reservation-mvp/frames/invoice-r1, stage: invoice-r1, expected: '50000', action: Review the first immutable invoice revision. }
-  - { sequence: 12, identifier: invoice-r2, act: commercial-commitment, title: Corrected invoice revision 2, persona: sales-representative, route: /storyboards/property-reservation-mvp/frames/invoice-r2, stage: invoice-r2, expected: '51000', action: Review the corrected immutable revision. }
-  - { sequence: 13, identifier: invoice-browser-document, act: commercial-commitment, title: Unified browser invoice, persona: buyer, route: /storyboards/property-reservation-mvp/frames/invoice-browser-document, stage: invoice-r2, expected: DOCUMENT-INVOICE, action: Observe x-document browser output. }
-  - { sequence: 14, identifier: invoice-readiness, act: commercial-commitment, title: Lifecycle and readiness, persona: operator, route: /storyboards/property-reservation-mvp/frames/invoice-readiness, stage: invoice-r2, expected: payment_evidence_submitted, action: Explain the next required evidence. }
-  - { sequence: 15, identifier: payment-evidence-stage, act: manual-payment, title: Payment evidence stage, persona: buyer, route: /storyboards/property-reservation-mvp/frames/payment-evidence-stage, stage: payment-evidence, expected: payment_evidence_submitted, action: 'Observe submitted proof as evidence, not approval.' }
-  - { sequence: 16, identifier: proof-submitted, act: manual-payment, title: Proof submitted, persona: buyer, route: /storyboards/property-reservation-mvp/frames/proof-submitted, stage: payment-evidence, expected: FICTIONAL-MANUAL-PROOF-101, action: Inspect fictional payment proof. }
-  - { sequence: 17, identifier: receipt-pending, act: manual-payment, title: Receipt remains pending, persona: buyer, route: /storyboards/property-reservation-mvp/frames/receipt-pending, stage: payment-evidence, expected: DOCUMENT-RECEIPT, action: Confirm GNE does not fabricate a receipt. }
-  - { sequence: 18, identifier: payment-review, act: manual-payment, title: Back-office payment review, persona: payment-reviewer, route: /storyboards/property-reservation-mvp/frames/payment-review, stage: payment-evidence, expected: PaymentApproval, action: Review evidence without settlement execution. }
-  - { sequence: 19, identifier: payment-approved, act: manual-payment, title: Payment approval accepted, persona: payment-reviewer, route: /storyboards/property-reservation-mvp/frames/payment-approved, stage: payment-approval, expected: payment_approved, action: Observe separately authored approval. }
-  - { sequence: 20, identifier: receipt-available, act: completion, title: Official Receipt available, persona: operator, route: /storyboards/property-reservation-mvp/frames/receipt-available, stage: receipt, expected: DOCUMENT-RECEIPT, action: Observe the authored official receipt. }
-  - { sequence: 21, identifier: certificate-pending, act: completion, title: Certificate remains pending, persona: buyer, route: /storyboards/property-reservation-mvp/frames/certificate-pending, stage: receipt, expected: DOCUMENT-RESERVATION-CERTIFICATE, action: Confirm certification is not inferred from payment. }
-  - { sequence: 22, identifier: certificate-available, act: completion, title: Reservation Certificate available, persona: reservation-approver, route: /storyboards/property-reservation-mvp/frames/certificate-available, stage: certificate, expected: DOCUMENT-RESERVATION-CERTIFICATE, action: Observe the authored certificate. }
-  - { sequence: 23, identifier: reservation-certified, act: completion, title: Final lifecycle state, persona: reservation-approver, route: /storyboards/property-reservation-mvp/frames/reservation-certified, stage: certificate, expected: reservation_certified, action: Confirm the final lifecycle position. }
-  - { sequence: 24, identifier: final-browser-document, act: completion, title: Final unified browser document, persona: buyer, route: /storyboards/property-reservation-mvp/frames/final-browser-document, stage: certificate, expected: LOT-DEMO-101, action: Observe the final browser projection and ETag. }
-  - { sequence: 25, identifier: completed-summary, act: completion, title: Completed process summary, persona: operator, route: /storyboards/property-reservation-mvp/frames/completed-summary, stage: certificate, expected: Completed process, action: Summarize immutable evidence and projection boundaries. }
+  - sequence: 1
+    identifier: login
+    act: entering-system
+    title: Login
+    persona: operator
+    display_route: /login
+    stage: public
+    expected: Log in
+    action: Authenticate with an ephemeral fictional demonstration account.
+    capture: { type: application, route: /login, requires_authentication: false, expected_final_route: /login, production_surface: true }
+  - sequence: 2
+    identifier: authenticated-dashboard
+    act: entering-system
+    title: Authenticated landing page
+    persona: operator
+    display_route: /dashboard
+    stage: application
+    expected: Dashboard
+    action: Enter the authenticated workbench.
+    capture: { type: application, route: /dashboard, requires_authentication: true, expected_final_route: /dashboard, production_surface: true }
+  - sequence: 3
+    identifier: property-reservation-workspace
+    act: entering-system
+    title: Property Reservation workspace
+    persona: sales-representative
+    display_route: /profiles
+    stage: application
+    expected: Property Reservation
+    action: Inspect the repository-owned profile.
+    capture: { type: application, route: /profiles, requires_authentication: true, expected_final_route: /profiles, production_surface: true }
+  - sequence: 4
+    identifier: subject-inventory
+    act: entering-system
+    title: Reservation subject inventory
+    persona: sales-representative
+    display_route: /document-sets
+    stage: application
+    expected: PROPERTY-RESERVATION-MVP-ACCEPTANCE-000001
+    action: Review compilation subjects.
+    capture: { type: application, route: /document-sets, requires_authentication: true, expected_final_route: /document-sets, production_surface: true }
+  - sequence: 5
+    identifier: select-demonstration-subject
+    act: entering-system
+    title: Select demonstration subject
+    persona: sales-representative
+    display_route: /document-sets/PROPERTY-RESERVATION-MVP-ACCEPTANCE-000001
+    stage: application
+    expected: PROPERTY-RESERVATION-MVP-ACCEPTANCE-000001
+    action: Select the fictional reservation.
+    capture: { type: application, route: /document-sets/PROPERTY-RESERVATION-MVP-ACCEPTANCE-000001, requires_authentication: true, expected_final_route: /document-sets/PROPERTY-RESERVATION-MVP-ACCEPTANCE-000001, production_surface: true }
+  - sequence: 6
+    identifier: property-offering
+    act: starting-process
+    title: Property offering context
+    persona: buyer
+    display_route: /subjects/PROPERTY-RESERVATION-MVP-ACCEPTANCE-000001/documents/DOCUMENT-BROCHURE/browser
+    stage: application
+    expected: Property Brochure
+    action: Review the offered lot through the resolved brochure.
+    capture: { type: document, route: /subjects/PROPERTY-RESERVATION-MVP-ACCEPTANCE-000001/documents/DOCUMENT-BROCHURE/browser, requires_authentication: true, expected_final_route: /subjects/PROPERTY-RESERVATION-MVP-ACCEPTANCE-000001/documents/DOCUMENT-BROCHURE/browser, production_surface: true }
+  - sequence: 7
+    identifier: application
+    act: starting-process
+    title: Application
+    persona: buyer
+    display_route: /documents/DOCUMENT-APPLICATION/PROPERTY-RESERVATION-MVP-ACCEPTANCE-000001
+    stage: application
+    expected: Alicia Demonstration
+    action: Inspect the resolved application compiler view.
+    capture: { type: application, route: /documents/DOCUMENT-APPLICATION/PROPERTY-RESERVATION-MVP-ACCEPTANCE-000001, requires_authentication: true, expected_final_route: /documents/DOCUMENT-APPLICATION/PROPERTY-RESERVATION-MVP-ACCEPTANCE-000001, production_surface: true }
+  - sequence: 8
+    identifier: application-accepted
+    act: starting-process
+    title: Application accepted
+    persona: sales-representative
+    display_route: /document-sets/PROPERTY-RESERVATION-MVP-ACCEPTANCE-000001
+    stage: application
+    expected: application_accepted
+    action: Observe accepted application evidence in the real lifecycle inventory.
+    capture: { type: evidence, route: /document-sets/PROPERTY-RESERVATION-MVP-ACCEPTANCE-000001, requires_authentication: true, expected_final_route: /document-sets/PROPERTY-RESERVATION-MVP-ACCEPTANCE-000001, production_surface: true }
+  - sequence: 9
+    identifier: assessment
+    act: starting-process
+    title: Assessment stage
+    persona: reservation-approver
+    display_route: /document-sets/PROPERTY-RESERVATION-MVP-ACCEPTANCE-000001
+    stage: assessment
+    expected: assessment_completed
+    action: Inspect assessment lifecycle evidence in the real subject inventory.
+    capture: { type: evidence, route: /document-sets/PROPERTY-RESERVATION-MVP-ACCEPTANCE-000001, requires_authentication: true, expected_final_route: /document-sets/PROPERTY-RESERVATION-MVP-ACCEPTANCE-000001, production_surface: true }
+  - sequence: 10
+    identifier: assessment-completed
+    act: starting-process
+    title: Assessment completed
+    persona: reservation-approver
+    display_route: /storyboards/property-reservation-mvp/frames/assessment-completed
+    stage: assessment
+    expected: approved
+    action: Explain the approved assessment evidence where no dedicated product detail exists.
+    capture: { type: explanation, route: /storyboards/property-reservation-mvp/frames/assessment-completed, requires_authentication: true, expected_final_route: /storyboards/property-reservation-mvp/frames/assessment-completed, production_surface: false }
+  - sequence: 11
+    identifier: invoice-r1
+    act: commercial-commitment
+    title: Invoice revision 1
+    persona: sales-representative
+    display_route: /subjects/PROPERTY-RESERVATION-MVP-ACCEPTANCE-000001/documents/DOCUMENT-INVOICE/browser
+    stage: invoice-r1
+    expected: '50000'
+    action: Review the first immutable invoice through the real x-document route.
+    capture: { type: document, route: /subjects/PROPERTY-RESERVATION-MVP-ACCEPTANCE-000001/documents/DOCUMENT-INVOICE/browser, requires_authentication: true, expected_final_route: /subjects/PROPERTY-RESERVATION-MVP-ACCEPTANCE-000001/documents/DOCUMENT-INVOICE/browser, production_surface: true }
+  - sequence: 12
+    identifier: invoice-r2
+    act: commercial-commitment
+    title: Corrected invoice revision 2
+    persona: sales-representative
+    display_route: /subjects/PROPERTY-RESERVATION-MVP-ACCEPTANCE-000001/documents/DOCUMENT-INVOICE/browser
+    stage: invoice-r2
+    expected: '51000'
+    action: Review the corrected immutable revision through the real x-document route.
+    capture: { type: document, route: /subjects/PROPERTY-RESERVATION-MVP-ACCEPTANCE-000001/documents/DOCUMENT-INVOICE/browser, requires_authentication: true, expected_final_route: /subjects/PROPERTY-RESERVATION-MVP-ACCEPTANCE-000001/documents/DOCUMENT-INVOICE/browser, production_surface: true }
+  - sequence: 13
+    identifier: invoice-browser-document
+    act: commercial-commitment
+    title: Unified browser invoice
+    persona: buyer
+    display_route: /subjects/PROPERTY-RESERVATION-MVP-ACCEPTANCE-000001/documents/DOCUMENT-INVOICE/browser
+    stage: invoice-r2
+    expected: Reservation Invoice
+    action: Observe the real x-document browser composition.
+    capture: { type: document, route: /subjects/PROPERTY-RESERVATION-MVP-ACCEPTANCE-000001/documents/DOCUMENT-INVOICE/browser, requires_authentication: true, expected_final_route: /subjects/PROPERTY-RESERVATION-MVP-ACCEPTANCE-000001/documents/DOCUMENT-INVOICE/browser, production_surface: true }
+  - sequence: 14
+    identifier: invoice-readiness
+    act: commercial-commitment
+    title: Lifecycle and readiness
+    persona: operator
+    display_route: /document-sets/PROPERTY-RESERVATION-MVP-ACCEPTANCE-000001
+    stage: invoice-r2
+    expected: payment_evidence_submitted
+    action: Explain the next required evidence through the real document inventory.
+    capture: { type: application, route: /document-sets/PROPERTY-RESERVATION-MVP-ACCEPTANCE-000001, requires_authentication: true, expected_final_route: /document-sets/PROPERTY-RESERVATION-MVP-ACCEPTANCE-000001, production_surface: true }
+  - sequence: 15
+    identifier: payment-evidence-stage
+    act: manual-payment
+    title: Payment evidence stage
+    persona: buyer
+    display_route: /document-sets/PROPERTY-RESERVATION-MVP-ACCEPTANCE-000001
+    stage: payment-evidence
+    expected: payment_evidence_submitted
+    action: Observe submitted proof as evidence, not approval, in the real lifecycle inventory.
+    capture: { type: evidence, route: /document-sets/PROPERTY-RESERVATION-MVP-ACCEPTANCE-000001, requires_authentication: true, expected_final_route: /document-sets/PROPERTY-RESERVATION-MVP-ACCEPTANCE-000001, production_surface: true }
+  - sequence: 16
+    identifier: proof-submitted
+    act: manual-payment
+    title: Proof submitted
+    persona: buyer
+    display_route: /storyboards/property-reservation-mvp/frames/proof-submitted
+    stage: payment-evidence
+    expected: FICTIONAL-MANUAL-PROOF-101
+    action: Explain the fictional proof where no production evidence-detail page exists.
+    capture: { type: explanation, route: /storyboards/property-reservation-mvp/frames/proof-submitted, requires_authentication: true, expected_final_route: /storyboards/property-reservation-mvp/frames/proof-submitted, production_surface: false }
+  - sequence: 17
+    identifier: receipt-pending
+    act: manual-payment
+    title: Receipt remains pending
+    persona: buyer
+    display_route: /document-sets/PROPERTY-RESERVATION-MVP-ACCEPTANCE-000001
+    stage: payment-evidence
+    expected: DOCUMENT-RECEIPT
+    action: Confirm in the real inventory that GNE does not fabricate a receipt.
+    capture: { type: application, route: /document-sets/PROPERTY-RESERVATION-MVP-ACCEPTANCE-000001, requires_authentication: true, expected_final_route: /document-sets/PROPERTY-RESERVATION-MVP-ACCEPTANCE-000001, production_surface: true }
+  - sequence: 18
+    identifier: payment-review
+    act: manual-payment
+    title: Back-office payment review
+    persona: payment-reviewer
+    display_route: /storyboards/property-reservation-mvp/frames/payment-review
+    stage: payment-evidence
+    expected: PaymentApproval
+    action: Explain review evidence without pretending a production approval screen exists.
+    capture: { type: explanation, route: /storyboards/property-reservation-mvp/frames/payment-review, requires_authentication: true, expected_final_route: /storyboards/property-reservation-mvp/frames/payment-review, production_surface: false }
+  - sequence: 19
+    identifier: payment-approved
+    act: manual-payment
+    title: Payment approval accepted
+    persona: payment-reviewer
+    display_route: /document-sets/PROPERTY-RESERVATION-MVP-ACCEPTANCE-000001
+    stage: payment-approval
+    expected: payment_approved
+    action: Observe separately authored approval in the real lifecycle inventory.
+    capture: { type: evidence, route: /document-sets/PROPERTY-RESERVATION-MVP-ACCEPTANCE-000001, requires_authentication: true, expected_final_route: /document-sets/PROPERTY-RESERVATION-MVP-ACCEPTANCE-000001, production_surface: true }
+  - sequence: 20
+    identifier: receipt-available
+    act: completion
+    title: Official Receipt available
+    persona: operator
+    display_route: /subjects/PROPERTY-RESERVATION-MVP-ACCEPTANCE-000001/documents/DOCUMENT-RECEIPT/browser
+    stage: receipt
+    expected: Reservation Receipt
+    action: Observe the authored receipt through the real x-document route.
+    capture: { type: document, route: /subjects/PROPERTY-RESERVATION-MVP-ACCEPTANCE-000001/documents/DOCUMENT-RECEIPT/browser, requires_authentication: true, expected_final_route: /subjects/PROPERTY-RESERVATION-MVP-ACCEPTANCE-000001/documents/DOCUMENT-RECEIPT/browser, production_surface: true }
+  - sequence: 21
+    identifier: certificate-pending
+    act: completion
+    title: Certificate remains pending
+    persona: buyer
+    display_route: /document-sets/PROPERTY-RESERVATION-MVP-ACCEPTANCE-000001
+    stage: receipt
+    expected: DOCUMENT-RESERVATION-CERTIFICATE
+    action: Confirm in the real inventory that certification is not inferred from payment.
+    capture: { type: application, route: /document-sets/PROPERTY-RESERVATION-MVP-ACCEPTANCE-000001, requires_authentication: true, expected_final_route: /document-sets/PROPERTY-RESERVATION-MVP-ACCEPTANCE-000001, production_surface: true }
+  - sequence: 22
+    identifier: certificate-available
+    act: completion
+    title: Reservation Certificate available
+    persona: reservation-approver
+    display_route: /subjects/PROPERTY-RESERVATION-MVP-ACCEPTANCE-000001/documents/DOCUMENT-RESERVATION-CERTIFICATE/browser
+    stage: certificate
+    expected: Reservation Certificate
+    action: Observe the authored certificate through the real x-document route.
+    capture: { type: document, route: /subjects/PROPERTY-RESERVATION-MVP-ACCEPTANCE-000001/documents/DOCUMENT-RESERVATION-CERTIFICATE/browser, requires_authentication: true, expected_final_route: /subjects/PROPERTY-RESERVATION-MVP-ACCEPTANCE-000001/documents/DOCUMENT-RESERVATION-CERTIFICATE/browser, production_surface: true }
+  - sequence: 23
+    identifier: reservation-certified
+    act: completion
+    title: Final lifecycle state
+    persona: reservation-approver
+    display_route: /document-sets/PROPERTY-RESERVATION-MVP-ACCEPTANCE-000001
+    stage: certificate
+    expected: reservation_certified
+    action: Confirm the final lifecycle position on the real subject page.
+    capture: { type: application, route: /document-sets/PROPERTY-RESERVATION-MVP-ACCEPTANCE-000001, requires_authentication: true, expected_final_route: /document-sets/PROPERTY-RESERVATION-MVP-ACCEPTANCE-000001, production_surface: true }
+  - sequence: 24
+    identifier: final-browser-document
+    act: completion
+    title: Final unified browser document
+    persona: buyer
+    display_route: /subjects/PROPERTY-RESERVATION-MVP-ACCEPTANCE-000001/documents/DOCUMENT-RESERVATION-CERTIFICATE/browser
+    stage: certificate
+    expected: LOT-DEMO-101
+    action: Observe the final x-document output and ETag-bearing response.
+    capture: { type: document, route: /subjects/PROPERTY-RESERVATION-MVP-ACCEPTANCE-000001/documents/DOCUMENT-RESERVATION-CERTIFICATE/browser, requires_authentication: true, expected_final_route: /subjects/PROPERTY-RESERVATION-MVP-ACCEPTANCE-000001/documents/DOCUMENT-RESERVATION-CERTIFICATE/browser, production_surface: true }
+  - sequence: 25
+    identifier: completed-summary
+    act: completion
+    title: Completed process summary
+    persona: operator
+    display_route: /document-sets/PROPERTY-RESERVATION-MVP-ACCEPTANCE-000001
+    stage: certificate
+    expected: reservation_certified
+    action: Summarize immutable evidence and projection boundaries on the real subject inventory.
+    capture: { type: application, route: /document-sets/PROPERTY-RESERVATION-MVP-ACCEPTANCE-000001, requires_authentication: true, expected_final_route: /document-sets/PROPERTY-RESERVATION-MVP-ACCEPTANCE-000001, production_surface: true }

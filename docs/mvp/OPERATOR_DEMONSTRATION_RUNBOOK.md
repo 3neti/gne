@@ -25,7 +25,7 @@ php artisan gne:mvp:smoke
 php artisan gne:storyboard property-reservation-mvp --capture --json
 ```
 
-The runner derives its host from `APP_URL`, prepares stages in isolated repositories, captures authenticated read-only observation pages, validates visible markers, and removes its temporary user. Outputs are beneath `.gne/storyboards/property-reservation-mvp/`.
+The runner derives its host from `APP_URL`, prepares stages in isolated repositories, opens a fresh browser context, captures `/login`, submits the actual login form, and preserves that same session while navigating the real protected GNE and x-document routes. Each frame must verify its final route, HTTP response, visible marker, and absence of login redirects or error pages before it becomes `captured_and_verified`. Three lifecycle concepts without a dedicated production surface remain explicitly labeled explanation frames. The runner removes its ephemeral fictional operator and records only safe authentication proof—never credentials, cookies, CSRF tokens, or headers. Outputs are beneath `.gne/storyboards/property-reservation-mvp/`.
 
 The final build order is capture, capture verification, finalized frame fingerprint, static HTML, Chromium PDF, narration/movie inventory, and report. Open `html/index.html` directly in a browser for the offline walkthrough; it uses only relative local assets and requires no server or JavaScript. The PDF is printed from `html/print.html`. Both final renditions reject planned, missing, or checksum-mismatched screenshots. A run without `--capture` is explicitly draft-only and removes any previous final PDF to prevent accidental reuse.
 

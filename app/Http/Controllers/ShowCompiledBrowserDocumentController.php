@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Application\Storyboard\ResolveStoryboardRepositoryRoot;
 use App\Domain\Compilation\CompilationSubjectNotFound;
 use App\Domain\Compilation\DocumentDefinitionNotFound;
 use App\Domain\Compilation\DocumentResolutionException;
@@ -19,6 +20,7 @@ final class ShowCompiledBrowserDocumentController extends Controller
         Request $request,
         string $subject,
         string $document,
+        ResolveStoryboardRepositoryRoot $roots,
         BrowserDocumentRepresentationResolver $resolver,
         DocumentHttpResponseFactory $responses,
     ): Response {
@@ -26,7 +28,7 @@ final class ShowCompiledBrowserDocumentController extends Controller
         $representation = $this->representation($request);
 
         try {
-            $hostResponse = $resolver->handle(base_path(), $document, $subject, $representation);
+            $hostResponse = $resolver->handle($roots->handle($request), $document, $subject, $representation);
         } catch (DocumentDefinitionNotFound|CompilationSubjectNotFound $exception) {
             abort(404, $exception->getMessage());
         } catch (DocumentResolutionException $exception) {

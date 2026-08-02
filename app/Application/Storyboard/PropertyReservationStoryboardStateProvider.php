@@ -28,47 +28,53 @@ final class PropertyReservationStoryboardStateProvider
     public function snapshot(string $sourceRoot, string $stage): array
     {
         $root = sys_get_temp_dir().'/gne-storyboard-state-'.Str::uuid();
-        $this->files->makeDirectory($root, 0755, true);
-        $this->files->copy($sourceRoot.'/GENEI.md', $root.'/GENEI.md');
-        $this->files->copy($sourceRoot.'/gne.yaml', $root.'/gne.yaml');
-        $this->files->copyDirectory($sourceRoot.'/business', $root.'/business');
-
         try {
-            $this->apply($root, $stage);
-            $manifest = $this->validator->handle($root);
-            if ($manifest->hasErrors()) {
-                throw new \RuntimeException('Prepared storyboard repository did not validate.');
-            }
-            $set = $this->sets->handle($root, $manifest, new CompilationSubject(self::Subject, self::SubjectType));
-            $document = $this->documentForStage($stage);
-            $entry = collect($set->entries)->firstWhere('definitionIdentifier', $document);
-            $browser = $entry?->readiness === DocumentReadiness::Resolved
-                ? $this->browser->handle($root, $document, self::Subject)
-                : null;
-
-            return [
-                'stage' => $stage,
-                'repository_fingerprint' => $manifest->fingerprint,
-                'subject' => ['identifier' => self::Subject, 'type' => self::SubjectType],
-                'lifecycle' => $set->lifecyclePosition->toArray(),
-                'document_set_fingerprint' => $set->fingerprint,
-                'documents' => array_map(fn ($item): array => [
-                    'identifier' => $item->definitionIdentifier,
-                    'readiness' => $item->readiness->value,
-                    'missing_evidence' => array_map(fn ($missing): array => $missing->toArray(), $item->missingEvidence),
-                ], $set->entries),
-                'artifact_identifiers' => collect($manifest->artifacts)
-                    ->where('subject.identifier', self::Subject)->pluck('identifier')->unique()->sort()->values()->all(),
-                'browser' => $browser === null ? null : [
-                    'document' => $document,
-                    'checksum' => $browser->output->checksum,
-                    'etag' => $browser->etag,
-                    'representation' => $browser->descriptor->representation->value,
-                ],
-            ];
+            return $this->prepareSnapshot($sourceRoot, $stage, $root);
         } finally {
             $this->files->deleteDirectory($root);
         }
+    }
+
+    /** @return array<string, mixed> */
+    public function prepareSnapshot(string $sourceRoot, string $stage, string $targetRoot): array
+    {
+        $this->files->deleteDirectory($targetRoot);
+        $this->files->makeDirectory($targetRoot, 0755, true);
+        $this->files->copy($sourceRoot.'/GENEI.md', $targetRoot.'/GENEI.md');
+        $this->files->copy($sourceRoot.'/gne.yaml', $targetRoot.'/gne.yaml');
+        $this->files->copyDirectory($sourceRoot.'/business', $targetRoot.'/business');
+        $this->apply($targetRoot, $stage);
+        $manifest = $this->validator->handle($targetRoot);
+        if ($manifest->hasErrors()) {
+            throw new \RuntimeException('Prepared storyboard repository did not validate.');
+        }
+        $set = $this->sets->handle($targetRoot, $manifest, new CompilationSubject(self::Subject, self::SubjectType));
+        $document = $this->documentForStage($stage);
+        $entry = collect($set->entries)->firstWhere('definitionIdentifier', $document);
+        $browser = $entry?->readiness === DocumentReadiness::Resolved
+            ? $this->browser->handle($targetRoot, $document, self::Subject)
+            : null;
+
+        return [
+            'stage' => $stage,
+            'repository_fingerprint' => $manifest->fingerprint,
+            'subject' => ['identifier' => self::Subject, 'type' => self::SubjectType],
+            'lifecycle' => $set->lifecyclePosition->toArray(),
+            'document_set_fingerprint' => $set->fingerprint,
+            'documents' => array_map(fn ($item): array => [
+                'identifier' => $item->definitionIdentifier,
+                'readiness' => $item->readiness->value,
+                'missing_evidence' => array_map(fn ($missing): array => $missing->toArray(), $item->missingEvidence),
+            ], $set->entries),
+            'artifact_identifiers' => collect($manifest->artifacts)
+                ->where('subject.identifier', self::Subject)->pluck('identifier')->unique()->sort()->values()->all(),
+            'browser' => $browser === null ? null : [
+                'document' => $document,
+                'checksum' => $browser->output->checksum,
+                'etag' => $browser->etag,
+                'representation' => $browser->descriptor->representation->value,
+            ],
+        ];
     }
 
     private function apply(string $root, string $stage): void
