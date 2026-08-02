@@ -69,6 +69,41 @@ Reviewed baselines:
 
 Baseline attestation needs local symlinked Composer path packages and Git. Browser delivery does not execute Git and continues to depend only on installed runtime classes.
 
+## Repeatable end-to-end acceptance demonstration
+
+Run the complete scenario with:
+
+```bash
+php artisan test --compact tests/Feature/PropertyReservationMvpAcceptanceTest.php
+```
+
+The suite copies `GENEI.md`, `gne.yaml`, and `business/` into a unique temporary repository. It then adds fictional accepted evidence in this order:
+
+```text
+PropertyOffering + Application
+→ Assessment
+→ Invoice revision 1
+→ Invoice revision 2
+→ PaymentEvidence
+→ PaymentApproval
+→ Receipt
+→ ReservationCertificate
+```
+
+At each step it validates the copied repository, selects the subject-bound artifact chain, builds the lifecycle/document inventory, and resolves the currently available browser representation. The authenticated browser route is exercised against the temporary repository through the same GNE resolver, x-document runtime, and x-document-laravel response factory used by the application.
+
+To perform the equivalent authoring ceremony manually in a disposable repository copy:
+
+1. Begin with a new subject containing immutable `PropertyOffering` and `Application` files.
+2. Run `php artisan gne:validate` and inspect `php artisan gne:documents --subject=<subject> --json` against that repository environment.
+3. Add exactly one new artifact file for the next stage; never edit an accepted artifact in place.
+4. Revalidate and rebuild disposable projections where the environment uses them.
+5. Refresh the resolved browser route and compare its strong ETag.
+6. For a correction, retain revision 1 and add revision 2 under the same artifact identifier.
+7. Repeat through `ReservationCertificate`, then confirm all earlier files and checksums remain present.
+
+The automated suite is the authoritative repeatable demonstration because it supplies the isolated repository root safely and cleans it afterward. The checked-out canonical `business/` tree is never used as mutable test state. Detailed deterministic evidence is recorded in the [Property Reservation Acceptance Report](PROPERTY_RESERVATION_ACCEPTANCE_REPORT.md).
+
 ## Troubleshooting
 
 - A failed baseline check means the sibling package source is not at the reviewed commit; inspect it before updating Composer metadata.

@@ -43,6 +43,8 @@ For the completed example, log in at the configured `APP_URL` and open `/subject
 
 The x-document contract `1.0` is closed under `resources/gne/contracts/x-document/1.0/`. Its standalone resolved-document schema is authoritative and referenced by the request schema through stable versioned IDs. GNE's runtime adapter crosses this boundary as canonical JSON and lets the real x-document package validate and express it; no repository service or internal IR is passed to the package.
 
+The Property Reservation MVP now has a complete isolated acceptance proof from application through reservation certification. It adds immutable fictional artifacts stage by stage, exercises real validation, chain selection, lifecycle inventory, x-document composition, authenticated GET/HEAD/conditional delivery, revision retention, and subject isolation without modifying canonical repository source. See the [acceptance report](docs/mvp/PROPERTY_RESERVATION_ACCEPTANCE_REPORT.md).
+
 `business/` is canonical source, `app/` interprets and projects it, and `.gne/` is disposable generated state. Configuration version 1 requires relative canonical/generated paths and an optional enabled-profile list in `gne.yaml`.
 
 Canonical orientation: [GENEI.md](GENEI.md), [ARCHITECTURE.md](ARCHITECTURE.md), [GRAMMAR.md](GRAMMAR.md), [DECISION_REGISTER.md](DECISION_REGISTER.md), [COMPASS.md](COMPASS.md), and [IMPLEMENTATION_STATUS.md](IMPLEMENTATION_STATUS.md).

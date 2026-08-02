@@ -1,15 +1,15 @@
 # GNE Compass
 
-**Current milestone:** Authenticated Browser Delivery through x-document-laravel
+**Current milestone:** End-to-End Property Reservation Acceptance Flow
 **North star:** The business belongs to the repository. Everything operational is a projection.
 
 ## Completed
 
-Canonical cognition, portable discovery, declaration-driven profiles, byte-complete fingerprints, immutable artifacts, semantic/database projections, and the authenticated workbench are established. Fully resolved documents cross canonical contract JSON into x-document and are delivered unchanged through x-document-laravel at an authenticated GET/HEAD route. Strong and weak ETag refresh, bodyless 304, exact length and media type, readiness-driven workbench navigation, real contract smoke, exact dependency attestation, and Herd-accurate environment guidance with host-neutral routing are established.
+Canonical cognition, portable discovery, declaration-driven profiles, byte-complete fingerprints, immutable artifacts, semantic/database projections, and the authenticated workbench are established. Fully resolved documents cross canonical contract JSON into x-document and are delivered unchanged through x-document-laravel at an authenticated GET/HEAD route. The complete Property Reservation progression is now proven in an isolated repository with immutable invoice revisions, readiness changes, exact browser bytes, stable and changing ETags, and subject isolation. Demonstrable MVP is achieved without claiming production readiness.
 
 ## Immediate direction
 
-Prove the complete Property Reservation acceptance progression from repository-authored evidence through lifecycle readiness and authenticated unified document delivery.
+Harden target deployment and the repeatable operator demonstration while preserving the accepted repository/compiler/document boundaries.
 
 ## Explicit deferrals
 
@@ -21,4 +21,4 @@ Validation supports the implemented document grammar and JSON Schema 2020-12 but
 
 ## Recommended next task
 
-**End-to-End Property Reservation Acceptance Flow** — demonstrate one complete operator-facing progression while keeping accepted facts immutable and actions non-executable until explicitly designed.
+**Target Deployment and Operator Demonstration Hardening** — prove the reviewed MVP in its target environment and close the remaining operational demonstration gaps without expanding product scope.
