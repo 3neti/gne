@@ -2,6 +2,8 @@
 
 The MVP demonstrates that accepted Property Reservation evidence can be resolved by GNE, expressed by x-document, and delivered unchanged by x-document-laravel to an authenticated browser user.
 
+The repeatable reconstructed demonstration is documented in `OPERATOR_DEMONSTRATION_RUNBOOK.md` and `PROPERTY_RESERVATION_STORYBOARD_REPORT.md`. It uses fictional isolated states and is neither an authoring workflow nor a production-readiness claim.
+
 ## Local installation with Laravel Herd
 
 1. Confirm this repository directory is parked or linked through Laravel Herd.

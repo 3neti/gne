@@ -4,6 +4,7 @@ use App\Http\Controllers\DocumentSetController;
 use App\Http\Controllers\RepositoryWorkbenchController;
 use App\Http\Controllers\ResolvedDocumentController;
 use App\Http\Controllers\ShowCompiledBrowserDocumentController;
+use App\Http\Controllers\StoryboardFrameController;
 use Illuminate\Support\Facades\Route;
 
 Route::inertia('/', 'Welcome')->name('home');
@@ -20,6 +21,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('document-sets/{subject}', [DocumentSetController::class, 'show'])->name('document_sets.show');
     Route::get('documents/{document}/{subject}', ResolvedDocumentController::class)->name('documents.show');
     Route::match(['GET', 'HEAD'], 'subjects/{subject}/documents/{document}/browser', ShowCompiledBrowserDocumentController::class)->name('documents.browser');
+    Route::get('storyboards/{storyboard}/frames/{frame}', StoryboardFrameController::class)->name('storyboards.frames.show');
 });
 
 require __DIR__.'/settings.php';

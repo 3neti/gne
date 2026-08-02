@@ -101,3 +101,11 @@ Each accepted decision is durable until superseded by another recorded decision.
 ## ADR-025 — Runtime dependency baselines are attested outside requests
 
 **Status:** Accepted — 2026-08-01. **Context:** Composer `dev-main` labels and hardcoded compatibility booleans cannot prove which local source is installed. **Decision:** Resolve each Composer install path and compare its actual Git HEAD with the reviewed commit during diagnostics, tests, and deployment smoke checks. Compile a known invoice as the contract smoke proof. Never execute Git on the browser request path. **Rationale:** Deployment claims require evidence without making user delivery depend on development tooling. **Consequences:** Baseline mismatch fails `gne:mvp:smoke`; diagnostics distinguish installation, commit match, contract smoke, binding, and route availability. **Rejected:** Unconditional compatibility truth, per-request Git calls, and undocumented moving baselines.
+
+## ADR-026 — Storyboards are derived demonstration projections
+
+**Status:** Accepted — 2026-08-02. **Decision:** Keep choreography in `docs/mvp/storyboards`, reconstruct fictional states in isolated repositories, observe compiler results through authenticated capture pages, and write disposable output under `.gne/storyboards`. **Rationale:** Demonstrations remain faithful and subordinate to repository evidence. **Rejected:** Storyboards as lifecycle authority or generated binaries under `business/`.
+
+## ADR-027 — The temporary GNE storyboard preserves an extraction seam
+
+**Status:** Accepted — 2026-08-02. **Decision:** Separate portable definition/frame/build boundaries from the Property Reservation state adapter and Laravel observation route. **Rationale:** A future `3neti/x-storyboard` may extract orchestration without absorbing GNE business compilation. **Rejected:** Immediate package creation or storyboard behavior inside x-document.

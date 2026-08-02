@@ -48,3 +48,7 @@ The Property Reservation MVP now has a complete isolated acceptance proof from a
 `business/` is canonical source, `app/` interprets and projects it, and `.gne/` is disposable generated state. Configuration version 1 requires relative canonical/generated paths and an optional enabled-profile list in `gne.yaml`.
 
 Canonical orientation: [GENEI.md](GENEI.md), [ARCHITECTURE.md](ARCHITECTURE.md), [GRAMMAR.md](GRAMMAR.md), [DECISION_REGISTER.md](DECISION_REGISTER.md), [COMPASS.md](COMPASS.md), and [IMPLEMENTATION_STATUS.md](IMPLEMENTATION_STATUS.md).
+
+## Repository-native storyboard
+
+`php artisan gne:storyboard property-reservation-mvp --capture --json` reconstructs fictional acceptance states in isolated repositories and captures authenticated observation pages using `APP_URL`. Canonical choreography is under `docs/mvp/storyboards/`; disposable output is under `.gne/storyboards/`. See the [operator runbook](docs/mvp/OPERATOR_DEMONSTRATION_RUNBOOK.md) and [storyboard report](docs/mvp/PROPERTY_RESERVATION_STORYBOARD_REPORT.md).

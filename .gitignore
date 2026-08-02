@@ -18,6 +18,7 @@
 !/.gne/projections/.gitkeep
 /.gne/reports/*
 !/.gne/reports/.gitkeep
+/.gne/storyboards/*
 /vendor
 .DS_Store
 .env

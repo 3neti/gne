@@ -1,6 +1,6 @@
 # GNE Compass
 
-**Current milestone:** End-to-End Property Reservation Acceptance Flow
+**Current milestone:** Target Deployment, Operator Demonstration, and Storyboard Artifact Hardening
 **North star:** The business belongs to the repository. Everything operational is a projection.
 
 ## Completed
@@ -21,4 +21,4 @@ Validation supports the implemented document grammar and JSON Schema 2020-12 but
 
 ## Recommended next task
 
-**Target Deployment and Operator Demonstration Hardening** — prove the reviewed MVP in its target environment and close the remaining operational demonstration gaps without expanding product scope.
+**Deliberate Subject Authorization** — replace the broad authenticated demonstration gate with explicit subject-level authority while preserving repository-native identity and compiler/document boundaries.

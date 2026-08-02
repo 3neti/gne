@@ -16,6 +16,8 @@ arch('commands delegate repository behavior')
     ->toOnlyUse([
         'App\Domain',
         'App\Integration',
+        'App\Application',
+        'App\Infrastructure',
         'Illuminate\Console',
         'Illuminate\Filesystem',
         'Illuminate\Support',
@@ -25,6 +27,7 @@ arch('commands delegate repository behavior')
         'JsonException',
         'base_path',
         'collect',
+        'config',
     ]);
 
 it('keeps canonical source and generated projections in separate roots', function () {
@@ -262,4 +265,14 @@ it('versions the x-document contract schema in its repository path', function ()
         ->and($result['$id'])->toBe('https://3neti.dev/contracts/x-document/1.0/compilation-result.schema.json')
         ->and($request['properties']['document'])->toBe(['$ref' => $document['$id']])
         ->and($request)->not->toHaveKey('$defs');
+});
+
+arch('storyboard domain models remain driver neutral and persistence free')
+    ->expect('App\Domain\Storyboard')
+    ->not->toUse(['App\Models', 'App\Integration\XDocument', 'Illuminate\Database\Eloquent', 'Illuminate\Http', 'Inertia', 'LBHurtado\XDocument', 'LBHurtado\XDocumentLaravel']);
+
+it('keeps demonstration choreography outside canonical business source', function () {
+    expect(dirname(__DIR__, 2).'/docs/mvp/storyboards/property-reservation-mvp.yaml')->toBeFile()
+        ->and(dirname(__DIR__, 2).'/docs/mvp/STORYBOARD_REFERENCE_REVIEW.md')->toBeFile()
+        ->and(dirname(__DIR__, 2).'/business/profiles/property-reservation/storyboards')->not->toBeDirectory();
 });

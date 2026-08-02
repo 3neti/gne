@@ -1,5 +1,7 @@
 # GNE Grammar
 
+A **Storyboard Definition** is canonical demonstration choreography, not business source. A **Frame** is an ordered observation with act, persona, route, stage, action, expected marker, and capture target. A **Snapshot** records repository, subject, lifecycle, document-set, browser, and artifact evidence. A **Storyboard Manifest** binds frames to snapshots and disposable projections.
+
 | Term | Canonical meaning |
 |---|---|
 | GNE | Repository-native Business Compiler and runtime control plane. |
