@@ -28,6 +28,7 @@ arch('commands delegate repository behavior')
         'base_path',
         'collect',
         'config',
+        'route',
     ]);
 
 it('keeps canonical source and generated projections in separate roots', function () {
@@ -275,4 +276,27 @@ it('keeps demonstration choreography outside canonical business source', functio
     expect(dirname(__DIR__, 2).'/docs/mvp/storyboards/property-reservation-mvp.yaml')->toBeFile()
         ->and(dirname(__DIR__, 2).'/docs/mvp/STORYBOARD_REFERENCE_REVIEW.md')->toBeFile()
         ->and(dirname(__DIR__, 2).'/business/profiles/property-reservation/storyboards')->not->toBeDirectory();
+});
+
+arch('storyboard rendition infrastructure consumes finalized evidence without compiling business meaning')
+    ->expect([
+        'App\Infrastructure\Storyboard\StoryboardHtmlRenderer',
+        'App\Infrastructure\Storyboard\PrintStoryboardPdf',
+    ])
+    ->not->toUse([
+        'App\Domain\Repository',
+        'App\Domain\Compilation',
+        'App\Integration\XDocument',
+        'App\Models',
+        'Illuminate\Database',
+        'Illuminate\Http',
+    ]);
+
+it('keeps one post-capture HTML-to-PDF path and no metadata-only storyboard PDF renderer', function () {
+    $root = dirname(__DIR__, 2);
+    $command = file_get_contents($root.'/app/Console/Commands/GneStoryboardCommand.php');
+
+    expect($root.'/app/Infrastructure/Storyboard/StoryboardPdfRenderer.php')->not->toBeFile()
+        ->and($command)->toContain('StoryboardHtmlRenderer', 'PrintStoryboardPdf')
+        ->and($command)->not->toContain('StoryboardPdfRenderer');
 });

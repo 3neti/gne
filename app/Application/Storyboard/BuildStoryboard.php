@@ -20,6 +20,7 @@ final readonly class BuildStoryboard
         $this->files->ensureDirectoryExists($output.'/pdf');
         $this->files->ensureDirectoryExists($output.'/movie');
         $this->files->ensureDirectoryExists($output.'/reports');
+        $this->files->deleteDirectory($output.'/html');
         $snapshots = [];
         $frames = [];
         foreach ($definition->frames as $frame) {
@@ -33,6 +34,7 @@ final readonly class BuildStoryboard
                 'capture_route' => $frame->identifier === 'login' ? '/login' : '/storyboards/'.$definition->identifier.'/frames/'.$frame->identifier,
                 'capture_status' => 'planned',
                 'capture_checksum' => null,
+                'capture_byte_length' => null,
                 'snapshot' => $snapshot,
                 'duration_seconds' => 4,
                 'transition' => 'cut',
@@ -47,6 +49,7 @@ final readonly class BuildStoryboard
             'personas' => $definition->personas,
             'frames' => $frames,
             'outputs' => [
+                'html' => ['format' => 'gne-storyboard-html/1.0', 'status' => 'planned'],
                 'pdf' => ['path' => 'pdf/'.$definition->identifier.'.pdf', 'status' => 'planned'],
                 'movie' => ['path' => 'movie/'.$definition->identifier.'.mp4', 'status' => 'build_ready'],
             ],
@@ -77,6 +80,27 @@ final readonly class BuildStoryboard
         $this->files->put($output.'/narration.md', $this->narration($definition, $frames));
 
         return $manifest;
+    }
+
+    /** @param array<string, mixed> $manifest */
+    public function finalizeMovie(string $repositoryRoot, array $manifest): void
+    {
+        $output = $repositoryRoot.'/.gne/storyboards/'.$manifest['identifier'];
+        $frames = array_map(fn (array $frame): array => [
+            'file' => $frame['capture_filename'],
+            'sha256' => $frame['capture_checksum'],
+            'byte_length' => $frame['capture_byte_length'],
+            'duration_seconds' => $frame['duration_seconds'],
+            'transition' => $frame['transition'],
+        ], $manifest['frames']);
+        $this->writeJson($output.'/movie/manifest.json', [
+            'format' => 'gne-storyboard-movie/1.0',
+            'storyboard' => $manifest['identifier'],
+            'source_manifest_fingerprint' => $manifest['finalized_frame_fingerprint'],
+            'frames' => $frames,
+            'encoder' => 'ffmpeg',
+            'status' => 'build_ready',
+        ]);
     }
 
     /** @param array<string, mixed> $manifest */

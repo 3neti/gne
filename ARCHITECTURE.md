@@ -2,7 +2,7 @@
 
 GNE is a standalone Laravel control plane around a repository-native compiler. Dependency direction is commands/controllers and infrastructure → domain services and values → repository evidence. Domain primitives have no Eloquent dependency.
 
-Storyboard observation follows `business repository → compiler → authenticated observation → manifest → image/PDF/movie projections`. Choreography cannot author lifecycle meaning. Generic definition/build concepts are separable from the Property Reservation state adapter; x-document and x-document-laravel remain unchanged.
+Storyboard observation follows `business repository → compiler → authenticated observation → finalized frame manifest → static HTML → PDF`, while the movie package consumes the same finalized frame inventory. Static HTML is the canonical presentation source for storyboard renditions, not canonical business truth. Final renderers reject planned, missing, or checksum-mismatched captures. Choreography cannot author lifecycle meaning. Generic definition/build concepts are separable from the Property Reservation state adapter; x-document and x-document-laravel remain unchanged.
 
 ```mermaid
 flowchart TD

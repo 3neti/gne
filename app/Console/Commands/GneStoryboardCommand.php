@@ -5,7 +5,8 @@ namespace App\Console\Commands;
 use App\Application\Storyboard\BuildStoryboard;
 use App\Application\Storyboard\LoadStoryboardDefinition;
 use App\Infrastructure\Storyboard\CaptureStoryboard;
-use App\Infrastructure\Storyboard\StoryboardPdfRenderer;
+use App\Infrastructure\Storyboard\PrintStoryboardPdf;
+use App\Infrastructure\Storyboard\StoryboardHtmlRenderer;
 use Illuminate\Console\Attributes\Description;
 use Illuminate\Console\Attributes\Signature;
 use Illuminate\Console\Command;
@@ -15,22 +16,32 @@ use Illuminate\Filesystem\Filesystem;
 #[Description('Build a deterministic repository-derived demonstration storyboard')]
 final class GneStoryboardCommand extends Command
 {
-    public function handle(LoadStoryboardDefinition $loader, BuildStoryboard $builder, StoryboardPdfRenderer $pdfs, CaptureStoryboard $capture, Filesystem $files): int
-    {
+    public function handle(
+        LoadStoryboardDefinition $loader,
+        BuildStoryboard $builder,
+        StoryboardHtmlRenderer $html,
+        PrintStoryboardPdf $pdfs,
+        CaptureStoryboard $capture,
+        Filesystem $files,
+    ): int {
         $identifier = (string) $this->argument('storyboard');
         $baseUrl = rtrim((string) ($this->option('base-url') ?: config('app.url')), '/');
         $definition = $loader->handle(base_path(), $identifier);
         $manifest = $builder->handle(base_path(), $definition, $baseUrl);
         $root = base_path('.gne/storyboards/'.$identifier);
         $pdfPath = $root.'/pdf/'.$identifier.'.pdf';
-        $files->put($pdfPath, $pdfs->render($manifest));
-        $manifest['outputs']['pdf'] = ['path' => 'pdf/'.$identifier.'.pdf', 'status' => 'generated', 'pages' => count($manifest['frames']) + 1, 'sha256' => hash_file('sha256', $pdfPath)];
+        $files->delete($pdfPath);
 
         $captureStatus = 'not_requested';
         if ($this->option('capture')) {
             $captureStatus = $capture->handle($this, $baseUrl, $root, $manifest);
             if ($captureStatus === 'captured') {
-                $manifest['outputs']['pdf'] = ['path' => 'pdf/'.$identifier.'.pdf', 'status' => 'generated', 'pages' => count($manifest['frames']) + 1, 'sha256' => hash_file('sha256', $pdfPath)];
+                $manifest['capture_status'] = $captureStatus;
+                $manifest['finalized_frame_fingerprint'] = $this->frameFingerprint($manifest['frames']);
+                $builder->persist(base_path(), $manifest);
+                $manifest['outputs']['html'] = $html->render($root, $manifest);
+                $manifest['outputs']['pdf'] = ['status' => 'generated', ...$pdfs->handle($root, $identifier, count($manifest['frames']))];
+                $builder->finalizeMovie(base_path(), $manifest);
             }
         }
         $manifest['capture_status'] = $captureStatus;
@@ -49,8 +60,13 @@ final class GneStoryboardCommand extends Command
             'screenshot_count' => $screenshotCount,
             'capture_status' => $captureStatus,
             'manifest' => $root.'/manifest.json',
-            'pdf' => $pdfPath,
-            'pdf_pages' => count($manifest['frames']) + 1,
+            'html' => $manifest['outputs']['html']['entrypoint'] ?? null,
+            'html_pages' => $manifest['outputs']['html']['page_count'] ?? 0,
+            'html_aggregate_fingerprint' => $manifest['outputs']['html']['aggregate_fingerprint'] ?? null,
+            'pdf' => is_file($pdfPath) ? $pdfPath : null,
+            'pdf_pages' => $manifest['outputs']['pdf']['pages'] ?? 0,
+            'pdf_screenshot_frames' => $manifest['outputs']['pdf']['screenshot_frames'] ?? 0,
+            'pdf_sha256' => $manifest['outputs']['pdf']['sha256'] ?? null,
             'movie_status' => 'build_ready',
             'movie_manifest' => $root.'/movie/manifest.json',
             'narration' => $root.'/narration.md',
@@ -63,10 +79,29 @@ final class GneStoryboardCommand extends Command
             $this->line('Frames: '.$report['frame_count']);
             $this->line('Screenshots: '.$report['screenshot_count']);
             $this->line('Capture: '.$captureStatus);
-            $this->line('PDF: '.$pdfPath);
+            $this->line('HTML: '.($report['html'] ?? 'requires --capture'));
+            $this->line('PDF: '.($report['pdf'] ?? 'requires --capture'));
             $this->line('Movie: build-ready manifest (FFmpeg optional)');
         }
 
         return $report['passed'] ? self::SUCCESS : self::FAILURE;
+    }
+
+    /** @param list<array<string, mixed>> $frames */
+    private function frameFingerprint(array $frames): string
+    {
+        $inventory = array_map(fn (array $frame): array => [
+            'sequence' => $frame['sequence'],
+            'identifier' => $frame['identifier'],
+            'capture_filename' => $frame['capture_filename'],
+            'capture_status' => $frame['capture_status'],
+            'capture_checksum' => $frame['capture_checksum'],
+            'capture_byte_length' => $frame['capture_byte_length'],
+            'snapshot' => $frame['snapshot'],
+            'duration_seconds' => $frame['duration_seconds'],
+            'transition' => $frame['transition'],
+        ], $frames);
+
+        return hash('sha256', json_encode($inventory, JSON_UNESCAPED_SLASHES | JSON_THROW_ON_ERROR));
     }
 }

@@ -27,6 +27,10 @@ php artisan gne:storyboard property-reservation-mvp --capture --json
 
 The runner derives its host from `APP_URL`, prepares stages in isolated repositories, captures authenticated read-only observation pages, validates visible markers, and removes its temporary user. Outputs are beneath `.gne/storyboards/property-reservation-mvp/`.
 
+The final build order is capture, capture verification, finalized frame fingerprint, static HTML, Chromium PDF, narration/movie inventory, and report. Open `html/index.html` directly in a browser for the offline walkthrough; it uses only relative local assets and requires no server or JavaScript. The PDF is printed from `html/print.html`. Both final renditions reject planned, missing, or checksum-mismatched screenshots. A run without `--capture` is explicitly draft-only and removes any previous final PDF to prevent accidental reuse.
+
+Expected final inventory: 25 PNG captures, 25 frame pages, five act pages, one index page, `html/manifest.json`, a 26-page PDF, narration, capture report, and movie build manifest. FFmpeg remains optional; when absent, use `movie/build.sh` later in an environment that provides it.
+
 ## Demonstrate and troubleshoot
 
 Log in, open `/document-sets`, select a subject, and open resolved browser documents. Explain that repository artifacts are immutable facts, readiness is derived, payment evidence is not approval, and receipt/certificate availability requires separate accepted evidence.

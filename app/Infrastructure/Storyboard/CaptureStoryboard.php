@@ -38,6 +38,7 @@ final class CaptureStoryboard
                 if (is_file($path)) {
                     $frame['capture_status'] = 'captured';
                     $frame['capture_checksum'] = hash_file('sha256', $path);
+                    $frame['capture_byte_length'] = filesize($path);
                 }
             }
             unset($frame);

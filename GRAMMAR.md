@@ -2,6 +2,8 @@
 
 A **Storyboard Definition** is canonical demonstration choreography, not business source. A **Frame** is an ordered observation with act, persona, route, stage, action, expected marker, and capture target. A **Snapshot** records repository, subject, lifecycle, document-set, browser, and artifact evidence. A **Storyboard Manifest** binds frames to snapshots and disposable projections.
 
+A **Captured Frame** has status `captured`, a local relative PNG reference, SHA-256, and byte length. `planned`, `failed`, and `skipped` are non-final states. A **Finalized Frame Inventory** is the ordered, fingerprinted source shared by HTML, PDF, and movie renditions. A **Storyboard HTML Rendition** (`gne-storyboard-html/1.0`) is a static offline presentation with an asset manifest; it neither executes actions nor authors business truth. **Draft Mode** validates and plans outputs without claiming final HTML/PDF. **Final Mode** requires every mandatory capture before rendering.
+
 | Term | Canonical meaning |
 |---|---|
 | GNE | Repository-native Business Compiler and runtime control plane. |

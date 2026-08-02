@@ -1,6 +1,6 @@
 # GNE Compass
 
-**Current milestone:** Target Deployment, Operator Demonstration, and Storyboard Artifact Hardening
+**Current milestone:** Storyboard HTML Rendition and Screenshot-Bearing Artifact Closure
 **North star:** The business belongs to the repository. Everything operational is a projection.
 
 ## Completed
@@ -9,7 +9,7 @@ Canonical cognition, portable discovery, declaration-driven profiles, byte-compl
 
 ## Immediate direction
 
-Harden target deployment and the repeatable operator demonstration while preserving the accepted repository/compiler/document boundaries.
+Preserve the now-portable operator demonstration and introduce deliberate subject authorization without changing compiler/document boundaries.
 
 ## Explicit deferrals
 
