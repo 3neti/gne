@@ -13,7 +13,18 @@ use Illuminate\Support\Collection;
 
 final class ResolveDoctorAvailability
 {
-    /** @return array<string, mixed> */
+    /**
+     * @return array{
+     *   doctors: list<array<string, mixed>>,
+     *   calendar: list<array<string, mixed>>,
+     *   weeks: list<array<string, mixed>>,
+     *   doctor_availability_matrix: list<array<string, mixed>>,
+     *   availability_summary: array<string, int>,
+     *   availability: list<array<string, mixed>>,
+     *   conflicts: list<DoctorRequestConflict>,
+     *   requests: list<array<string, mixed>>
+     * }
+     */
     public function handle(RosterPeriod $period): array
     {
         $period->loadMissing(['days', 'doctorRequirements.doctor', 'scheduleRequests.doctor', 'scheduleRequests.dates']);
@@ -63,12 +74,12 @@ final class ResolveDoctorAvailability
             return ['identifier' => $doctor->identifier, 'name' => $doctor->full_name, 'required_hours' => $requirements->get($doctor->id)?->required_hours, 'standard_daily_hours' => $doctor->standard_daily_hours, 'explicit_available_dates' => $datesFor('available'), 'unspecified_date_count' => $cells->where('effective_status', 'unspecified')->count(), 'unavailable_dates' => $datesFor('unavailable'), 'leave_dates' => $datesFor('leave'), 'preferred_work_dates' => $datesFor('preferred_work'), 'preferred_off_dates' => $datesFor('preferred_off'), 'conflict_codes' => $cells->pluck('conflict_codes')->flatten()->unique()->values()->all()];
         })->values()->all();
 
-        $weeks = collect($calendar)->chunk(7)->values()->map(fn (Collection $days, int $index): array => ['week' => $index + 1, 'dates' => $days->values()->all()])->all();
-        $matrix = $doctors->map(function (Doctor $doctor) use ($availabilityCollection): array {
+        $weeks = array_values(collect($calendar)->chunk(7)->values()->map(fn (Collection $days, int $index): array => ['week' => $index + 1, 'dates' => array_values($days->values()->all())])->all());
+        $matrix = array_values($doctors->map(function (Doctor $doctor) use ($availabilityCollection): array {
             $cells = $availabilityCollection->where('doctor_identifier', $doctor->identifier)->map(fn (array $cell): array => ['date' => $cell['date'], 'state' => $this->matrixState($cell), 'effective_status' => $cell['effective_status'], 'preference' => $cell['preference'], 'conflicted' => $cell['conflicted']])->values()->all();
 
             return ['doctor_identifier' => $doctor->identifier, 'doctor_name' => $doctor->full_name, 'dates' => $cells];
-        })->values()->all();
+        })->values()->all());
         $summary = ['explicit_available_total' => $availabilityCollection->where('effective_status', 'available')->count(), 'unspecified_total' => $availabilityCollection->where('effective_status', 'unspecified')->count(), 'unavailable_total' => $availabilityCollection->where('effective_status', 'unavailable')->count(), 'leave_total' => $availabilityCollection->where('effective_status', 'leave')->count()];
 
         return ['doctors' => array_values($doctorData), 'calendar' => array_values($calendar), 'weeks' => $weeks, 'doctor_availability_matrix' => $matrix, 'availability_summary' => $summary, 'availability' => $availability, 'conflicts' => $conflicts, 'requests' => array_values($requests->map(fn (DoctorScheduleRequest $request): array => ['identifier' => $request->identifier, 'doctor_identifier' => $request->doctor->identifier, 'doctor_name' => $request->doctor->full_name, 'request_type' => $request->request_type->value, 'status' => $request->status->value, 'dates' => $request->dates->pluck('date')->map->toDateString()->all(), 'reason' => $request->reason, 'notes' => $request->notes])->all())];

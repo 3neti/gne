@@ -28,6 +28,7 @@
 | x-change runtime integration | Documented optional seam | Architecture checks | No settlement or execution | Deferred | Keep external and optional |
 | Production controls | None claimed | None | Audit/compliance/scale uncertified | Deferred | Deliberate later milestone |
 | Anaesthesia requests and availability | Host-owned accepted requests, exclusive effective states, provisional unspecified eligibility, eligible-pool readiness, four-week calendar, doctor matrix, JSON/HTML/PDF evidence | Feature/unit/architecture/scenario tests and visual report inspection | Provisional eligibility needs department confirmation; no generation, publication, import, payroll, call, or multiple duties | Implemented | Manual Roster Editing |
+| Anaesthesia manual roster editing | Preview/add/remove/move/replace services, request-aware validation, assigned calendar/matrix, hours and staffing projections, immutable revisions, audit, JSON/HTML/PDF scenario evidence | Feature/domain/UI/scenario/artifact tests | One standard-day assignment per doctor/date; no generation, publication, multiple segments, payroll, or optimization | Implemented | Draft Roster Generation |
 
 Runtime baselines: `3neti/x-document` at `29853fae23939cba0b440db3ae04e351c499a78e`; `3neti/x-document-laravel` at `b299d5bfbe7bdf93ecaf840431349804b676a6c7`. Composer resolves both as symlinked `dev-main` path packages; `gne:mvp:smoke` verifies these actual Git commits rather than trusting version labels.
 

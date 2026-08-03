@@ -1,7 +1,6 @@
 <?php
 
 use App\Application\Rostering\CreateRosterAssignment;
-use App\Application\Rostering\CreateRosterPeriod;
 use App\Application\Rostering\TransitionRosterPeriod;
 use App\Domain\Rostering\DuplicatePrimaryRosterAssignment;
 use App\Domain\Rostering\InvalidRosterTransition;
@@ -13,9 +12,11 @@ use App\Models\RosterDay;
 use App\Models\RosterPeriod;
 use App\Models\User;
 
-function createFoundationPeriod(User $administrator, array $overrides = []): RosterPeriod
+function readyFoundationPeriod(User $administrator, RosterPeriod $period): RosterPeriod
 {
-    return app(CreateRosterPeriod::class)->handle($administrator, [...['identifier' => 'ROSTER-2026-09', 'title' => 'Four week foundation', 'start_date' => '2026-09-01', 'end_date' => '2026-09-28', 'default_weekday_requirement' => 6, 'default_weekend_requirement' => 3, 'notes' => null], ...$overrides]);
+    $period->forceFill(['status' => RosterPeriodStatus::ReadyForGeneration])->save();
+
+    return $period->fresh();
 }
 
 it('creates every inclusive roster day with deterministic classification and defaults', function () {
@@ -78,7 +79,7 @@ it('permits warning-bearing foundation inputs before ready for generation', func
 it('enforces one primary assignment and preserves its optional seam', function () {
     $administrator = User::factory()->rosterAdministrator()->create();
     $doctor = Doctor::factory()->create(['standard_daily_hours' => 7.5]);
-    $period = createFoundationPeriod($administrator);
+    $period = readyFoundationPeriod($administrator, createFoundationPeriod($administrator));
     $day = $period->days->first();
 
     $assignment = app(CreateRosterAssignment::class)->handle($administrator, $doctor, $period, $day, optional: ['start_time' => '08:00', 'end_time' => '16:30', 'credited_hours' => 7.5, 'notes' => 'Foundation proof']);
@@ -91,7 +92,7 @@ it('enforces one primary assignment and preserves its optional seam', function (
 
 it('rejects assignment for inactive doctor or day outside the period', function () {
     $administrator = User::factory()->rosterAdministrator()->create();
-    $period = createFoundationPeriod($administrator);
+    $period = readyFoundationPeriod($administrator, createFoundationPeriod($administrator));
     $inactive = Doctor::factory()->inactive()->create();
 
     expect(fn () => app(CreateRosterAssignment::class)->handle($administrator, $inactive, $period, $period->days->first()))->toThrow(DomainException::class, 'Inactive doctors');

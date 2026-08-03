@@ -1,5 +1,8 @@
 <?php
 
+use App\Application\Rostering\CreateRosterPeriod;
+use App\Models\RosterPeriod;
+use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
@@ -44,7 +47,7 @@ expect()->extend('toBeOne', function () {
 |
 */
 
-function something()
+function createFoundationPeriod(User $administrator, array $overrides = []): RosterPeriod
 {
-    // ..
+    return app(CreateRosterPeriod::class)->handle($administrator, [...['identifier' => 'ROSTER-2026-09', 'title' => 'Four week foundation', 'start_date' => '2026-09-01', 'end_date' => '2026-09-28', 'default_weekday_requirement' => 6, 'default_weekend_requirement' => 3, 'notes' => null], ...$overrides]);
 }

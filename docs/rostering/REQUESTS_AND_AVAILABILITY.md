@@ -9,3 +9,5 @@ Daily availability categories are mutually exclusive: effective explicit availab
 The four-week calendar and doctor-by-date matrix are derived reporting projections. `A`, `U`, `L`, `PW`, `PO`, `-`, and `!` mean explicit availability, unavailable, leave, preferred work, preferred off, unspecified, and conflict. They are not assignments.
 
 Routes under `/rostering/requests` are administrator-only. `/rostering/periods/{period}/availability` shows four calendar weeks, staffing demand, exclusive availability counts, a doctor matrix, preferences, and server-derived conflicts. It always states that no assignments have been generated.
+
+This input model now feeds manual roster editing. An eligible cell is still not an assignment: only an authorised mutation creates the assigned roster. See [Manual Roster Editing](MANUAL_ROSTER_EDITING.md).

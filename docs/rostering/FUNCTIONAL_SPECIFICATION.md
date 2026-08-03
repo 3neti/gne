@@ -8,22 +8,22 @@ The numbered requirements below preserve the approved FR-001–FR-014 handoff vo
 | FR-002 — Roster-period management | Implemented | Stable period, inclusive day expansion, explicit early lifecycle | Revisions, reopen, publication |
 | FR-003 — Staffing and required-hours inputs | Implemented | Weekday/weekend defaults, date overrides, explicit doctor-period targets | Demand/contract derivation |
 | FR-004 — Requests and availability | Implemented for administrator entry | Normalized dates, explicit statuses, conflict validation, availability calendar | Doctor self-service deferred |
-| FR-005 — Leave handling | Deferred | Assignment vocabulary seam only | Request workflow and legacy mapping |
-| FR-006 — Preferences | Deferred | — | Semantics and policy |
+| FR-005 — Leave handling | Implemented for assignment protection | Accepted leave and unavailability prohibit create/move/replace; regression tests | Doctor self-service and legacy mapping |
+| FR-006 — Preferences | Implemented for manual validation | Preferred-off assignment and request conflicts remain visible warnings | Optimization and automatic honouring |
 | FR-007 — On-call and specialist coverage | Deferred | — | Department confirmation |
-| FR-008 — Roster construction | Partially implemented | One counted primary assignment persistence seam and constraints | Grid, manual editing, generation, multiple duties |
-| FR-009 — Validation and fairness | Requests subset implemented | Hard request errors block readiness; soft conflicts explained | Assignment fairness, fatigue, coverage deferred |
+| FR-008 — Roster construction | Manual editing implemented | Preview, add, remove, move, replace, grid, validation feedback, revisions | Automatic generation and multiple duties |
+| FR-009 — Validation and fairness | Substantially implemented for manual roster | Eligibility errors; daily staffing, hours, and preference findings | Fairness solver, fatigue, specialist coverage |
 | FR-010 — Review and approval | Deferred | Lifecycle vocabulary only | Review UI and authority |
 | FR-011 — Publication | Deferred | Status/policy vocabulary only | Freeze, release, reopen |
 | FR-012 — Import and export | Deferred | Workbook characterization only | Confirmed mapping, CSV/XLSX |
-| FR-013 — Reporting and analytics | Deferred | Foundation counts only | Hours variance, payroll, SLA |
-| FR-014 — Integration and automation | Partially implemented | Stable audited request actions and public identifiers | OpenAPI, AI operation, generator interface |
+| FR-013 — Reporting and analytics | Manual roster reporting implemented | Assigned calendar, matrix, staffing, doctor hours, validation, revision/audit JSON/HTML/PDF | Payroll, SLA, operational analytics |
+| FR-014 — Integration and automation | Assignment/audit subset implemented | Stable audited request and assignment actions with public identifiers | OpenAPI, AI operation, generator interface |
 
 ## Foundation user journeys
 
 A roster administrator registers and maintains fictional or real doctor records; creates a bounded roster period with explicit weekday/weekend headcount defaults; reviews every created day; overrides individual dates; authors one required-hours target per doctor; advances through the two enabled early transitions; and inspects deterministic structural findings and audit evidence. An ordinary authenticated user has no rostering access.
 
-No action in this specification generates a roster, imports the workbook, executes an assignment, calculates pay, or publishes a schedule.
+No action in this specification automatically generates a roster, imports the workbook, calculates pay, or publishes a schedule. Authorised administrators now deliberately create and revise assignments.
 
 Foundation readiness permits warning findings and rejects error findings. Assignment acceptance includes immediate allowlisted audit evidence in the same transaction. Period updates accept only title and notes; status changes use the transition service. The lifecycle scenario runner demonstrates these rules without adding production workflow behavior.
 

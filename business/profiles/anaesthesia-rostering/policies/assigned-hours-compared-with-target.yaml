@@ -1,0 +1,3 @@
+identifier: POLICY-ANAESTHESIA-ASSIGNED-HOURS-TARGET
+revision: 1
+rule: Assigned credited hours are compared with each doctor target and draft variance remains a visible warning.

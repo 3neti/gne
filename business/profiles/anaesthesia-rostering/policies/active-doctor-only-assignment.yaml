@@ -1,0 +1,3 @@
+identifier: POLICY-ANAESTHESIA-ACTIVE-DOCTOR-ONLY-ASSIGNMENT
+revision: 1
+rule: Only an active doctor may receive or retain a roster assignment.

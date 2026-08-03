@@ -26,7 +26,7 @@ class RosterAssignmentFactory extends Factory
             'roster_period_id' => RosterPeriod::factory(),
             'roster_day_id' => RosterDay::factory(),
             'status' => 'assigned',
-            'source' => 'manual',
+            'source' => 'manually_added',
             'duty_code' => 'standard_day',
             'credited_hours' => 8,
         ];

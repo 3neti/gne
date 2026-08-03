@@ -2,6 +2,7 @@
 
 namespace App\Application\Rostering;
 
+use App\Contracts\Rostering\RosterAuditRecorder;
 use App\Domain\Rostering\FoundationValidationSeverity;
 use App\Domain\Rostering\InvalidRosterTransition;
 use App\Domain\Rostering\RosterPeriodStatus;
@@ -12,7 +13,7 @@ use Illuminate\Support\Facades\DB;
 
 final readonly class TransitionRosterPeriod
 {
-    public function __construct(private RecordRosterAudit $audit, private ValidateRosterFoundation $validate, private ValidateDoctorRequests $validateRequests) {}
+    public function __construct(private RosterAuditRecorder $audit, private ValidateRosterFoundation $validate, private ValidateDoctorRequests $validateRequests) {}
 
     public function handle(User $actor, RosterPeriod $period, RosterPeriodStatus $target, ?string $reason = null): RosterTransitionResult
     {
@@ -31,7 +32,7 @@ final readonly class TransitionRosterPeriod
             $from = $period->status;
             $previous = $period->toArray();
             $period->update(['status' => $target]);
-            $this->audit->handle($actor, 'roster_period.transitioned', 'roster_period', $period->identifier, $previous, $period->fresh()->toArray(), $reason);
+            $this->audit->record($actor, 'roster_period.transitioned', 'roster_period', $period->identifier, $previous, $period->fresh()->toArray(), $reason);
 
             return new RosterTransitionResult($period->fresh(), $from, $target, $findings);
         });

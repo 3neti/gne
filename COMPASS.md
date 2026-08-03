@@ -9,7 +9,7 @@ Canonical cognition, portable discovery, immutable artifacts, compiler projectio
 
 ## Immediate direction
 
-Requests and availability now complete the generation-input foundation. Proceed to **Manual Roster Editing** so human-authored assignments and request-aware validation are proven together before automatic generation.
+Manual roster editing now proves human-authored assignments, request-aware validation, rolled-back previews, immutable revisions, and atomic audit evidence. Availability remains contextual evidence; only an administrator command creates an assignment.
 
 The foundation integrity proof is now repository-authored and rollback-by-default. Warning-bearing readiness, error blocking, assignment audit atomicity, duplicate rejection, and audit rollback are exercised through one allowlisted scenario.
 
@@ -23,4 +23,4 @@ Validation supports the implemented document grammar and JSON Schema 2020-12 but
 
 ## Recommended next task
 
-**Manual Roster Editing** — allow an authorized administrator to construct a roster deliberately from validated availability inputs without introducing automatic generation.
+**Draft Roster Generation** — introduce an explicit generation boundary while preserving the validation, revision, audit, and human-review contracts proven by manual editing.

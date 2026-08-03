@@ -2,6 +2,7 @@
 
 namespace App\Application\Rostering;
 
+use App\Contracts\Rostering\RosterAuditRecorder;
 use App\Domain\Rostering\RequirementSource;
 use App\Models\Doctor;
 use App\Models\DoctorRosterRequirement;
@@ -12,7 +13,7 @@ use InvalidArgumentException;
 
 final readonly class SetDoctorRosterRequirement
 {
-    public function __construct(private RecordRosterAudit $audit) {}
+    public function __construct(private RosterAuditRecorder $audit) {}
 
     public function handle(User $actor, RosterPeriod $period, Doctor $doctor, string|int|float $requiredHours, RequirementSource $source = RequirementSource::Manual, ?string $notes = null): DoctorRosterRequirement
     {
@@ -28,7 +29,7 @@ final readonly class SetDoctorRosterRequirement
                 ['required_hours' => $requiredHours, 'source' => $source, 'notes' => $notes],
             );
             $action = $previous === null ? 'doctor_requirement.created' : 'doctor_requirement.updated';
-            $this->audit->handle($actor, $action, 'doctor_roster_requirement', $period->identifier.'@'.$doctor->identifier, $previous, $requirement->toArray());
+            $this->audit->record($actor, $action, 'doctor_roster_requirement', $period->identifier.'@'.$doctor->identifier, $previous, $requirement->toArray());
 
             return $requirement;
         });

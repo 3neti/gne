@@ -10,13 +10,13 @@ The supplied four-week workbook proved the need to preserve doctor identity, con
 
 Repository-authored profile policy describes the language. Host-owned Laravel records persist doctors, periods, days, explicit staffing and required hours, assignment seams, authorization, and audit evidence. Transactional application actions own mutations; Inertia pages are read/write delivery surfaces without business rules.
 
-Implemented UI: rostering dashboard, doctors, period list/create/detail, daily staffing, doctor required hours, and assignment empty state. Implemented tests cover the central invariants and dependency exclusions.
+Implemented UI: rostering dashboard, doctors, period list/create/detail, daily staffing, doctor required hours, availability, and a real manual assignment calendar/matrix with add, remove, move, replace, preview, validation, hours, revision, and audit feedback. Implemented tests cover the central invariants and dependency exclusions.
 
 Foundation integrity is now executable through the allowlisted repository scenario. Readiness preserves warnings while blocking errors; assignment creation and its safe audit evidence commit or roll back together; period edits cannot bypass lifecycle transitions.
 
 ## Known limitations and questions
 
-One department and one simple administrator capability are assumed. Unspecified-doctor eligibility remains a provisional policy requiring department confirmation. Contracted-hour period meaning, employee-number semantics, holidays, staffing-row interpretation, duty-code mapping, call/overtime rules, and multiple daily work segments remain unresolved. `off` is absence of assignment. There is no assignment grid, generator, publication, import/export, payroll, OpenAPI, doctor self-service, or AI operation.
+One department and one simple administrator capability are assumed. Unspecified-doctor eligibility remains a provisional policy requiring department confirmation. Contracted-hour period meaning, employee-number semantics, holidays, staffing-row interpretation, call/overtime rules, and multiple daily work segments remain unresolved. `off` is absence of assignment. The active duty vocabulary is only `standard_day`. There is no generator, publication, import/export, payroll, OpenAPI, doctor self-service, or AI operation.
 
 ## Future slices
 
@@ -33,4 +33,4 @@ Administrator-entered requests and availability are implemented as audited host 
 
 ## Recommended next slice
 
-**Manual Roster Editing** — prove human-authored assignments and request-aware validation before automatic generation.
+**Draft Roster Generation** — add an explicit generator boundary only after preserving the same validation, revision, audit, and human-review contracts proven by manual editing.

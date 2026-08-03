@@ -42,7 +42,13 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::put('periods/{roster_period}/staffing', [RosterStaffingController::class, 'update'])->name('periods.staffing.update');
         Route::get('periods/{roster_period}/requirements', [DoctorRosterRequirementController::class, 'edit'])->name('periods.requirements.edit');
         Route::put('periods/{roster_period}/requirements', [DoctorRosterRequirementController::class, 'update'])->name('periods.requirements.update');
+        Route::get('periods/{roster_period}/roster', [RosterAssignmentController::class, 'index'])->name('periods.roster.show');
         Route::get('periods/{roster_period}/assignments', [RosterAssignmentController::class, 'index'])->name('periods.assignments.index');
+        Route::post('periods/{roster_period}/assignments', [RosterAssignmentController::class, 'store'])->name('periods.assignments.store');
+        Route::delete('periods/{roster_period}/assignments/{roster_assignment}', [RosterAssignmentController::class, 'destroy'])->name('periods.assignments.destroy');
+        Route::post('periods/{roster_period}/assignments/{roster_assignment}/move', [RosterAssignmentController::class, 'move'])->name('periods.assignments.move');
+        Route::post('periods/{roster_period}/assignments/{roster_assignment}/replace', [RosterAssignmentController::class, 'replace'])->name('periods.assignments.replace');
+        Route::post('periods/{roster_period}/roster/preview', [RosterAssignmentController::class, 'preview'])->name('periods.roster.preview');
         Route::get('periods/{roster_period}/availability', RosterAvailabilityController::class)->name('periods.availability.show');
     });
 });

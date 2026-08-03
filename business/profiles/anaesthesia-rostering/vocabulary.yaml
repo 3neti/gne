@@ -7,3 +7,6 @@ terms:
   - { term: Primary Daily Assignment, definition: The single counted assignment permitted for one doctor and roster day in the MVP. }
   - { term: Doctor Schedule Request, definition: "Host-owned mutable availability, leave, or preference input for explicit roster-period dates." }
   - { term: Effective Availability, definition: Derived per-doctor per-date meaning from accepted requests and deterministic precedence. }
+  - { term: Manual Roster Assignment, definition: "An authorised deliberate placement of one active doctor on one roster date." }
+  - { term: Roster Revision, definition: "An immutable validation snapshot and structured change record created for one committed roster mutation." }
+  - { term: Roster Mutation Preview, definition: "A rolled-back simulation of a proposed add, remove, move, or replace action with no durable audit or revision." }

@@ -96,6 +96,12 @@ A **Captured and Verified Frame** has status `captured_and_verified`, the observ
 | HTTP Response Factory | x-document-laravel contract that expresses an existing Browser Host Response as exact HTTP bytes and metadata. |
 | Package Baseline Attestation | Diagnostic comparison of an installed local package's actual Git HEAD with its expected reviewed commit. |
 | Contract Smoke Proof | Real known-subject compilation through GNE preparation, x-document validation, and browser expression; stronger than class-existence diagnostics. |
+| Manual Roster Assignment | Authorised deliberate placement of one active doctor on one date; availability alone is never an assignment. |
+| Roster Mutation Preview | Rolled-back simulation of an add, remove, move, or replace command with resulting validation and impact but no durable evidence. |
+| Roster Validation Result | Deterministically ordered `valid`, `valid_with_warnings`, or `invalid` assessment of assignments, staffing, hours, and preferences. |
+| Roster Revision | Immutable monotonic per-period snapshot recording one committed manual action, its structured changes, and post-mutation validation. |
+| Assigned Hours | Sum of explicit credited hours for one doctor's assignments in one roster period. |
+| Staffing Status | Derived comparison of assigned count with required count: `understaffed`, `fully_staffed`, or `overstaffed`. |
 # Anaesthesia rostering grammar
 
 **Doctor** is a stable host clinician record. **Roster Period** is an inclusive calendar planning window. **Roster Day** is one date in that period with an explicit non-negative staffing requirement. **Doctor Roster Requirement** is one explicit non-negative required-hours target for a doctor and period. **Primary Daily Assignment** is the sole counted assignment allowed for one doctor and roster day in the foundation. **Roster Administrator** is the host-owned capability permitted to mutate these records. **Roster Audit Entry** is append-only structured evidence of a major mutation.

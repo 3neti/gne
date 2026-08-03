@@ -2,6 +2,7 @@
 
 namespace App\Application\Rostering;
 
+use App\Contracts\Rostering\RosterAuditRecorder;
 use App\Domain\Rostering\DuplicatePrimaryRosterAssignment;
 use App\Domain\Rostering\InvalidRosterTransition;
 use App\Domain\Rostering\RosterLifecycleScenarioDefinition;
@@ -91,6 +92,7 @@ final readonly class RunRosterLifecycleScenario
     /** @return array<string, mixed> */
     private function assignmentAudit(User $actor, Doctor $doctor, RosterPeriod $period): array
     {
+        $period->refresh();
         $assignment = $this->createAssignment->handle($actor, $doctor, $period, $period->days()->orderBy('date')->firstOrFail());
 
         return ['created' => true, 'audit_recorded' => RosterAuditEntry::query()->where('entity_identifier', $assignment->identifier)->where('action', 'roster_assignment.created')->exists()];
@@ -113,19 +115,20 @@ final readonly class RunRosterLifecycleScenario
     private function auditRollback(User $actor, Doctor $doctor, RosterPeriod $period): array
     {
         $assignmentCount = $period->assignments()->count();
-        $failingAudit = new class extends RecordRosterAudit
+        $failingAudit = new class implements RosterAuditRecorder
         {
             /**
              * @param  array<string, mixed>|null  $previousValue
              * @param  array<string, mixed>|null  $newValue
              */
-            public function handle(?User $actor, string $action, string $entityType, string $entityIdentifier, ?array $previousValue, ?array $newValue, ?string $reason = null): RosterAuditEntry
+            public function record(?User $actor, string $action, string $entityType, string $entityIdentifier, ?array $previousValue, ?array $newValue, ?string $reason = null): RosterAuditEntry
             {
                 throw new RuntimeException('Controlled audit failure.');
             }
         };
         try {
-            (new CreateRosterAssignment($failingAudit))->handle($actor, $doctor, $period, $period->days()->orderBy('date')->skip(1)->firstOrFail());
+            app()->instance(RosterAuditRecorder::class, $failingAudit);
+            app(CreateRosterAssignment::class)->handle($actor, $doctor, $period->fresh(), $period->days()->orderBy('date')->skip(1)->firstOrFail());
         } catch (RuntimeException $exception) {
             if ($exception->getMessage() === 'Controlled audit failure.') {
                 return ['audit_failed' => true, 'assignment_count_unchanged' => $period->assignments()->count() === $assignmentCount];

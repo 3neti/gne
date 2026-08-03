@@ -2,13 +2,14 @@
 
 namespace App\Application\Rostering;
 
+use App\Contracts\Rostering\RosterAuditRecorder;
 use App\Models\RosterPeriod;
 use App\Models\User;
 use Illuminate\Support\Facades\DB;
 
 final readonly class UpdateRosterPeriod
 {
-    public function __construct(private RecordRosterAudit $audit) {}
+    public function __construct(private RosterAuditRecorder $audit) {}
 
     /** @param array<string, mixed> $attributes */
     public function handle(User $actor, RosterPeriod $period, array $attributes): RosterPeriod
@@ -18,7 +19,7 @@ final readonly class UpdateRosterPeriod
         return DB::transaction(function () use ($actor, $period, $attributes): RosterPeriod {
             $previous = $period->toArray();
             $period->update($attributes);
-            $this->audit->handle($actor, 'roster_period.updated', 'roster_period', $period->identifier, $previous, $period->fresh()->toArray());
+            $this->audit->record($actor, 'roster_period.updated', 'roster_period', $period->identifier, $previous, $period->fresh()->toArray());
 
             return $period->fresh();
         });

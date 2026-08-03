@@ -1,0 +1,3 @@
+identifier: POLICY-ANAESTHESIA-MANUAL-ASSIGNMENT-AUDIT
+revision: 1
+rule: Every committed manual assignment mutation creates exactly one immutable roster revision and atomic audit evidence.

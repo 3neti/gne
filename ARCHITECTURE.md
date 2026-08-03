@@ -136,3 +136,9 @@ Roster readiness is derived by `ValidateRosterFoundation`; warnings remain repor
 Doctor schedule requests are host-owned operational inputs. Application actions atomically mutate and audit them; `ResolveDoctorAvailability` compiles accepted requests into a disposable calendar. Leave and unavailability prohibit assignment, availability is positive evidence, and preferences are soft. Conflict findings join foundation findings at the transition gate. UI and static report drivers consume the projection and never determine request meaning.
 
 Availability resolution assigns each active doctor/date exactly one effective state while retaining preferences and conflict evidence as overlays. The provisional policy counts both explicit availability and unspecified active doctors as eligible; `ValidateDoctorRequests` blocks readiness when that eligible pool is below explicit daily demand. This readiness gate is not roster generation and gives no feasibility or balance guarantee.
+
+## Manual roster mutation boundary
+
+Manual editing follows `command → rolled-back preview → authorised transaction → assignment → validation snapshot → immutable revision → audit`. Controllers and Vue select commands and present server-prepared projections; application services own mutations and validation. The first committed assignment moves `ready_for_generation → generated`, where “generated” means a roster body exists even though it was manually authored. Editing continues in `generated` and `under_review`; publication remains deferred.
+
+Every administrator action creates one append-only `RosterRevision` and structured change record in the same transaction as its assignment audit. Preview uses a nested rolled-back transaction and creates no durable assignment, revision, or audit. Calendar, matrix, staffing, and doctor-hours projections are derived read models. No automatic generator, solver, or optimization dependency exists.

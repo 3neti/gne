@@ -16,10 +16,10 @@ final readonly class RosterLifecycleScenarioDefinition
         if (! is_array($data) || array_diff(array_keys($data), ['identifier', 'slug', 'profile', 'title', 'description', 'lifecycle', 'steps']) !== []) {
             throw new DomainException('The roster lifecycle scenario contains unsupported top-level keys.');
         }
-        if (! in_array($data['identifier'] ?? null, ['ANAESTHESIA-ROSTER-FOUNDATION-LIFECYCLE', 'ANAESTHESIA-ROSTER-REQUESTS-AND-AVAILABILITY'], true) || ! is_array($data['steps'] ?? null)) {
+        if (! in_array($data['identifier'] ?? null, ['ANAESTHESIA-ROSTER-FOUNDATION-LIFECYCLE', 'ANAESTHESIA-ROSTER-REQUESTS-AND-AVAILABILITY', 'ANAESTHESIA-MANUAL-ROSTER'], true) || ! is_array($data['steps'] ?? null)) {
             throw new DomainException('The roster lifecycle scenario grammar is malformed.');
         }
-        $allowed = ['warning_readiness', 'error_readiness', 'assignment_audit', 'duplicate_rejection', 'audit_rollback', 'create_dataset', 'record_requests', 'prove_hard_conflict', 'resolve_hard_conflict', 'validate_readiness', 'finalize_report'];
+        $allowed = ['warning_readiness', 'error_readiness', 'assignment_audit', 'duplicate_rejection', 'audit_rollback', 'create_dataset', 'record_requests', 'prove_hard_conflict', 'resolve_hard_conflict', 'validate_readiness', 'finalize_report', 'assign_roster', 'prove_invalid_assignments', 'preview_mutation', 'move_assignment', 'replace_assignment', 'remove_assignment', 'validate_manual_roster'];
         $steps = [];
         foreach ($data['steps'] as $step) {
             if (! is_array($step) || array_diff(array_keys($step), ['id', 'title', 'operation']) !== [] || ! in_array($step['operation'] ?? null, $allowed, true)) {

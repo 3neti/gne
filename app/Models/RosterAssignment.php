@@ -22,7 +22,7 @@ class RosterAssignment extends Model
     /** @use HasFactory<RosterAssignmentFactory> */
     use HasFactory;
 
-    protected $attributes = ['source' => 'manual'];
+    protected $attributes = ['status' => 'assigned', 'source' => 'manually_added', 'duty_code' => 'standard_day'];
 
     public function getRouteKeyName(): string
     {

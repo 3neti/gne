@@ -6,9 +6,9 @@
 | Roster periods | Implemented | Transactional creation and inclusive day expansion | One department; no revisions |
 | Staffing requirements | Implemented | Weekday/weekend defaults and date overrides | Headcount only |
 | Required hours | Implemented | Explicit doctor-period targets | No contract derivation |
-| Assignments | Foundation seam | Schema, service, uniqueness/integrity tests | No grid or generation |
-| Lifecycle | Foundation subset | Draft → collecting requests → ready for generation | Later transitions declared only |
-| Validation | Foundation subset | Deterministic error/warning findings and CLI | No fairness/fatigue/coverage rules |
+| Assignments | Implemented for manual roster | Preview/add/remove/move/replace services, grid, date and doctor projections | One standard-day assignment per doctor/date; no generator |
+| Lifecycle | Manual roster subset | Draft → collecting requests → ready for generation → generated → under review | Publication remains deferred |
+| Validation | Substantially implemented | Eligibility, staffing, hours, preference findings and CLI | No fairness solver, fatigue, specialist, or call rules |
 | Audit | Implemented for major mutations | Structured append-only rows | Not event sourcing or compliance certification |
 | Authorization | Implemented | Host roster-administrator policies and tests | No enterprise RBAC; ordinary users denied |
 | GNE profile | Implemented skeleton | Vocabulary, lifecycle, policies, schemas, scenario, minimal deferred summary document | Operational rows are not repository artifacts |
@@ -22,3 +22,5 @@
 The requests lifecycle scenario produces finalized JSON, a four-week visual calendar, doctor matrix, linked static HTML, and a Chromium PDF while rolling operational demonstration state back by default. Exclusive effective-state counts, provisional unspecified eligibility, overlap rejection, and daily eligible-pool readiness are implemented and tested.
 
 The provisional unspecified-eligibility policy still requires department confirmation. Generation, multiple duties, optimization, and arbitrary YAML execution remain deferred.
+
+The manual-roster lifecycle scenario produces 28 assigned dates, a doctor matrix, hours and staffing reports, deterministic validation, immutable revisions, audit evidence, self-contained HTML, and a Chromium PDF. It rolls operational demonstration state back by default and ends mandatory-valid with deliberate warnings. Manual creation is not automatic generation.

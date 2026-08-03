@@ -1,9 +1,9 @@
 <?php
 
 use App\Application\Rostering\CreateRosterAssignment;
-use App\Application\Rostering\RecordRosterAudit;
 use App\Application\Rostering\TransitionRosterPeriod;
 use App\Application\Rostering\UpdateRosterPeriod;
+use App\Contracts\Rostering\RosterAuditRecorder;
 use App\Domain\Rostering\DuplicatePrimaryRosterAssignment;
 use App\Domain\Rostering\InvalidRosterTransition;
 use App\Domain\Rostering\RosterLifecycleScenarioDefinition;
@@ -29,16 +29,17 @@ it('blocks readiness only when foundation validation contains an error', functio
 it('rolls back assignment creation when audit recording fails', function () {
     $actor = User::factory()->rosterAdministrator()->create();
     $doctor = Doctor::factory()->create();
-    $period = createFoundationPeriod($actor);
-    $audit = new class extends RecordRosterAudit
+    $period = readyFoundationPeriod($actor, createFoundationPeriod($actor));
+    $audit = new class implements RosterAuditRecorder
     {
-        public function handle(?User $actor, string $action, string $entityType, string $entityIdentifier, ?array $previousValue, ?array $newValue, ?string $reason = null): RosterAuditEntry
+        public function record(?User $actor, string $action, string $entityType, string $entityIdentifier, ?array $previousValue, ?array $newValue, ?string $reason = null): RosterAuditEntry
         {
             throw new RuntimeException('Audit unavailable.');
         }
     };
 
-    expect(fn () => (new CreateRosterAssignment($audit))->handle($actor, $doctor, $period, $period->days->first()))
+    app()->instance(RosterAuditRecorder::class, $audit);
+    expect(fn () => app(CreateRosterAssignment::class)->handle($actor, $doctor, $period, $period->days->first()))
         ->toThrow(RuntimeException::class, 'Audit unavailable');
     expect(RosterAssignment::query()->count())->toBe(0)
         ->and(RosterAuditEntry::query()->where('action', 'roster_assignment.created')->count())->toBe(0);
@@ -47,7 +48,7 @@ it('rolls back assignment creation when audit recording fails', function () {
 it('rejects duplicate assignments through the domain without a rejection audit', function () {
     $actor = User::factory()->rosterAdministrator()->create();
     $doctor = Doctor::factory()->create();
-    $period = createFoundationPeriod($actor);
+    $period = readyFoundationPeriod($actor, createFoundationPeriod($actor));
     $day = $period->days->first();
     app(CreateRosterAssignment::class)->handle($actor, $doctor, $period, $day);
     $auditCount = RosterAuditEntry::query()->count();

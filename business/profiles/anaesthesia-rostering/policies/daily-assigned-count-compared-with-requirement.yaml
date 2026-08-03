@@ -1,0 +1,3 @@
+identifier: POLICY-ANAESTHESIA-DAILY-ASSIGNED-COUNT
+revision: 1
+rule: Daily assigned-doctor count is compared with the authored requirement; understaffing is an error and overstaffing is a warning while draft.

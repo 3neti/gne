@@ -2,6 +2,7 @@
 
 namespace App\Application\Rostering;
 
+use App\Contracts\Rostering\RosterAuditRecorder;
 use App\Domain\Rostering\DoctorRequestStatus;
 use App\Domain\Rostering\DoctorRequestType;
 use App\Domain\Rostering\OverlappingEffectiveDoctorRequest;
@@ -15,7 +16,7 @@ use Illuminate\Support\Facades\DB;
 
 final readonly class RecordDoctorScheduleRequest
 {
-    public function __construct(private RecordRosterAudit $audit) {}
+    public function __construct(private RosterAuditRecorder $audit) {}
 
     /** @param list<string> $dates */
     public function handle(User $actor, Doctor $doctor, RosterPeriod $period, DoctorRequestType $type, array $dates, DoctorRequestStatus $status = DoctorRequestStatus::Submitted, ?string $reason = null, ?string $notes = null): DoctorScheduleRequest
@@ -32,8 +33,9 @@ final readonly class RecordDoctorScheduleRequest
         }
         $overlappingRequests = DoctorScheduleRequest::query()->with('dates')->where('doctor_id', $doctor->id)->where('roster_period_id', $period->id)->where('request_type', $type->value)->where('status', DoctorRequestStatus::Accepted->value)->get()->filter(fn (DoctorScheduleRequest $request): bool => $request->dates->contains(fn ($requestDate): bool => $dates->contains($requestDate->date->toDateString())));
         if ($status === DoctorRequestStatus::Accepted && $overlappingRequests->isNotEmpty()) {
-            $overlappingDates = $overlappingRequests->flatMap(fn (DoctorScheduleRequest $request) => $request->dates->pluck('date')->map->toDateString())->intersect($dates)->unique()->sort()->values()->all();
-            throw new OverlappingEffectiveDoctorRequest($overlappingDates, $overlappingRequests->pluck('identifier')->sort()->values()->all());
+            $overlappingDates = array_values($overlappingRequests->flatMap(fn (DoctorScheduleRequest $request) => $request->dates->pluck('date')->map->toDateString())->intersect($dates)->unique()->sort()->values()->map(fn (mixed $date): string => (string) $date)->all());
+            $requestIdentifiers = array_values($overlappingRequests->pluck('identifier')->sort()->values()->map(fn (mixed $identifier): string => (string) $identifier)->all());
+            throw new OverlappingEffectiveDoctorRequest($overlappingDates, $requestIdentifiers);
         }
 
         return DB::transaction(function () use ($actor, $doctor, $period, $type, $dates, $status, $reason, $notes): DoctorScheduleRequest {
@@ -41,9 +43,9 @@ final readonly class RecordDoctorScheduleRequest
             $request->update(['identifier' => sprintf('REQUEST-%06d', $request->id)]);
             $request->dates()->createMany($dates->map(fn (string $date): array => ['date' => $date])->all());
             $payload = $this->auditPayload($request->fresh('dates'));
-            $this->audit->handle($actor, 'doctor_request.created', 'doctor_schedule_request', $request->identifier, null, $payload);
+            $this->audit->record($actor, 'doctor_request.created', 'doctor_schedule_request', $request->identifier, null, $payload);
             if ($status === DoctorRequestStatus::Accepted) {
-                $this->audit->handle($actor, 'doctor_request.accepted', 'doctor_schedule_request', $request->identifier, ['status' => DoctorRequestStatus::Submitted->value], $payload);
+                $this->audit->record($actor, 'doctor_request.accepted', 'doctor_schedule_request', $request->identifier, ['status' => DoctorRequestStatus::Submitted->value], $payload);
             }
 
             return $request->fresh(['doctor', 'rosterPeriod', 'dates']);

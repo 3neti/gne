@@ -2,6 +2,7 @@
 
 namespace App\Application\Rostering;
 
+use App\Contracts\Rostering\RosterAuditRecorder;
 use App\Domain\Rostering\RosterDayType;
 use App\Domain\Rostering\RosterPeriodStatus;
 use App\Models\RosterPeriod;
@@ -12,7 +13,7 @@ use InvalidArgumentException;
 
 final readonly class CreateRosterPeriod
 {
-    public function __construct(private RecordRosterAudit $audit) {}
+    public function __construct(private RosterAuditRecorder $audit) {}
 
     /** @param array<string, mixed> $attributes */
     public function handle(User $actor, array $attributes): RosterPeriod
@@ -42,7 +43,7 @@ final readonly class CreateRosterPeriod
                 ]);
                 $date = $date->addDay();
             }
-            $this->audit->handle($actor, 'roster_period.created', 'roster_period', $period->identifier, null, $period->fresh()->toArray());
+            $this->audit->record($actor, 'roster_period.created', 'roster_period', $period->identifier, null, $period->fresh()->toArray());
 
             return $period->fresh('days');
         });

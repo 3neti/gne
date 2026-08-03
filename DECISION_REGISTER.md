@@ -181,3 +181,15 @@ Each accepted decision is durable until superseded by another recorded decision.
 ## ADR-045 — Availability artifacts render a visual calendar without implying assignments
 
 **Status:** Accepted — 2026-08-03. **Decision:** Project the resolved 28-day availability input as four weekly date-card bands plus a doctor-by-date matrix in UI, self-contained HTML, and Chromium PDF. Label all counts and states as availability inputs and prominently state that no assignments were generated. **Rationale:** Department review needs visually appreciable staffing evidence before manual or automatic roster construction exists. **Consequences:** The same server-derived semantics feed every presentation; colours are supplemented by text; artifacts remain disposable. **Rejected:** table-only reporting, UI-side eligibility calculation, and calendar marks that resemble assignments.
+
+## ADR-046 — Manual roster mutations are previewed, validated, revised, and audited atomically
+
+**Status:** Accepted — 2026-08-03. **Decision:** Simulate previews in rolled-back transactions and commit each authorised add, remove, move, or replace together with post-mutation validation, one revision, one change record, and assignment/revision audit evidence. **Rationale:** Human roster decisions must be explainable without partial history or preview side effects. **Consequences:** Mandatory eligibility failures reject before mutation; removals may leave an invalid draft visible; unexpected audit failures roll the action back. **Rejected:** controller-owned rules, best-effort audit, mutable history, and success audit for rejected attempts.
+
+## ADR-047 — Every committed manual roster change creates one immutable revision
+
+**Status:** Accepted — 2026-08-03. **Decision:** Number revisions monotonically per period and prohibit application updates or deletion of revision snapshots and change records. **Rationale:** Review requires a stable answer to who changed what and what validation followed. **Consequences:** Revisions are operational evidence, not event sourcing. **Rejected:** overwriting the latest snapshot and one revision per database row in a multi-row action.
+
+## ADR-048 — Assigned-roster artifacts are distinct from availability evidence
+
+**Status:** Accepted — 2026-08-03. **Decision:** Render the manual scenario from finalized assignment projections and label it “Manually Authored Draft — Not Yet Published.” **Rationale:** Eligibility is an input while assignments are deliberate decisions. **Consequences:** The report includes assigned names, staffing, hours, validation, revisions, and audit without claiming automatic generation or publication. **Rejected:** reusing availability cards as an assigned roster and treating PDF as canonical.

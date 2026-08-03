@@ -53,6 +53,12 @@ class RosterPeriod extends Model
         return $this->hasMany(RosterAssignment::class);
     }
 
+    /** @return HasMany<RosterRevision, $this> */
+    public function revisions(): HasMany
+    {
+        return $this->hasMany(RosterRevision::class)->orderBy('revision_number');
+    }
+
     /** @return HasMany<DoctorScheduleRequest, $this> */
     public function scheduleRequests(): HasMany
     {

@@ -2,6 +2,7 @@
 
 namespace App\Application\Rostering;
 
+use App\Contracts\Rostering\RosterAuditRecorder;
 use App\Domain\Rostering\RosterDayType;
 use App\Models\RosterDay;
 use App\Models\RosterPeriod;
@@ -11,7 +12,7 @@ use InvalidArgumentException;
 
 final readonly class SetDailyStaffingRequirement
 {
-    public function __construct(private RecordRosterAudit $audit) {}
+    public function __construct(private RosterAuditRecorder $audit) {}
 
     /** @param array<int|string, int|string> $specificRequirements */
     public function handle(User $actor, RosterPeriod $period, ?int $weekdayDefault, ?int $weekendDefault, array $specificRequirements = []): void
@@ -31,7 +32,7 @@ final readonly class SetDailyStaffingRequirement
                 }
                 $previous = $day->toArray();
                 $day->update(['required_doctor_count' => $next]);
-                $this->audit->handle($actor, 'roster_day.staffing_changed', 'roster_day', $period->identifier.'@'.$day->date->toDateString(), $previous, $day->fresh()->toArray());
+                $this->audit->record($actor, 'roster_day.staffing_changed', 'roster_day', $period->identifier.'@'.$day->date->toDateString(), $previous, $day->fresh()->toArray());
             });
         });
     }

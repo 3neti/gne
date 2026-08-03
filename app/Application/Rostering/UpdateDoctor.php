@@ -2,6 +2,7 @@
 
 namespace App\Application\Rostering;
 
+use App\Contracts\Rostering\RosterAuditRecorder;
 use App\Models\Doctor;
 use App\Models\User;
 use Illuminate\Support\Facades\DB;
@@ -9,7 +10,7 @@ use InvalidArgumentException;
 
 final readonly class UpdateDoctor
 {
-    public function __construct(private RecordRosterAudit $audit) {}
+    public function __construct(private RosterAuditRecorder $audit) {}
 
     /** @param array<string, mixed> $attributes */
     public function handle(User $actor, Doctor $doctor, array $attributes, ?string $reason = null): Doctor
@@ -23,7 +24,7 @@ final readonly class UpdateDoctor
         return DB::transaction(function () use ($actor, $doctor, $attributes, $reason): Doctor {
             $previous = $doctor->toArray();
             $doctor->update($attributes);
-            $this->audit->handle($actor, 'doctor.updated', 'doctor', $doctor->identifier, $previous, $doctor->fresh()->toArray(), $reason);
+            $this->audit->record($actor, 'doctor.updated', 'doctor', $doctor->identifier, $previous, $doctor->fresh()->toArray(), $reason);
 
             return $doctor->fresh();
         });

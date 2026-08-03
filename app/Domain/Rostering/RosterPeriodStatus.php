@@ -18,6 +18,8 @@ enum RosterPeriodStatus: string
         return match ($this) {
             self::Draft => [self::CollectingRequests],
             self::CollectingRequests => [self::ReadyForGeneration],
+            self::ReadyForGeneration => [self::Generated],
+            self::Generated => [self::UnderReview],
             default => [],
         };
     }

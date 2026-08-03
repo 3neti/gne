@@ -1,0 +1,16 @@
+identifier: ANAESTHESIA-MANUAL-ROSTER
+slug: manual-roster
+profile: PROFILE-ANAESTHESIA-ROSTERING
+title: Anaesthesia manually authored roster lifecycle proof
+description: Creates and revises a deterministic four-week assigned roster without an automatic generator.
+lifecycle: LIFECYCLE-ANAESTHESIA-ROSTER-PERIOD
+steps:
+  - { id: dataset, title: Create doctors period staffing and hour targets, operation: create_dataset }
+  - { id: requests, title: Record leave unavailability and preferences, operation: record_requests }
+  - { id: invalid, title: Reject mandatory-rule violations, operation: prove_invalid_assignments }
+  - { id: assignments, title: Deliberately assign the roster, operation: assign_roster }
+  - { id: preview, title: Preview without durable effects, operation: preview_mutation }
+  - { id: move, title: Move and revalidate an assignment, operation: move_assignment }
+  - { id: replace, title: Replace an assigned doctor, operation: replace_assignment }
+  - { id: remove, title: Remove and expose staffing impact, operation: remove_assignment }
+  - { id: validate, title: Finalize warning-bearing manual roster evidence, operation: validate_manual_roster }

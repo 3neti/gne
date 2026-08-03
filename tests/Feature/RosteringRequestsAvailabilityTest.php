@@ -3,11 +3,11 @@
 use App\Application\Rostering\CreateRosterPeriod;
 use App\Application\Rostering\RecordAcceptedDoctorScheduleRequest;
 use App\Application\Rostering\RecordDoctorScheduleRequest;
-use App\Application\Rostering\RecordRosterAudit;
 use App\Application\Rostering\ResolveDoctorAvailability;
 use App\Application\Rostering\TransitionDoctorScheduleRequest;
 use App\Application\Rostering\TransitionRosterPeriod;
 use App\Application\Rostering\ValidateDoctorRequests;
+use App\Contracts\Rostering\RosterAuditRecorder;
 use App\Domain\Rostering\DoctorRequestStatus;
 use App\Domain\Rostering\DoctorRequestType;
 use App\Domain\Rostering\InvalidRosterTransition;
@@ -59,9 +59,9 @@ it('creates and audits atomically and rolls back when audit fails', function () 
     $actor = User::factory()->rosterAdministrator()->create();
     $doctor = Doctor::factory()->create();
     $period = requestPeriod($actor);
-    $audit = new class extends RecordRosterAudit
+    $audit = new class implements RosterAuditRecorder
     {
-        public function handle(?User $actor, string $action, string $entityType, string $entityIdentifier, ?array $previousValue, ?array $newValue, ?string $reason = null): RosterAuditEntry
+        public function record(?User $actor, string $action, string $entityType, string $entityIdentifier, ?array $previousValue, ?array $newValue, ?string $reason = null): RosterAuditEntry
         {
             throw new RuntimeException('Audit unavailable');
         }
