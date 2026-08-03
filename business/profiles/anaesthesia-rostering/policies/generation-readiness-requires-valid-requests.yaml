@@ -1,0 +1,4 @@
+identifier: POLICY-ANAESTHESIA-GENERATION-READINESS-REQUESTS
+title: Generation readiness requires valid accepted requests
+rule: Ready for generation requires zero foundation errors and zero doctor-request errors; warnings remain visible.
+deferred: [automatic_generation, optimization, fairness_allocation]

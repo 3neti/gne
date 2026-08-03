@@ -6,7 +6,7 @@ use App\Models\RosterPeriod;
 
 final readonly class RosterTransitionResult
 {
-    /** @param list<FoundationValidationFinding> $findings */
+    /** @param list<FoundationValidationFinding|DoctorRequestConflict> $findings */
     public function __construct(
         public RosterPeriod $period,
         public RosterPeriodStatus $from,
@@ -14,9 +14,9 @@ final readonly class RosterTransitionResult
         public array $findings,
     ) {}
 
-    /** @return list<FoundationValidationFinding> */
+    /** @return list<FoundationValidationFinding|DoctorRequestConflict> */
     public function warnings(): array
     {
-        return array_values(array_filter($this->findings, fn (FoundationValidationFinding $finding): bool => $finding->severity === FoundationValidationSeverity::Warning));
+        return array_values(array_filter($this->findings, fn (FoundationValidationFinding|DoctorRequestConflict $finding): bool => $finding->severity === FoundationValidationSeverity::Warning));
     }
 }

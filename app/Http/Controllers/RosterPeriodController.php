@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Application\Rostering\CreateRosterPeriod;
 use App\Application\Rostering\TransitionRosterPeriod;
 use App\Application\Rostering\UpdateRosterPeriod;
+use App\Application\Rostering\ValidateDoctorRequests;
 use App\Application\Rostering\ValidateRosterFoundation;
 use App\Domain\Rostering\RosterPeriodStatus;
 use App\Http\Requests\StoreRosterPeriodRequest;
@@ -39,12 +40,14 @@ class RosterPeriodController extends Controller
         return to_route('rostering.periods.show', $period)->with('success', 'Roster period created with its full calendar.');
     }
 
-    public function show(RosterPeriod $rosterPeriod, ValidateRosterFoundation $validator): Response
+    public function show(RosterPeriod $rosterPeriod, ValidateRosterFoundation $validator, ValidateDoctorRequests $requestValidator): Response
     {
         Gate::authorize('view', $rosterPeriod);
         $rosterPeriod->loadCount(['days', 'doctorRequirements', 'assignments']);
 
-        return Inertia::render('rostering/periods/Show', ['period' => $this->periodData($rosterPeriod), 'findings' => array_map(fn ($finding): array => $finding->toArray(), $validator->handle($rosterPeriod)), 'allowedTransitions' => array_map(fn (RosterPeriodStatus $status): string => $status->value, $rosterPeriod->status->allowedFoundationTransitions())]);
+        $findings = [...$validator->handle($rosterPeriod), ...$requestValidator->handle($rosterPeriod)];
+
+        return Inertia::render('rostering/periods/Show', ['period' => $this->periodData($rosterPeriod), 'findings' => array_map(fn ($finding): array => $finding->toArray(), $findings), 'allowedTransitions' => array_map(fn (RosterPeriodStatus $status): string => $status->value, $rosterPeriod->status->allowedFoundationTransitions())]);
     }
 
     public function update(UpdateRosterPeriodRequest $request, RosterPeriod $rosterPeriod, UpdateRosterPeriod $update): RedirectResponse

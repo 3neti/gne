@@ -146,3 +146,7 @@ Pest feature/unit/architecture tests cover doctor invariants and authorization; 
 ## 16. Integrity closure
 
 `ready_for_generation` is blocked by error findings only. Warnings remain visible in `RosterTransitionResult`. Assignment creation and `roster_assignment.created` audit evidence share one transaction; duplicate identity becomes a domain rejection and unexpected database failures propagate. The repository-authored lifecycle scenario is a closed, allowlisted CI proof whose default state is rolled back.
+
+## 17. Requests and availability
+
+The operational pre-generation layer is defined in [Requests and Availability Architecture](REQUESTS_AND_AVAILABILITY_ARCHITECTURE.md). Normalized request dates, explicit status actions, deterministic conflict precedence, derived availability, administrator UI, and static lifecycle evidence extend the foundation without adding generation.

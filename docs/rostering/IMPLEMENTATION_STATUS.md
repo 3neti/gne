@@ -12,10 +12,13 @@
 | Audit | Implemented for major mutations | Structured append-only rows | Not event sourcing or compliance certification |
 | Authorization | Implemented | Host roster-administrator policies and tests | No enterprise RBAC; ordinary users denied |
 | GNE profile | Implemented skeleton | Vocabulary, lifecycle, policies, schemas, scenario, minimal deferred summary document | Operational rows are not repository artifacts |
-| Requests | Deferred | — | Next slice |
+| Requests | Implemented for administrators | Normalized dates, explicit status actions, audit and filters | No doctor portal or automatic approval |
+| Availability | Implemented projection | 28-day matrix, doctor summaries, conflicts | No assignments or generation |
 | Generation | Deferred | — | No generator |
 | Publication | Deferred | — | No freeze/reopen |
 | Import/export | Deferred | Characterization only | No production parser |
 | OpenAPI | Deferred | Stable actions/identifiers only | Later slice |
+
+The requests lifecycle scenario produces finalized JSON, linked static HTML, and a Chromium PDF while rolling operational demonstration state back by default.
 
 The foundation integrity closure adds error-only readiness blocking, transactional assignment audit, domain duplicate rejection, a closed period-update allowlist, and the rollback-by-default `ANAESTHESIA-ROSTER-FOUNDATION-LIFECYCLE` proof. Missing active-doctor targets and zero staffing remain warnings. Requests, availability, generation, multiple duties, optimization, and arbitrary YAML execution remain deferred.

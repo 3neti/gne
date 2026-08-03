@@ -53,6 +53,8 @@ The Property Reservation MVP now has a complete isolated acceptance proof from a
 
 Anaesthesia foundation integrity can be exercised without persisting demo state using `php artisan gne:roster:lifecycle:run --scenario=ANAESTHESIA-ROSTER-FOUNDATION-LIFECYCLE --json`. The repository scenario is allowlisted; it cannot resolve services or execute arbitrary code. See [Foundation Lifecycle Scenario](docs/rostering/FOUNDATION_LIFECYCLE_SCENARIO.md).
 
+The requests and availability proof runs with `php artisan gne:roster:lifecycle:run --scenario=ANAESTHESIA-ROSTER-REQUESTS-AND-AVAILABILITY --artifact --json`. It produces a 28-day staffing/availability calendar, doctor request summaries, conflict explanations, linked HTML, and a PDF under `.gne/reports/rostering/` while creating no roster assignment. See [Requests and Availability](docs/rostering/REQUESTS_AND_AVAILABILITY.md).
+
 Canonical orientation: [GENEI.md](GENEI.md), [ARCHITECTURE.md](ARCHITECTURE.md), [GRAMMAR.md](GRAMMAR.md), [DECISION_REGISTER.md](DECISION_REGISTER.md), [COMPASS.md](COMPASS.md), and [IMPLEMENTATION_STATUS.md](IMPLEMENTATION_STATUS.md).
 
 ## Repository-native storyboard

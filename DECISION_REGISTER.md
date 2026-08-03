@@ -157,3 +157,15 @@ Each accepted decision is durable until superseded by another recorded decision.
 ## ADR-039 — Lifecycle scenarios are allowlisted, isolated proofs
 
 **Status:** Accepted — 2026-08-03. **Decision:** Repository YAML may select only a closed operation vocabulary executed through application services, with rollback by default. **Rationale:** Durable examples should prove lifecycle behavior without becoming arbitrary code execution or a workflow engine. **Rejected:** PHP class names in YAML, service-container lookup, SQL/shell steps, direct status mutation, and implicit persistent demo state.
+
+## ADR-040 — Doctor requests are host-owned inputs compiled into availability
+
+**Status:** Accepted — 2026-08-03. **Decision:** Persist normalized mutable request/date records in the host and derive effective availability from accepted requests. **Rationale:** Requests are operational planning state, not canonical repository evidence or generated assignments. **Rejected:** spreadsheet cells, repository artifacts, and persisted calculated calendars as truth.
+
+## ADR-041 — Hard request conflicts block readiness; soft conflicts warn
+
+**Status:** Accepted — 2026-08-03. **Decision:** Leave/unavailability precedence determines effective state without hiding conflicts. Available/unavailable and leave/available are errors; preference conflicts are warnings. **Rationale:** Readiness requires trustworthy prohibitions while preserving human preference nuance. **Rejected:** silent precedence and treating every preference conflict as a veto.
+
+## ADR-042 — Finalized scenario data drives static HTML and PDF evidence
+
+**Status:** Accepted — 2026-08-03. **Decision:** Render disposable HTML from the finalized scenario projection, then print it through existing Playwright/Chromium infrastructure. **Rationale:** Human review needs portable evidence without expanding x-document or creating a PDF subsystem. **Rejected:** direct drawing commands, PDF as canonical truth, and polished success artifacts for failed scenarios.

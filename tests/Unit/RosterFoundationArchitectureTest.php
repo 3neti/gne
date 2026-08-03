@@ -24,3 +24,16 @@ it('keeps active duty vocabulary deliberately small', function () {
         ->not->toContain('OnCall')
         ->not->toContain('Overtime');
 });
+
+it('keeps request resolution in the application layer and generation out of the request slice', function () {
+    $root = dirname(__DIR__, 2);
+    $controller = file_get_contents($root.'/app/Http/Controllers/DoctorScheduleRequestController.php');
+    $availabilityPage = file_get_contents($root.'/resources/js/pages/rostering/periods/Availability.vue');
+    $scenario = file_get_contents($root.'/app/Domain/Rostering/RosterLifecycleScenarioDefinition.php');
+
+    expect($controller)->toContain('ValidateDoctorRequests')
+        ->not->toContain('conflict_codes', 'effective_status', 'RosterGenerator')
+        ->and($availabilityPage)->not->toContain('leave > unavailable', 'preferred_work && preferred_off', 'fetch(')
+        ->and($scenario)->toContain("'record_requests'", "'prove_hard_conflict'", "'resolve_hard_conflict'")
+        ->not->toContain('class_exists($step');
+});

@@ -2,35 +2,55 @@
 
 namespace App\Console\Commands;
 
+use App\Application\Rostering\RunRequestsAvailabilityScenario;
 use App\Application\Rostering\RunRosterLifecycleScenario;
 use App\Domain\Rostering\RosterLifecycleScenarioDefinition;
+use App\Infrastructure\Rostering\PrintRequestsAvailabilityPdf;
+use App\Infrastructure\Rostering\RenderRequestsAvailabilityReport;
 use Illuminate\Console\Command;
+use Illuminate\Filesystem\Filesystem;
 
 final class GneRosterLifecycleRunCommand extends Command
 {
-    protected $signature = 'gne:roster:lifecycle:run {--scenario=ANAESTHESIA-ROSTER-FOUNDATION-LIFECYCLE} {--repository= : Repository root} {--keep-state : Commit scenario state} {--json : Emit deterministic JSON}';
+    protected $signature = 'gne:roster:lifecycle:run {--scenario=ANAESTHESIA-ROSTER-FOUNDATION-LIFECYCLE} {--repository= : Repository root} {--keep-state : Commit scenario state} {--artifact : Generate finalized JSON, HTML, and PDF evidence} {--output= : Artifact output directory} {--json : Emit deterministic JSON}';
 
     protected $description = 'Run the allowlisted anaesthesia roster foundation lifecycle proof';
 
-    public function handle(RunRosterLifecycleScenario $runner): int
+    public function handle(RunRosterLifecycleScenario $runner, RunRequestsAvailabilityScenario $requestsRunner, RenderRequestsAvailabilityReport $render, PrintRequestsAvailabilityPdf $print, Filesystem $files): int
     {
-        if ($this->option('scenario') !== 'ANAESTHESIA-ROSTER-FOUNDATION-LIFECYCLE') {
+        if (! in_array($this->option('scenario'), ['ANAESTHESIA-ROSTER-FOUNDATION-LIFECYCLE', 'ANAESTHESIA-ROSTER-REQUESTS-AND-AVAILABILITY'], true)) {
             $this->error('Unknown roster lifecycle scenario.');
 
             return self::FAILURE;
         }
         $root = rtrim((string) ($this->option('repository') ?: base_path()), '/');
-        $definition = RosterLifecycleScenarioDefinition::fromFile($root.'/business/profiles/anaesthesia-rostering/scenarios/foundation-lifecycle.yaml');
-        $result = $runner->handle($definition, (bool) $this->option('keep-state'));
+        $requestsScenario = $this->option('scenario') === 'ANAESTHESIA-ROSTER-REQUESTS-AND-AVAILABILITY';
+        $source = $requestsScenario ? 'requests-and-availability.yaml' : 'foundation-lifecycle.yaml';
+        $definition = RosterLifecycleScenarioDefinition::fromFile($root.'/business/profiles/anaesthesia-rostering/scenarios/'.$source);
+        $result = $requestsScenario ? $requestsRunner->handle($definition, (bool) $this->option('keep-state')) : $runner->handle($definition, (bool) $this->option('keep-state'));
+        $payload = $result->toArray();
+        if ($requestsScenario && $this->option('artifact')) {
+            $artifactRoot = rtrim((string) ($this->option('output') ?: base_path('.gne/reports/rostering/requests-and-availability')), '/');
+            $files->ensureDirectoryExists($artifactRoot);
+            $html = $render->handle($artifactRoot, $payload);
+            $pdf = $print->handle($artifactRoot);
+            $payload['artifacts'] = ['status' => 'final', 'html' => $html, 'pdf' => $pdf];
+            $json = json_encode($payload, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES | JSON_THROW_ON_ERROR)."\n";
+            $files->put($artifactRoot.'/report.json', $json);
+            $payload['artifacts']['json'] = ['path' => 'report.json', 'sha256' => hash('sha256', $json), 'byte_length' => strlen($json)];
+        }
         if ($this->option('json')) {
-            $this->line(json_encode($result->toArray(), JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES | JSON_THROW_ON_ERROR));
+            $this->line(json_encode($payload, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES | JSON_THROW_ON_ERROR));
         } else {
-            $this->info("Roster lifecycle scenario: {$result->scenario}");
-            foreach ($result->steps as $step) {
+            $scenarioIdentifier = $requestsScenario ? $payload['scenario']['identifier'] : $payload['scenario'];
+            $this->info("Roster lifecycle scenario: {$scenarioIdentifier}");
+            foreach ($payload['steps'] as $step) {
                 $this->line(strtoupper($step['status'])." {$step['sequence']}. {$step['title']}");
             }
         }
 
-        return $result->passed ? self::SUCCESS : self::FAILURE;
+        $passed = $requestsScenario ? $payload['scenario']['passed'] : $payload['passed'];
+
+        return $passed ? self::SUCCESS : self::FAILURE;
     }
 }

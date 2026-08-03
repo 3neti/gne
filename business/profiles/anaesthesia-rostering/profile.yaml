@@ -6,7 +6,7 @@ version: 1
 canonical: true
 vocabulary: vocabulary.yaml
 lifecycles: [lifecycles/roster-period.yaml]
-scenarios: [scenarios/create-roster-period.yaml, scenarios/foundation-lifecycle.yaml]
+scenarios: [scenarios/create-roster-period.yaml, scenarios/foundation-lifecycle.yaml, scenarios/requests-and-availability.yaml]
 policies:
   - policies/active-doctor-eligibility.yaml
   - policies/roster-period-boundaries.yaml
@@ -14,6 +14,8 @@ policies:
   - policies/unique-daily-assignment.yaml
   - policies/explicit-required-hours.yaml
   - policies/publication-validation.yaml
+  - policies/request-conflict-precedence.yaml
+  - policies/generation-readiness-requires-valid-requests.yaml
 documents: [documents/roster-period-summary.yaml]
 schemas:
   - schemas/doctor.schema.json
@@ -21,9 +23,11 @@ schemas:
   - schemas/roster-day.schema.json
   - schemas/doctor-roster-requirement.schema.json
   - schemas/roster-assignment.schema.json
+  - schemas/doctor-schedule-request.schema.json
 artifact_types:
   Doctor: { schema: schemas/doctor.schema.json }
   RosterPeriod: { schema: schemas/roster-period.schema.json }
   RosterDay: { schema: schemas/roster-day.schema.json }
   DoctorRosterRequirement: { schema: schemas/doctor-roster-requirement.schema.json }
   RosterAssignment: { schema: schemas/roster-assignment.schema.json }
+  DoctorScheduleRequest: { schema: schemas/doctor-schedule-request.schema.json }

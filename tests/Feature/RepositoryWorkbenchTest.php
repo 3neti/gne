@@ -18,6 +18,6 @@ it('shows repository-derived status to an authenticated user', function () {
         ->where('repository.canonical_source_path', 'business')
         ->where('repository.generated_projection_path', '.gne')
         ->has('repository.profiles', 3)
-        ->has('repository.scenarios', 4)
+        ->has('repository.scenarios', 5)
     );
 });

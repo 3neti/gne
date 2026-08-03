@@ -27,6 +27,10 @@ One department and one simple administrator capability are assumed. Contracted-h
 5. Publication.
 6. OpenAPI AI Operation.
 
+## Current slice
+
+Administrator-entered requests and availability are implemented as audited host state. Accepted requests compile into an effective per-doctor/date calendar; hard conflicts block readiness and soft conflicts remain warnings. The repository lifecycle proof emits rollback-isolated JSON, HTML, and PDF evidence without generating assignments.
+
 ## Recommended next slice
 
-**Requests and Availability** — confirm and model doctor-authored constraints before any generation work begins.
+**Manual Roster Editing** — prove human-authored assignments and request-aware validation before automatic generation.

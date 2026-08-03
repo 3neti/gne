@@ -1,0 +1,13 @@
+identifier: ANAESTHESIA-ROSTER-REQUESTS-AND-AVAILABILITY
+slug: requests-and-availability
+profile: PROFILE-ANAESTHESIA-ROSTERING
+title: Anaesthesia requests and availability lifecycle proof
+description: Creates fictional four-week inputs, distinguishes hard and soft conflicts, proves readiness, and finalizes a report without generating assignments.
+lifecycle: LIFECYCLE-ANAESTHESIA-ROSTER-PERIOD
+steps:
+  - { id: dataset, title: "Create doctors, period, staffing, and hour targets", operation: create_dataset }
+  - { id: requests, title: "Record accepted availability, leave, and preferences", operation: record_requests }
+  - { id: hard-conflict, title: Prove hard request conflict blocks readiness, operation: prove_hard_conflict }
+  - { id: resolve-hard-conflict, title: Withdraw the conflicting hard request, operation: resolve_hard_conflict }
+  - { id: readiness, title: Validate warnings and transition to ready for generation, operation: validate_readiness }
+  - { id: report, title: Finalize calendar and doctor availability evidence, operation: finalize_report }

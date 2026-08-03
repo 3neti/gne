@@ -1,0 +1,6 @@
+identifier: POLICY-ANAESTHESIA-REQUEST-CONFLICT-PRECEDENCE
+title: Accepted request precedence and conflict visibility
+precedence: [leave, unavailable, available, preferred_off, preferred_work]
+hard_conflicts: [available_and_unavailable, leave_and_available]
+soft_conflicts: [leave_and_preferred_work, unavailable_and_preferred_work, preferred_work_and_preferred_off]
+rule: Precedence determines effective availability but never hides a conflict finding.

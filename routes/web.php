@@ -2,10 +2,12 @@
 
 use App\Http\Controllers\DoctorController;
 use App\Http\Controllers\DoctorRosterRequirementController;
+use App\Http\Controllers\DoctorScheduleRequestController;
 use App\Http\Controllers\DocumentSetController;
 use App\Http\Controllers\RepositoryWorkbenchController;
 use App\Http\Controllers\ResolvedDocumentController;
 use App\Http\Controllers\RosterAssignmentController;
+use App\Http\Controllers\RosterAvailabilityController;
 use App\Http\Controllers\RosteringDashboardController;
 use App\Http\Controllers\RosterPeriodController;
 use App\Http\Controllers\RosterStaffingController;
@@ -32,6 +34,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::prefix('rostering')->name('rostering.')->group(function () {
         Route::get('/', RosteringDashboardController::class)->name('dashboard');
         Route::resource('doctors', DoctorController::class)->except(['show']);
+        Route::resource('requests', DoctorScheduleRequestController::class)->parameters(['requests' => 'doctor_schedule_request'])->except(['destroy']);
+        Route::post('requests/{doctor_schedule_request}/transition', [DoctorScheduleRequestController::class, 'transition'])->name('requests.transition');
         Route::resource('periods', RosterPeriodController::class)->parameters(['periods' => 'roster_period'])->except(['edit', 'destroy']);
         Route::post('periods/{roster_period}/transition', [RosterPeriodController::class, 'transition'])->name('periods.transition');
         Route::get('periods/{roster_period}/staffing', [RosterStaffingController::class, 'edit'])->name('periods.staffing.edit');
@@ -39,6 +43,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::get('periods/{roster_period}/requirements', [DoctorRosterRequirementController::class, 'edit'])->name('periods.requirements.edit');
         Route::put('periods/{roster_period}/requirements', [DoctorRosterRequirementController::class, 'update'])->name('periods.requirements.update');
         Route::get('periods/{roster_period}/assignments', [RosterAssignmentController::class, 'index'])->name('periods.assignments.index');
+        Route::get('periods/{roster_period}/availability', RosterAvailabilityController::class)->name('periods.availability.show');
     });
 });
 

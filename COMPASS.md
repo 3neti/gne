@@ -9,7 +9,7 @@ Canonical cognition, portable discovery, immutable artifacts, compiler projectio
 
 ## Immediate direction
 
-Stabilize explicit doctor, period, staffing, required-hours, lifecycle, authorization, and audit foundations; then model **Requests and Availability** before any roster generation.
+Requests and availability now complete the generation-input foundation. Proceed to **Manual Roster Editing** so human-authored assignments and request-aware validation are proven together before automatic generation.
 
 The foundation integrity proof is now repository-authored and rollback-by-default. Warning-bearing readiness, error blocking, assignment audit atomicity, duplicate rejection, and audit rollback are exercised through one allowlisted scenario.
 

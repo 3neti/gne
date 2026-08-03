@@ -5,3 +5,5 @@ terms:
   - { term: Roster Day, definition: One calendar date inside a roster period with an authored staffing requirement. }
   - { term: Required Hours, definition: An explicit non-negative target for one doctor in one roster period. }
   - { term: Primary Daily Assignment, definition: The single counted assignment permitted for one doctor and roster day in the MVP. }
+  - { term: Doctor Schedule Request, definition: "Host-owned mutable availability, leave, or preference input for explicit roster-period dates." }
+  - { term: Effective Availability, definition: Derived per-doctor per-date meaning from accepted requests and deterministic precedence. }

@@ -7,17 +7,17 @@ The numbered requirements below preserve the approved FR-001–FR-014 handoff vo
 | FR-001 — Doctor management | Implemented | Stable identifiers, contract notation, active/inactive history, administrator UI/actions/tests | Skills, subspecialties, credentialing |
 | FR-002 — Roster-period management | Implemented | Stable period, inclusive day expansion, explicit early lifecycle | Revisions, reopen, publication |
 | FR-003 — Staffing and required-hours inputs | Implemented | Weekday/weekend defaults, date overrides, explicit doctor-period targets | Demand/contract derivation |
-| FR-004 — Requests and availability | Deferred | — | Next slice |
+| FR-004 — Requests and availability | Implemented for administrator entry | Normalized dates, explicit statuses, conflict validation, availability calendar | Doctor self-service deferred |
 | FR-005 — Leave handling | Deferred | Assignment vocabulary seam only | Request workflow and legacy mapping |
 | FR-006 — Preferences | Deferred | — | Semantics and policy |
 | FR-007 — On-call and specialist coverage | Deferred | — | Department confirmation |
 | FR-008 — Roster construction | Partially implemented | One counted primary assignment persistence seam and constraints | Grid, manual editing, generation, multiple duties |
-| FR-009 — Validation and fairness | Deferred except foundation subset | Structural validation findings | Fatigue, fairness, preferences, coverage |
+| FR-009 — Validation and fairness | Requests subset implemented | Hard request errors block readiness; soft conflicts explained | Assignment fairness, fatigue, coverage deferred |
 | FR-010 — Review and approval | Deferred | Lifecycle vocabulary only | Review UI and authority |
 | FR-011 — Publication | Deferred | Status/policy vocabulary only | Freeze, release, reopen |
 | FR-012 — Import and export | Deferred | Workbook characterization only | Confirmed mapping, CSV/XLSX |
 | FR-013 — Reporting and analytics | Deferred | Foundation counts only | Hours variance, payroll, SLA |
-| FR-014 — Integration and automation | Partially implemented | Stable application actions and public identifiers | OpenAPI, AI operation, generator interface |
+| FR-014 — Integration and automation | Partially implemented | Stable audited request actions and public identifiers | OpenAPI, AI operation, generator interface |
 
 ## Foundation user journeys
 

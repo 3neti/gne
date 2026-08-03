@@ -39,6 +39,12 @@ class Doctor extends Model
         return $this->hasMany(RosterAssignment::class);
     }
 
+    /** @return HasMany<DoctorScheduleRequest, $this> */
+    public function scheduleRequests(): HasMany
+    {
+        return $this->hasMany(DoctorScheduleRequest::class);
+    }
+
     /** @return array<string, string> */
     protected function casts(): array
     {
