@@ -7,6 +7,7 @@ use App\Domain\Compilation\PrepareCompilationPlan;
 use App\Domain\Repository\ExplainRepository;
 use App\Domain\Repository\ValidateRepository;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Gate;
 use Inertia\Inertia;
 use Inertia\Response;
 
@@ -14,6 +15,7 @@ class RepositoryWorkbenchController extends Controller
 {
     public function __invoke(Request $request, ResolveStoryboardRepositoryRoot $roots, ValidateRepository $validator, ExplainRepository $explainer, PrepareCompilationPlan $compiler): Response
     {
+        Gate::authorize('view-repository-workbench');
         $root = $roots->handle($request);
         $manifest = $validator->handle($root);
         $explanation = $explainer->handle($root, $manifest);

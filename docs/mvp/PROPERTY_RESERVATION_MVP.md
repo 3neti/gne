@@ -36,7 +36,7 @@ A secured Herd site uses `https://gne.test`. Running `php artisan serve` is supp
 GET|HEAD /subjects/{subject}/documents/{document}/browser
 ```
 
-The route uses the existing `auth` and `verified` middleware group. The current `User` model does not implement Laravel's email-verification contract, so authentication is enforced while email verification is not yet an active additional check. Its temporary MVP gate permits authenticated local GNE users to view repository-authored demonstration subjects. It does not implement organization ownership, customer access, or multi-tenant isolation.
+The route uses `auth` and `verified`, then requires an active host-owned `view` grant for the exact repository subject. The current `User` model does not implement Laravel's email-verification contract, so email verification is not yet an active additional check. Unknown subjects return `404`; known ungranted subjects return `403`; authorization occurs before resolution. This is deliberate MVP subject isolation, not organization ownership, enterprise RBAC, or multi-tenancy.
 
 The default representation is `browser-composition-html-styled`. The strict query allowlist also accepts `browser-composition-html` and `browser-composition`. Unknown representations return 400. Unknown subjects or definitions return 404. Valid definitions with missing accepted evidence return 422.
 

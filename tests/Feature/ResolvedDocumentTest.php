@@ -1,5 +1,7 @@
 <?php
 
+use App\Application\Authorization\GrantSubjectAccess;
+use App\Domain\Authorization\SubjectPermission;
 use App\Domain\Compilation\CompilationSubject;
 use App\Domain\Compilation\DocumentResolutionRequest;
 use App\Domain\Compilation\ResolveDocument;
@@ -41,7 +43,9 @@ it('protects and displays a browser projection with field evidence', function ()
     $this->get(route('documents.show', $parameters))->assertRedirect(route('login'));
 
     $this->withoutVite();
-    $this->actingAs(User::factory()->create(['email_verified_at' => now()]))
+    $user = User::factory()->create(['email_verified_at' => now()]);
+    app(GrantSubjectAccess::class)->handle($user, new CompilationSubject('RESERVATION-000001', 'PropertyReservation'), SubjectPermission::View);
+    $this->actingAs($user)
         ->get(route('documents.show', $parameters))
         ->assertSuccessful()
         ->assertInertia(fn (Assert $page) => $page
@@ -56,7 +60,11 @@ it('protects and displays a browser projection with field evidence', function ()
 
 it('distinguishes missing definitions from definitions with missing evidence', function () {
     $this->withoutVite();
-    $this->actingAs(User::factory()->create(['email_verified_at' => now()]));
+    $user = User::factory()->create(['email_verified_at' => now()]);
+    foreach (['RESERVATION-000001', 'RESERVATION-000002'] as $identifier) {
+        app(GrantSubjectAccess::class)->handle($user, new CompilationSubject($identifier, 'PropertyReservation'), SubjectPermission::View);
+    }
+    $this->actingAs($user);
 
     $this->get(route('documents.show', ['document' => 'DOCUMENT-NOT-FOUND', 'subject' => 'RESERVATION-000001']))->assertNotFound();
     $this->get(route('documents.show', ['document' => 'DOCUMENT-INVOICE', 'subject' => 'RESERVATION-NOT-FOUND']))->assertNotFound();

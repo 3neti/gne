@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Application\Authorization\FindCompilationSubject;
 use App\Application\Storyboard\ResolveStoryboardRepositoryRoot;
 use App\Domain\Compilation\CompilationSubjectNotFound;
 use App\Domain\Compilation\DocumentDefinitionNotFound;
@@ -21,14 +22,17 @@ final class ShowCompiledBrowserDocumentController extends Controller
         string $subject,
         string $document,
         ResolveStoryboardRepositoryRoot $roots,
+        FindCompilationSubject $subjects,
         BrowserDocumentRepresentationResolver $resolver,
         DocumentHttpResponseFactory $responses,
     ): Response {
-        Gate::authorize('view-demonstration-documents');
-        $representation = $this->representation($request);
+        $root = $roots->handle($request);
 
         try {
-            $hostResponse = $resolver->handle($roots->handle($request), $document, $subject, $representation);
+            $compilationSubject = $subjects->handle($root, $subject);
+            Gate::authorize('view-subject', $compilationSubject);
+            $representation = $this->representation($request);
+            $hostResponse = $resolver->handle($root, $document, $subject, $representation);
         } catch (DocumentDefinitionNotFound|CompilationSubjectNotFound $exception) {
             abort(404, $exception->getMessage());
         } catch (DocumentResolutionException $exception) {

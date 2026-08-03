@@ -12,7 +12,7 @@ it('protects the repository workbench', function () {
 
 it('shows repository-derived status to an authenticated user', function () {
     $this->withoutVite();
-    $user = User::factory()->create(['email_verified_at' => now()]);
+    $user = User::factory()->create(['email_verified_at' => now(), 'is_operator' => true]);
     $this->actingAs($user)->get(route('repository'))->assertSuccessful()->assertInertia(fn (Assert $page) => $page
         ->component('RepositoryWorkbench')
         ->where('repository.canonical_source_path', 'business')

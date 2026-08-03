@@ -1,5 +1,8 @@
 <?php
 
+use App\Application\Authorization\GrantSubjectAccess;
+use App\Domain\Authorization\SubjectPermission;
+use App\Domain\Compilation\CompilationSubject;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Artisan;
@@ -29,6 +32,9 @@ it('targets a subject and rejects an unknown subject', function () {
 it('shows subject lifecycle and document readiness in the authenticated workbench', function () {
     $this->withoutVite();
     $user = User::factory()->create(['email_verified_at' => now()]);
+    foreach (['RESERVATION-000001', 'RESERVATION-000002'] as $identifier) {
+        app(GrantSubjectAccess::class)->handle($user, new CompilationSubject($identifier, 'PropertyReservation'), SubjectPermission::View);
+    }
 
     $this->actingAs($user)->get(route('document_sets.index'))->assertSuccessful()->assertInertia(fn (Assert $page) => $page->component('DocumentSetWorkbench')->has('documentSets', 2));
     $this->actingAs($user)->get(route('document_sets.show', 'RESERVATION-000002'))->assertSuccessful()->assertInertia(fn (Assert $page) => $page

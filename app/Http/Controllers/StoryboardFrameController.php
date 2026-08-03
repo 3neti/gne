@@ -2,8 +2,10 @@
 
 namespace App\Http\Controllers;
 
+use App\Domain\Compilation\CompilationSubject;
 use Illuminate\Filesystem\Filesystem;
 use Illuminate\Http\Response;
+use Illuminate\Support\Facades\Gate;
 
 final class StoryboardFrameController extends Controller
 {
@@ -23,6 +25,7 @@ final class StoryboardFrameController extends Controller
         }
         abort_if($entry === null, 404);
         $snapshot = $entry['snapshot'];
+        Gate::authorize('view-subject', new CompilationSubject($snapshot['subject']['identifier'], $snapshot['subject']['type']));
         $documents = implode('', array_map(fn (array $document): string => '<li><strong>'.e($document['identifier']).'</strong> - '.e($document['readiness']).'</li>', $snapshot['documents']));
         $artifacts = implode('', array_map(fn (string $identifier): string => '<li>'.e($identifier).'</li>', $snapshot['artifact_identifiers']));
         $browser = $snapshot['browser'] === null ? 'No resolved browser document for this stage.' : 'Checksum '.e($snapshot['browser']['checksum']).' · ETag '.e($snapshot['browser']['etag']);

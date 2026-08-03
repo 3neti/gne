@@ -18,6 +18,8 @@ arch('commands delegate repository behavior')
         'App\Integration',
         'App\Application',
         'App\Infrastructure',
+        'App\Models',
+        'Carbon',
         'Illuminate\Console',
         'Illuminate\Filesystem',
         'Illuminate\Support',
@@ -252,6 +254,42 @@ arch('dependency baseline attestation remains outside the browser request path')
         'App\Integration\XDocument\ResolveInstalledPackageGitHead',
         'Symfony\Component\Process',
     ]);
+
+arch('subject authorization remains host-owned and outside compiler primitives')
+    ->expect([
+        'App\Domain\Compilation',
+        'App\Domain\Repository',
+        'App\Integration\XDocument',
+    ])
+    ->not->toUse([
+        'App\Models\SubjectAccessGrant',
+        'App\Models\User',
+        'App\Contracts\SubjectAuthorization',
+        'App\Domain\Authorization\SubjectPermission',
+    ]);
+
+it('authorizes compiled browser delivery before invoking x-document resolution', function () {
+    $controller = file_get_contents(dirname(__DIR__, 2).'/app/Http/Controllers/ShowCompiledBrowserDocumentController.php');
+
+    expect(strpos($controller, "Gate::authorize('view-subject'"))
+        ->toBeLessThan(strpos($controller, '$resolver->handle('))
+        ->and($controller)->not->toContain('view-demonstration-documents');
+});
+
+it('keeps subject authorization out of canonical business source and browser clients', function () {
+    $root = dirname(__DIR__, 2);
+    $business = collect((new RecursiveIteratorIterator(new RecursiveDirectoryIterator($root.'/business'))))
+        ->filter(fn (SplFileInfo $file): bool => $file->isFile())
+        ->map(fn (SplFileInfo $file): string => file_get_contents($file->getPathname()))
+        ->implode("\n");
+    $browser = collect((new RecursiveIteratorIterator(new RecursiveDirectoryIterator($root.'/resources/js'))))
+        ->filter(fn (SplFileInfo $file): bool => $file->isFile())
+        ->map(fn (SplFileInfo $file): string => file_get_contents($file->getPathname()))
+        ->implode("\n");
+
+    expect($business)->not->toContain('SubjectAccessGrant', 'is_operator')
+        ->and($browser)->not->toContain('SubjectAccessGrant', 'view-subject', 'is_operator');
+});
 
 it('versions the x-document contract schema in its repository path', function () {
     $root = dirname(__DIR__, 2).'/resources/gne/contracts/x-document/1.0';

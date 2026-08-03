@@ -7,6 +7,10 @@ A **Captured and Verified Frame** has status `captured_and_verified`, the observ
 | Term | Canonical meaning |
 |---|---|
 | GNE | Repository-native Business Compiler and runtime control plane. |
+| Subject Access Grant | Host-owned operational authorization linking one user to one exact repository-native Compilation Subject and one permission; it is not canonical business evidence and survives repository projection rebuilds. |
+| Subject Permission | Explicit host permission over one Compilation Subject. The MVP vocabulary contains only `view`; no wildcard or inferred permission exists. |
+| Operator | Deliberately designated host user allowed to open global repository workbenches. Operator status does not replace an exact subject grant. |
+| Authorization Decision | Derived allow or deny result with a safe reason such as active, missing, or expired grant; it is evaluated before resolution and external document compilation. |
 | GeNEi | Provider-independent repository-native AI role, pronounced “Genie”. |
 | Business Repository | Version-controlled canonical business source and evidence. |
 | Business Source | Authored repository evidence from which meaning derives. |

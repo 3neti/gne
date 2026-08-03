@@ -5,11 +5,11 @@
 
 ## Completed
 
-Canonical cognition, portable discovery, declaration-driven profiles, byte-complete fingerprints, immutable artifacts, semantic/database projections, and the authenticated workbench are established. Fully resolved documents cross canonical contract JSON into x-document and are delivered unchanged through x-document-laravel at an authenticated GET/HEAD route. The complete Property Reservation progression is now proven in an isolated repository with immutable invoice revisions, readiness changes, exact browser bytes, stable and changing ETags, and subject isolation. Demonstrable MVP is achieved without claiming production readiness.
+Canonical cognition, portable discovery, immutable artifacts, compiler projections, and host-owned exact-subject authorization are established. Fully resolved documents cross canonical contract JSON into x-document and are delivered unchanged only after an active `view` grant is confirmed. Unauthorized subjects are removed before inventory serialization; denied document routes stop before resolution or x-document. The complete Property Reservation progression remains demonstrable without claiming production readiness.
 
 ## Immediate direction
 
-Preserve the now-portable operator demonstration and introduce deliberate subject authorization without changing compiler/document boundaries.
+Preserve the deliberate authorization-before-resolution boundary and move next to a production artifact-authoring surface without broadening the MVP into enterprise tenancy or generic RBAC.
 
 ## Explicit deferrals
 

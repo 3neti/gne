@@ -6,6 +6,8 @@ GNE is a repository-native Business Compiler. Its north star is: **The business 
 
 Storyboard definitions under `docs/mvp/storyboards/` choreograph demonstrations only. They observe isolated repository/compiler states and never define business truth; generated captures and static HTML/PDF/movie renditions under `.gne/storyboards/` are disposable. Final renditions require a finalized 25-frame capture inventory; planned placeholders are draft evidence only. A final capture uses one interactive login and one continuing authenticated browser context. Production surfaces are captured from their real application or x-document routes; explanation frames are explicitly non-production annotations.
 
+Subject authorization is deliberate host-owned operational policy. Repository subject identifiers remain canonical, but grants, expiry, revocation, and the operator designation live only in the database. Authorization filters subject inventories and precedes resolution or x-document invocation. Canonical business source, resolved-document identities, and repository fingerprints never contain grant state.
+
 ## How to read this repository
 
 Begin here for durable cognition, `GRAMMAR.md` for vocabulary, `ARCHITECTURE.md` for boundaries, and `DECISION_REGISTER.md` for constraints. Read `business/` as canonical source and accepted evidence. Treat `.gne/`, database rows, caches, indexes, rendered documents, browser views, and reports as derived. Read `COMPASS.md` and `IMPLEMENTATION_STATUS.md` for volatile direction.

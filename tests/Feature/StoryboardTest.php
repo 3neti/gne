@@ -1,9 +1,12 @@
 <?php
 
+use App\Application\Authorization\GrantSubjectAccess;
 use App\Application\Storyboard\BuildStoryboard;
 use App\Application\Storyboard\LoadStoryboardDefinition;
 use App\Application\Storyboard\PropertyReservationStoryboardStateProvider;
 use App\Application\Storyboard\ResolveStoryboardRepositoryRoot;
+use App\Domain\Authorization\SubjectPermission;
+use App\Domain\Compilation\CompilationSubject;
 use App\Infrastructure\Storyboard\StoryboardArtifactException;
 use App\Infrastructure\Storyboard\StoryboardHtmlRenderer;
 use App\Models\User;
@@ -118,7 +121,13 @@ it('labels authenticated storyboard explanations as non-production surfaces', fu
     $path = '/storyboards/property-reservation-mvp/frames/proof-submitted';
 
     $this->get($path)->assertRedirect('/login');
-    $this->actingAs(User::factory()->create())->get($path)
+    $user = User::factory()->create(['is_operator' => true]);
+    app(GrantSubjectAccess::class)->handle(
+        $user,
+        new CompilationSubject('PROPERTY-RESERVATION-MVP-ACCEPTANCE-000001', 'PropertyReservation'),
+        SubjectPermission::View,
+    );
+    $this->actingAs($user)->get($path)
         ->assertSuccessful()
         ->assertSee('payment_evidence_submitted', escape: false)
         ->assertSee('Not a production application screen', escape: false)
@@ -137,6 +146,11 @@ it('exposes isolated storyboard state only to an authenticated local capture req
     $this->withHeaders($headers)->get('/document-sets')->assertRedirect('/login');
 
     $user = User::factory()->create();
+    app(GrantSubjectAccess::class)->handle(
+        $user,
+        new CompilationSubject('PROPERTY-RESERVATION-MVP-ACCEPTANCE-000001', 'PropertyReservation'),
+        SubjectPermission::View,
+    );
     $this->actingAs($user)->withHeaders($headers)->get('/document-sets')
         ->assertSuccessful()
         ->assertInertia(fn (Assert $page): Assert => $page
@@ -148,12 +162,15 @@ it('exposes isolated storyboard state only to an authenticated local capture req
 
 it('keeps the capture runner on one interactive browser context without session injection', function () {
     $script = file_get_contents(base_path('scripts/gne-storyboard-capture.mjs'));
+    $capture = file_get_contents(app_path('Infrastructure/Storyboard/CaptureStoryboard.php'));
 
     expect(substr_count($script, 'browser.newContext('))->toBe(1)
         ->and($script)->toContain('loginFrame.capture_route')
         ->and($script)->toContain("page.locator('[data-test=\"login-button\"]').click()")
         ->and($script)->toContain("status: 'captured_and_verified'")
-        ->and($script)->not->toContain('storageState', 'laravel_session', 'session cookie', 'csrf');
+        ->and($script)->not->toContain('storageState', 'laravel_session', 'session cookie', 'csrf')
+        ->and($capture)->toContain("forceFill(['is_operator' => true])", 'GrantSubjectAccess', 'RevokeSubjectAccess')
+        ->not->toContain("subject_identifier' => '*'");
 });
 
 it('keeps storyboard definitions out of canonical business source and generated outputs disposable', function () {

@@ -1,5 +1,8 @@
 <?php
 
+use App\Application\Authorization\FindCompilationSubject;
+use App\Application\Authorization\GrantSubjectAccess;
+use App\Domain\Authorization\SubjectPermission;
 use App\Domain\Compilation\AmbiguousArtifactSelection;
 use App\Domain\Compilation\BuildResolvedDocumentSet;
 use App\Domain\Compilation\CompilationSubject;
@@ -98,6 +101,13 @@ function bindAcceptanceBrowserRepository(PropertyReservationAcceptanceRepository
             );
         }
     });
+    app()->instance(FindCompilationSubject::class, new class(app(ValidateRepository::class)) extends FindCompilationSubject
+    {
+        public function handle(string $repositoryRoot, string $subjectIdentifier): CompilationSubject
+        {
+            return new CompilationSubject($subjectIdentifier, PropertyReservationAcceptanceRepository::SubjectType);
+        }
+    });
 }
 
 function acceptanceBrowserUrl(string $document, string $subject = PropertyReservationAcceptanceRepository::SubjectIdentifier): string
@@ -122,6 +132,14 @@ it('proves the complete immutable Property Reservation lifecycle and browser ref
         $repository->begin();
         bindAcceptanceBrowserRepository($repository);
         $user = User::factory()->create(['email_verified_at' => now()]);
+        app(GrantSubjectAccess::class)->handle(
+            $user,
+            new CompilationSubject(
+                PropertyReservationAcceptanceRepository::SubjectIdentifier,
+                PropertyReservationAcceptanceRepository::SubjectType,
+            ),
+            SubjectPermission::View,
+        );
 
         $applicationChecksum = $repository->checksum('acceptance-application-r1.yaml');
         $stageA = propertyReservationAcceptanceSnapshot($repository, 'application_submitted', 'DOCUMENT-APPLICATION');

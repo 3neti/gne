@@ -117,3 +117,11 @@ Each accepted decision is durable until superseded by another recorded decision.
 ## ADR-029 — Lifecycle storyboards capture one real authenticated journey
 
 **Status:** Accepted — 2026-08-02. **Decision:** Capture the public login and all subsequent protected production surfaces through one continuous interactively authenticated browser context. Each frame declares an actual capture route and type; non-product explanations are visibly labeled. Local authenticated capture requests may select validated disposable staged repository roots, while normal requests retain canonical repository state. **Rationale:** A screenshot proves application behavior only when the real route, session, response, and visible marker are verified. **Rejected:** independent session injection per frame and screenshots of explanation wrappers claimed as product pages.
+
+## ADR-030 — Subject authorization is deliberate host-owned operational policy
+
+**Status:** Accepted — 2026-08-03. **Decision:** Store exact user/Compilation Subject/permission grants in a rebuild-independent host table; retain subject identity in canonical repository source and restrict global workbenches to deliberately designated operators. **Rationale:** Authentication alone proves identity, not authority over every business case. **Consequences:** The MVP has one `view` permission, explicit grant/revoke/list commands, immediate expiry and revocation, no wildcard, and no claim of enterprise tenancy. **Rejected:** granting every authenticated user access, filename inference, repository-authored user ACLs, and operator bypass of subject grants.
+
+## ADR-031 — Subject authorization precedes resolution and document expression
+
+**Status:** Accepted — 2026-08-03. **Decision:** Resolve a route subject identity, authorize it, and only then invoke document resolution or x-document; filter unauthorized subjects before inventory serialization. **Rationale:** A denial must reveal neither readiness nor document content and must consume no compiler or document-driver work. **Consequences:** Unknown subject is `404`, known ungranted subject is `403`, and denied delivery cannot invoke x-document. **Rejected:** post-resolution checks, client-side filtering, and broad demonstration gates.

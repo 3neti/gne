@@ -1,5 +1,8 @@
 <?php
 
+use App\Application\Authorization\GrantSubjectAccess;
+use App\Domain\Authorization\SubjectPermission;
+use App\Domain\Compilation\CompilationSubject;
 use App\Integration\XDocument\BrowserDocumentRepresentationResolver;
 use App\Integration\XDocument\ResolveXDocumentBrowserRepresentation;
 use App\Models\User;
@@ -11,7 +14,17 @@ uses(RefreshDatabase::class);
 
 function authenticatedDocumentUser(): User
 {
-    return User::factory()->create(['email_verified_at' => now()]);
+    $user = User::factory()->create(['email_verified_at' => now()]);
+
+    foreach (['RESERVATION-000001', 'RESERVATION-000002'] as $identifier) {
+        app(GrantSubjectAccess::class)->handle(
+            $user,
+            new CompilationSubject($identifier, 'PropertyReservation'),
+            SubjectPermission::View,
+        );
+    }
+
+    return $user;
 }
 
 function browserDocumentUrl(string $document = 'DOCUMENT-INVOICE', string $subject = 'RESERVATION-000001', array $query = []): string

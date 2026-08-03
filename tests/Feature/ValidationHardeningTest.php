@@ -45,7 +45,7 @@ it('fails validation and refuses compilation for invalid authored payloads', fun
 it('shows structured validation findings in the authenticated workbench', function () {
     $this->withoutVite();
 
-    $this->actingAs(User::factory()->create(['email_verified_at' => now()]))
+    $this->actingAs(User::factory()->create(['email_verified_at' => now(), 'is_operator' => true]))
         ->get(route('repository'))
         ->assertSuccessful()
         ->assertInertia(fn (Assert $page) => $page

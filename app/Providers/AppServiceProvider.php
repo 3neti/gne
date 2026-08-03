@@ -2,9 +2,12 @@
 
 namespace App\Providers;
 
+use App\Application\Authorization\DatabaseSubjectAuthorization;
+use App\Contracts\SubjectAuthorization;
 use App\Integration\XDocument\BrowserDocumentRepresentationResolver;
 use App\Integration\XDocument\ResolveXDocumentBrowserRepresentation;
 use App\Models\User;
+use App\Policies\CompilationSubjectPolicy;
 use Carbon\CarbonImmutable;
 use Illuminate\Support\Facades\Date;
 use Illuminate\Support\Facades\DB;
@@ -20,6 +23,7 @@ class AppServiceProvider extends ServiceProvider
     public function register(): void
     {
         $this->app->bind(BrowserDocumentRepresentationResolver::class, ResolveXDocumentBrowserRepresentation::class);
+        $this->app->bind(SubjectAuthorization::class, DatabaseSubjectAuthorization::class);
     }
 
     /**
@@ -28,7 +32,8 @@ class AppServiceProvider extends ServiceProvider
     public function boot(): void
     {
         $this->configureDefaults();
-        Gate::define('view-demonstration-documents', fn (User $user): bool => $user->exists);
+        Gate::define('view-subject', [CompilationSubjectPolicy::class, 'view']);
+        Gate::define('view-repository-workbench', fn (User $user): bool => (bool) $user->is_operator);
     }
 
     /**

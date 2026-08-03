@@ -60,6 +60,7 @@ final class GneStoryboardCommand extends Command
             'screenshot_count' => $screenshotCount,
             'capture_status' => $captureStatus,
             'authentication' => $manifest['authentication'] ?? null,
+            'authorization' => $manifest['authorization'] ?? null,
             'manifest' => $root.'/manifest.json',
             'html' => $manifest['outputs']['html']['entrypoint'] ?? null,
             'html_pages' => $manifest['outputs']['html']['page_count'] ?? 0,

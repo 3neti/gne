@@ -71,6 +71,15 @@ final readonly class BuildStoryboard
                 'unexpected_login_redirects' => 0,
                 'ephemeral_user_removed' => null,
             ],
+            'authorization' => [
+                'mode' => 'subject_grant',
+                'subject_identifier' => $definition->subject,
+                'permission' => 'view',
+                'grant_created' => false,
+                'protected_frames_authorized' => 0,
+                'unexpected_denials' => 0,
+                'grant_removed' => null,
+            ],
             'frames' => $frames,
             'outputs' => [
                 'html' => ['format' => 'gne-storyboard-html/1.0', 'status' => 'planned'],
