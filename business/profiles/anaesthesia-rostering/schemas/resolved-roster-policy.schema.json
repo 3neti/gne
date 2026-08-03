@@ -1,0 +1,1 @@
+{"$schema":"https://json-schema.org/draft/2020-12/schema","title":"Resolved Roster Policy","type":"object","required":["profile_identifier","revision","fingerprint"],"properties":{"profile_identifier":{"type":"string"},"revision":{"type":"integer","minimum":1},"fingerprint":{"type":"string","pattern":"^sha256:[a-f0-9]{64}$"}},"additionalProperties":true}

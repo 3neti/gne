@@ -1,6 +1,6 @@
 # GNE Compass
 
-**Current milestone:** Anaesthesia Rostering Foundation Vertical Slice
+**Current milestone:** Anaesthesia Draft Roster Generation
 **North star:** The business belongs to the repository. Everything operational is a projection.
 
 ## Completed

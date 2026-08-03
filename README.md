@@ -1,5 +1,7 @@
 # GNE
 
+Anaesthesia rostering now includes authorised deterministic balanced-greedy initial draft preview and commit. Generation is atomic, creates one batch revision, remains editable, and does not claim mathematical optimality. See `docs/rostering/DRAFT_ROSTER_GENERATION.md`.
+
 GNE is a repository-native **Business Compiler**: the business belongs to version-controlled files, while databases, browser views, documents, APIs, reports, and analytics are rebuildable projections.
 
 The anaesthesia rostering foundation is available to deliberately designated roster administrators at `/rostering`. It normalizes doctors, roster periods/days, explicit staffing headcounts, explicit doctor-period required hours, early lifecycle transitions, audit evidence, and a one-primary-assignment persistence seam. Run `php artisan db:seed --class=AnaesthesiaRosteringDemoSeeder` for fictional demonstration data and `php artisan gne:roster:validate --period=ROSTER-2026-09`. It does not generate, import, publish, or calculate payroll.

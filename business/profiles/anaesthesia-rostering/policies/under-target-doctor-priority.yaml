@@ -1,0 +1,3 @@
+identifier: POLICY-UNDER-TARGET-DOCTOR-PRIORITY
+revision: 1
+rule: Prefer eligible doctors with positive remaining required hours during draft generation.

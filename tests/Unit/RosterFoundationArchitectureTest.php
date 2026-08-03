@@ -2,15 +2,14 @@
 
 use Illuminate\Filesystem\Filesystem;
 
-it('keeps prohibited generation import and integration machinery out of rostering', function () {
+it('keeps prohibited optimization import and integration machinery out of rostering', function () {
     $files = new Filesystem;
     $root = dirname(__DIR__, 2);
     $roots = ["{$root}/app/Application/Rostering", "{$root}/app/Domain/Rostering", "{$root}/resources/js/pages/rostering", "{$root}/business/profiles/anaesthesia-rostering"];
     $controllerFiles = $files->glob("{$root}/app/Http/Controllers/*Roster*.php");
     $source = collect($roots)->flatMap(fn (string $root) => $files->allFiles($root))->map(fn ($file): string => $file->getContents())->merge(array_map(fn (string $path): string => $files->get($path), $controllerFiles))->implode("\n");
 
-    expect($source)->not->toContain('RosterGenerator')
-        ->not->toContain('OR-Tools')
+    expect($source)->not->toContain('OR-Tools')
         ->not->toContain('x-optimization')
         ->not->toContain('LBHurtado\\XChange')
         ->not->toContain('LBHurtado\\XDocument')

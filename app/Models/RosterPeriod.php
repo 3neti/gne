@@ -71,6 +71,12 @@ class RosterPeriod extends Model
         return $this->hasMany(RosterAuditEntry::class);
     }
 
+    /** @return HasMany<RosterGenerationRun, $this> */
+    public function generationRuns(): HasMany
+    {
+        return $this->hasMany(RosterGenerationRun::class);
+    }
+
     /** @return array<string, string> */
     protected function casts(): array
     {

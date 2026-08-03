@@ -2,6 +2,22 @@
 
 Each accepted decision is durable until superseded by another recorded decision.
 
+## ADR-052 — Deterministic explainable greedy generation
+
+Accepted. Mandatory eligibility precedes documented lexicographic ranking; mathematical optimization is not claimed and the generator remains replaceable.
+
+## ADR-053 — One generation command, one batch revision
+
+Accepted. One run creates many assignments, one revision, one change per assignment, and one generation audit. Manual corrections create later revisions.
+
+## ADR-054 — Generated and manual rosters share semantics
+
+Accepted. Both use the existing roster models, validation, projections, editing, revision, and audit boundaries.
+
+## ADR-055 — Direct-input generation fingerprints
+
+Accepted. The period requirement set isolates candidates. Unrelated doctors, users, periods, timestamps, database IDs, and filenames do not affect identity.
+
 ## ADR-001 — Repository is canonical; database is projection
 **Status:** Accepted · **Date:** 2026-07-22
 **Context:** Operational schemas obscure authored business meaning. **Decision:** Repository files are canonical and database rows rebuildable. **Rationale:** Human/AI readability and deterministic recovery. **Consequences:** Materializers retain stable identifiers and support replacement. **Rejected:** Database-first domain truth.

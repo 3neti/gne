@@ -32,6 +32,11 @@ class RosterPeriodPolicy
         return (bool) $user->is_roster_administrator;
     }
 
+    public function generate(User $user, RosterPeriod $rosterPeriod): bool
+    {
+        return (bool) $user->is_roster_administrator;
+    }
+
     public function delete(User $user, RosterPeriod $rosterPeriod): bool
     {
         return false;

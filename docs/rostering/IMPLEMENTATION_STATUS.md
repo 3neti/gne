@@ -1,6 +1,7 @@
 # Anaesthesia Rostering Implementation Status
 
 | Capability | Status | Evidence | Limitation |
+| Draft roster generation | Implemented | Deterministic preview; atomic run; one batch revision; explanations; workbench; artifacts | Greedy and initial-only |
 | --- | --- | --- | --- |
 | Doctors | Implemented | Routes, application actions, tests, Vue UI | No skills/subspecialties |
 | Roster periods | Implemented | Transactional creation and inclusive day expansion | One department; no revisions |

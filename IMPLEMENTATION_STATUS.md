@@ -1,6 +1,7 @@
 # Implementation Status
 
 | Intended capability | Current implementation | Test coverage | Limitations | Status | Next action |
+| Anaesthesia draft generation | Deterministic preview, atomic initial commit, explanations, batch history, UI, scenario, artifacts | Unit, feature, scenario, architecture | Greedy, initial-only, standard-day | Implemented | Quality hardening |
 |---|---|---|---|---|---|
 | Canonical cognition | Root documentation and business source | Architecture checks | Bootstrap vocabulary only | Implemented | Preserve durability |
 | Configuration | Version-1 YAML parser with safe relative paths | Unit/command | No extensible config language | Implemented | Evolve only from need |

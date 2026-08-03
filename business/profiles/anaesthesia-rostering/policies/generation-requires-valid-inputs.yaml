@@ -1,0 +1,3 @@
+identifier: POLICY-GENERATION-REQUIRES-VALID-INPUTS
+revision: 1
+rule: Initial draft generation requires valid readiness inputs, an empty roster, and no mandatory proposal errors.

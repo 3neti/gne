@@ -1,0 +1,3 @@
+identifier: POLICY-ASSIGNMENT-COUNT-BALANCE
+revision: 1
+rule: Prefer the eligible candidate with fewer proposed assignments after required-hour priorities.

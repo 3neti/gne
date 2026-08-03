@@ -3,8 +3,10 @@
 namespace App\Providers;
 
 use App\Application\Authorization\DatabaseSubjectAuthorization;
+use App\Application\Rostering\BalancedGreedyRosterGenerator;
 use App\Application\Rostering\RecordRosterAudit;
 use App\Contracts\Rostering\RosterAuditRecorder;
+use App\Contracts\Rostering\RosterGenerator;
 use App\Contracts\SubjectAuthorization;
 use App\Integration\XDocument\BrowserDocumentRepresentationResolver;
 use App\Integration\XDocument\ResolveXDocumentBrowserRepresentation;
@@ -27,6 +29,7 @@ class AppServiceProvider extends ServiceProvider
         $this->app->bind(BrowserDocumentRepresentationResolver::class, ResolveXDocumentBrowserRepresentation::class);
         $this->app->bind(SubjectAuthorization::class, DatabaseSubjectAuthorization::class);
         $this->app->bind(RosterAuditRecorder::class, RecordRosterAudit::class);
+        $this->app->bind(RosterGenerator::class, BalancedGreedyRosterGenerator::class);
     }
 
     /**

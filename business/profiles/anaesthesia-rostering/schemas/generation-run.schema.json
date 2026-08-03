@@ -1,0 +1,1 @@
+{"$schema":"https://json-schema.org/draft/2020-12/schema","title":"Roster Generation Run","type":"object","required":["identifier","generator_name","generator_version","status"],"properties":{"identifier":{"type":"string"},"generator_name":{"type":"string"},"generator_version":{"type":"string"},"status":{"enum":["previewed","committed","failed"]}},"additionalProperties":true}

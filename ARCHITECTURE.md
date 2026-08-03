@@ -1,5 +1,7 @@
 # GNE Architecture
 
+Draft generation follows `repository policy → ResolvedRosterPolicy → RosterGenerationInput → RosterGenerator → GeneratedRosterResult`. The replaceable generator is computation-only; preview, atomic persistence, shared validation, revision, period-scoped audit, lifecycle, UI, and artifacts remain outside it.
+
 GNE is a standalone Laravel control plane around a repository-native compiler. Dependency direction is commands/controllers and infrastructure → domain services and values → repository evidence. Domain primitives have no Eloquent dependency.
 
 Storyboard observation follows `interactive login → one authenticated browser context → real application/document routes → verified frame manifest → static HTML → PDF`, while the movie package consumes the same finalized frame inventory. Local authenticated capture requests may select a disposable staged repository through a validated host seam; ordinary and production requests always use canonical repository state. Application screenshots and storyboard annotations remain separate layers. Explanation frames are allowed only when labeled non-production. Final renderers reject planned, unverified, missing, or checksum-mismatched captures. Choreography cannot author lifecycle meaning. Generic definition/build concepts are separable from the Property Reservation state adapter; x-document and x-document-laravel remain unchanged.

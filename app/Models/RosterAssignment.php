@@ -10,6 +10,7 @@ use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 
 /**
  * @property AssignmentStatus $status
@@ -51,6 +52,11 @@ class RosterAssignment extends Model
     public function creator(): BelongsTo
     {
         return $this->belongsTo(User::class, 'created_by');
+    }
+
+    public function explanation(): HasOne
+    {
+        return $this->hasOne(RosterAssignmentExplanation::class);
     }
 
     /** @return array<string, string> */

@@ -1,0 +1,13 @@
+identifier: ANAESTHESIA-DRAFT-ROSTER-GENERATION
+slug: draft-roster-generation
+profile: PROFILE-ANAESTHESIA-ROSTERING
+title: Anaesthesia deterministic draft roster generation proof
+description: Proves deterministic preview, one atomic generation batch, shared validation, and a later manual correction.
+lifecycle: LIFECYCLE-ANAESTHESIA-ROSTER-PERIOD
+steps:
+  - { id: dataset, title: Create deterministic generation inputs, operation: create_dataset }
+  - { id: preview, title: Preview twice without persistence, operation: preview_generation }
+  - { id: generate, title: Commit one generated draft batch, operation: generate_initial_draft }
+  - { id: validate, title: Validate generated roster, operation: validate_roster }
+  - { id: correct, title: Move one generated assignment manually, operation: move_assignment }
+  - { id: artifact, title: Project generation evidence, operation: render_artifacts }

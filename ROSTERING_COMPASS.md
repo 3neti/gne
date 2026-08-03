@@ -1,5 +1,7 @@
 # Anaesthesia Rostering Compass
 
+Initial draft generation is a deterministic, explainable, replaceable balanced-greedy computation. It requires valid readiness inputs and an empty roster; generated output remains manually editable.
+
 **Product objective:** replace ambiguous spreadsheet structure with a small, trustworthy foundation for anaesthesia roster planning.
 
 ## Workbook grounding

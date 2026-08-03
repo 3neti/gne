@@ -1,0 +1,3 @@
+identifier: POLICY-PREFERRED-OFF-AVOIDANCE
+revision: 1
+rule: Avoid accepted preferred-off dates where staffing and higher-priority balancing permit.

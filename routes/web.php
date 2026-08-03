@@ -8,6 +8,7 @@ use App\Http\Controllers\RepositoryWorkbenchController;
 use App\Http\Controllers\ResolvedDocumentController;
 use App\Http\Controllers\RosterAssignmentController;
 use App\Http\Controllers\RosterAvailabilityController;
+use App\Http\Controllers\RosterGenerationController;
 use App\Http\Controllers\RosterHistoryController;
 use App\Http\Controllers\RosteringDashboardController;
 use App\Http\Controllers\RosterPeriodController;
@@ -46,6 +47,9 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::get('periods/{roster_period}/roster', [RosterAssignmentController::class, 'index'])->name('periods.roster.show');
         Route::get('periods/{roster_period}/revisions', [RosterHistoryController::class, 'revisions'])->name('periods.revisions.index');
         Route::get('periods/{roster_period}/audit', [RosterHistoryController::class, 'audit'])->name('periods.audit.index');
+        Route::get('periods/{roster_period}/generation', [RosterGenerationController::class, 'show'])->name('periods.generation.show');
+        Route::post('periods/{roster_period}/generation/preview', [RosterGenerationController::class, 'preview'])->name('periods.generation.preview');
+        Route::post('periods/{roster_period}/generation', [RosterGenerationController::class, 'store'])->name('periods.generation.store');
         Route::get('periods/{roster_period}/assignments', [RosterAssignmentController::class, 'index'])->name('periods.assignments.index');
         Route::post('periods/{roster_period}/assignments', [RosterAssignmentController::class, 'store'])->name('periods.assignments.store');
         Route::delete('periods/{roster_period}/assignments/{roster_assignment}', [RosterAssignmentController::class, 'destroy'])->name('periods.assignments.destroy');

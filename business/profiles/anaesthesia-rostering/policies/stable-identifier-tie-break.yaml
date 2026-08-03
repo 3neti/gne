@@ -1,0 +1,3 @@
+identifier: POLICY-STABLE-IDENTIFIER-TIE-BREAK
+revision: 1
+rule: Resolve otherwise equal generation candidates by stable doctor identifier.

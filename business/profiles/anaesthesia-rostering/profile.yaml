@@ -6,7 +6,7 @@ version: 1
 canonical: true
 vocabulary: vocabulary.yaml
 lifecycles: [lifecycles/roster-period.yaml]
-scenarios: [scenarios/create-roster-period.yaml, scenarios/foundation-lifecycle.yaml, scenarios/requests-and-availability.yaml, scenarios/manual-roster.yaml]
+scenarios: [scenarios/create-roster-period.yaml, scenarios/foundation-lifecycle.yaml, scenarios/requests-and-availability.yaml, scenarios/manual-roster.yaml, scenarios/draft-roster-generation.yaml]
 policies:
   - policies/active-doctor-eligibility.yaml
   - policies/roster-period-boundaries.yaml
@@ -25,6 +25,12 @@ policies:
   - policies/daily-assigned-count-compared-with-requirement.yaml
   - policies/assigned-hours-compared-with-target.yaml
   - policies/manual-assignment-requires-audit.yaml
+  - policies/under-target-doctor-priority.yaml
+  - policies/preferred-work-preference.yaml
+  - policies/preferred-off-avoidance.yaml
+  - policies/assignment-count-balance.yaml
+  - policies/stable-identifier-tie-break.yaml
+  - policies/generation-requires-valid-inputs.yaml
 documents: [documents/roster-period-summary.yaml]
 schemas:
   - schemas/doctor.schema.json
@@ -34,6 +40,10 @@ schemas:
   - schemas/roster-assignment.schema.json
   - schemas/doctor-schedule-request.schema.json
   - schemas/roster-revision.schema.json
+  - schemas/resolved-roster-policy.schema.json
+  - schemas/generation-run.schema.json
+  - schemas/generated-roster-result.schema.json
+  - schemas/generation-explanation.schema.json
 artifact_types:
   Doctor: { schema: schemas/doctor.schema.json }
   RosterPeriod: { schema: schemas/roster-period.schema.json }
