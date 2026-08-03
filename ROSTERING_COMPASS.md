@@ -12,7 +12,7 @@ The supplied four-week workbook proved the need to preserve doctor identity, con
 
 Repository-authored profile policy describes the language. Host-owned Laravel records persist doctors, periods, days, explicit staffing and required hours, assignment seams, authorization, and audit evidence. Transactional application actions own mutations; Inertia pages are read/write delivery surfaces without business rules.
 
-Implemented UI: rostering dashboard, doctors, period list/create/detail, daily staffing, doctor required hours, availability, and a real manual assignment calendar/matrix with add, remove, move, replace, preview, validation, hours, exact-period revision summary, audit summary, and period-owned complete history. Implemented tests cover cross-period isolation, atomic evidence, and dependency exclusions.
+Implemented UI: rostering dashboard, doctors, period list/create/detail, daily staffing, doctor required hours, availability, and a real manual assignment calendar/matrix with add, remove, move, replace, preview, validation, hours, exact-period revision summary, audit summary, and period-owned complete history. Deterministic generation artifacts now show assigned doctors in weekly calendars, complete date lists, and four weekly matrices while separating revision-1 generation state from revision-2 current state. Implemented tests cover cross-period isolation, atomic evidence, artifact completeness, and dependency exclusions.
 
 Foundation integrity is now executable through the allowlisted repository scenario. Readiness preserves warnings while blocking errors; assignment creation and its safe audit evidence commit or roll back together; period edits cannot bypass lifecycle transitions.
 
@@ -35,4 +35,4 @@ Administrator-entered requests and availability are implemented as audited host 
 
 ## Recommended next slice
 
-**Draft Roster Generation** — add an explicit generator boundary only after preserving the same validation, revision, audit, and human-review contracts proven by manual editing.
+**Draft Generation Quality and Explainability Hardening** — evaluate the now-visible balance, target-hour variance, preference outcome, and ranking explanations without introducing optimization or publication.

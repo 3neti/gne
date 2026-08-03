@@ -1,6 +1,6 @@
 # GNE
 
-Anaesthesia rostering now includes authorised deterministic balanced-greedy initial draft preview and commit. Generation is atomic, creates one batch revision, remains editable, and does not claim mathematical optimality. See `docs/rostering/DRAFT_ROSTER_GENERATION.md`.
+Anaesthesia rostering now includes authorised deterministic balanced-greedy initial draft preview and commit. Generation is atomic, creates one batch revision, remains editable, and does not claim mathematical optimality. Its disposable report distinguishes the fully staffed revision-1 generation result from the revision-2 post-correction roster and renders assigned doctors in weekly calendars, a complete date list, and four doctor-by-date matrices. See `docs/rostering/DRAFT_ROSTER_GENERATION.md`.
 
 GNE is a repository-native **Business Compiler**: the business belongs to version-controlled files, while databases, browser views, documents, APIs, reports, and analytics are rebuildable projections.
 

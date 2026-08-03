@@ -1,6 +1,6 @@
 # GNE Compass
 
-**Current milestone:** Anaesthesia Draft Roster Generation
+**Current milestone:** Anaesthesia Generated Roster Artifact Closure
 **North star:** The business belongs to the repository. Everything operational is a projection.
 
 ## Completed
@@ -23,4 +23,4 @@ Validation supports the implemented document grammar and JSON Schema 2020-12 but
 
 ## Recommended next task
 
-**Draft Roster Generation** — introduce an explicit generation boundary while preserving the validation, revision, audit, and human-review contracts proven by manual editing.
+**Draft Generation Quality and Explainability Hardening** — assess balance and preference quality now that assignment identity, provenance, and post-correction consequences are visually reviewable.

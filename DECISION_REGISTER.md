@@ -18,6 +18,10 @@ Accepted. Both use the existing roster models, validation, projections, editing,
 
 Accepted. The period requirement set isolates candidates. Unrelated doctors, users, periods, timestamps, database IDs, and filenames do not affect identity.
 
+## ADR-056 — Generated roster artifacts render assignment identity
+
+Accepted. A staffing-count table is a staffing summary, not a roster calendar. Generated artifacts capture separate generation and current-state projections and render assigned doctors by date, complete date assignment lists, and weekly doctor-by-date matrices with generated/manual provenance. JSON, HTML, and PDF consume the same prepared projections. Rejected: relabeling totals as a calendar, flattening a matrix into an assignment list, omitting the matrix from operator PDF, and presenting revision-1 totals as revision-2 state.
+
 ## ADR-001 — Repository is canonical; database is projection
 **Status:** Accepted · **Date:** 2026-07-22
 **Context:** Operational schemas obscure authored business meaning. **Decision:** Repository files are canonical and database rows rebuildable. **Rationale:** Human/AI readability and deterministic recovery. **Consequences:** Materializers retain stable identifiers and support replacement. **Rejected:** Database-first domain truth.
