@@ -57,4 +57,9 @@ class UserFactory extends Factory
             'two_factor_confirmed_at' => now(),
         ]);
     }
+
+    public function rosterAdministrator(): static
+    {
+        return $this->state(fn (): array => ['is_roster_administrator' => true]);
+    }
 }

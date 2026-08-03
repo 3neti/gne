@@ -1,0 +1,29 @@
+identifier: PROFILE-ANAESTHESIA-ROSTERING
+slug: anaesthesia-rostering
+title: Anaesthesia Rostering
+description: Repository-authored foundation policy for explicit anaesthesia roster inputs and lifecycle.
+version: 1
+canonical: true
+vocabulary: vocabulary.yaml
+lifecycles: [lifecycles/roster-period.yaml]
+scenarios: [scenarios/create-roster-period.yaml]
+policies:
+  - policies/active-doctor-eligibility.yaml
+  - policies/roster-period-boundaries.yaml
+  - policies/daily-staffing-requirement.yaml
+  - policies/unique-daily-assignment.yaml
+  - policies/explicit-required-hours.yaml
+  - policies/publication-validation.yaml
+documents: [documents/roster-period-summary.yaml]
+schemas:
+  - schemas/doctor.schema.json
+  - schemas/roster-period.schema.json
+  - schemas/roster-day.schema.json
+  - schemas/doctor-roster-requirement.schema.json
+  - schemas/roster-assignment.schema.json
+artifact_types:
+  Doctor: { schema: schemas/doctor.schema.json }
+  RosterPeriod: { schema: schemas/roster-period.schema.json }
+  RosterDay: { schema: schemas/roster-day.schema.json }
+  DoctorRosterRequirement: { schema: schemas/doctor-roster-requirement.schema.json }
+  RosterAssignment: { schema: schemas/roster-assignment.schema.json }

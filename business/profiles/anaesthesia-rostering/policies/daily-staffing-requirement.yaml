@@ -1,0 +1,3 @@
+identifier: POLICY-ANAESTHESIA-DAILY-STAFFING-REQUIREMENT
+revision: 1
+rule: Each roster day stores an explicit non-negative required doctor count; a specific date overrides its applicable bulk default.

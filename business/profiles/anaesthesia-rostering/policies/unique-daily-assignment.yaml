@@ -1,0 +1,3 @@
+identifier: POLICY-ANAESTHESIA-UNIQUE-DAILY-ASSIGNMENT
+revision: 1
+rule: At most one counted primary assignment exists per doctor, period, and roster day.

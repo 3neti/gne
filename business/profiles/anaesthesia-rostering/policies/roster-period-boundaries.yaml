@@ -1,0 +1,3 @@
+identifier: POLICY-ANAESTHESIA-ROSTER-PERIOD-BOUNDARIES
+revision: 1
+rule: Every inclusive calendar date belongs to exactly one roster day in its period.

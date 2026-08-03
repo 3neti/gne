@@ -28,6 +28,7 @@ use Laravel\Fortify\TwoFactorAuthenticatable;
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
  * @property bool $is_operator
+ * @property bool $is_roster_administrator
  */
 #[Fillable(['name', 'email', 'password'])]
 #[Hidden(['password', 'two_factor_secret', 'two_factor_recovery_codes', 'remember_token'])]
@@ -42,6 +43,12 @@ class User extends Authenticatable implements PasskeyUser
         return $this->hasMany(SubjectAccessGrant::class);
     }
 
+    /** @return HasMany<RosterPeriod, $this> */
+    public function createdRosterPeriods(): HasMany
+    {
+        return $this->hasMany(RosterPeriod::class, 'created_by');
+    }
+
     /**
      * Get the attributes that should be cast.
      *
@@ -54,6 +61,7 @@ class User extends Authenticatable implements PasskeyUser
             'password' => 'hashed',
             'two_factor_confirmed_at' => 'datetime',
             'is_operator' => 'boolean',
+            'is_roster_administrator' => 'boolean',
         ];
     }
 }

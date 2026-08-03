@@ -27,6 +27,7 @@
 | Repository-native storyboard | 25-frame isolated compiler-state reconstruction, one interactive login/session, one explicit ephemeral subject grant, real-route capture, deterministic offline HTML/PDF/movie inputs, and verified grant/user cleanup | Unit/feature/CLI/security/structural and visual artifact inspection | One operator identity and narrative personas; three explanation frames; Chromium PDF metadata varies; FFmpeg optional | Implemented | Preserve safe authorization evidence |
 | x-change runtime integration | Documented optional seam | Architecture checks | No settlement or execution | Deferred | Keep external and optional |
 | Production controls | None claimed | None | Audit/compliance/scale uncertified | Deferred | Deliberate later milestone |
+| Anaesthesia rostering foundation | Host-owned doctors, periods/days, staffing headcounts, required hours, assignment identity seam, early lifecycle, audit, administrator UI, and repository profile | Feature/unit/architecture tests and `gne:roster:validate` | No requests, grid, generation, publication, import, payroll, call, or multiple duties | Implemented foundation | Requests and Availability |
 
 Runtime baselines: `3neti/x-document` at `29853fae23939cba0b440db3ae04e351c499a78e`; `3neti/x-document-laravel` at `b299d5bfbe7bdf93ecaf840431349804b676a6c7`. Composer resolves both as symlinked `dev-main` path packages; `gne:mvp:smoke` verifies these actual Git commits rather than trusting version labels.
 

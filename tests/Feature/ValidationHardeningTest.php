@@ -21,8 +21,8 @@ it('emits stable structured validation JSON with warning-only readiness findings
 
     expect($output)->toHaveKeys(['valid', 'fingerprint', 'summary', 'findings'])
         ->and($output['valid'])->toBeTrue()
-        ->and($output['summary'])->toBe(['errors' => 0, 'warnings' => 2, 'info' => 0])
-        ->and(array_column($output['findings'], 'code'))->toBe(['DOCUMENT_EVIDENCE_ABSENT', 'DOCUMENT_EVIDENCE_ABSENT']);
+        ->and($output['summary'])->toBe(['errors' => 0, 'warnings' => 3, 'info' => 0])
+        ->and(array_column($output['findings'], 'code'))->toBe(['DOCUMENT_EVIDENCE_ABSENT', 'DOCUMENT_EVIDENCE_ABSENT', 'DOCUMENT_EVIDENCE_ABSENT']);
 });
 
 it('fails validation and refuses compilation for invalid authored payloads', function () {
@@ -50,9 +50,9 @@ it('shows structured validation findings in the authenticated workbench', functi
         ->assertSuccessful()
         ->assertInertia(fn (Assert $page) => $page
             ->component('RepositoryWorkbench')
-            ->has('findings', 2)
+            ->has('findings', 3)
             ->where('findings.0.code', 'DOCUMENT_EVIDENCE_ABSENT')
-            ->where('findings.0.source_path', 'business/profiles/civic-permit/documents/acknowledgement-note.yaml')
+            ->where('findings.0.source_path', 'business/profiles/anaesthesia-rostering/documents/roster-period-summary.yaml')
             ->where('findings.0.location', '/primary_artifact_type')
         );
 });

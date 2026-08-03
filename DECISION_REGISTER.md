@@ -125,3 +125,23 @@ Each accepted decision is durable until superseded by another recorded decision.
 ## ADR-031 — Subject authorization precedes resolution and document expression
 
 **Status:** Accepted — 2026-08-03. **Decision:** Resolve a route subject identity, authorize it, and only then invoke document resolution or x-document; filter unauthorized subjects before inventory serialization. **Rationale:** A denial must reveal neither readiness nor document content and must consume no compiler or document-driver work. **Consequences:** Unknown subject is `404`, known ungranted subject is `403`, and denied delivery cannot invoke x-document. **Rejected:** post-resolution checks, client-side filtering, and broad demonstration gates.
+
+## ADR-032 — The legacy anaesthesia roster is discovery evidence, not the runtime domain model
+
+**Status:** Accepted — 2026-08-03. **Context:** The supplied four-week workbook combines doctor identity, employment notation, multi-row duty segments, leave, call, overtime, notes, colours, and unlabelled staffing numbers in one visual surface with no formulas. **Decision:** Normalize those concepts into doctors, roster periods/days, explicit requirements, and one counted daily assignment for the first release. Preserve nullable duty code, start/end time, and credited-hours seams without making generation segment-driven. Defer production import and every unconfirmed legacy-code mapping. **Rationale:** The workbook reveals future compatibility needs but is not a safe executable grammar. **Consequences:** Discovery documents classify observed, inferred, and unresolved meanings; clean demo data uses confirmed semantics only; no generic workforce-optimisation abstraction is introduced. **Rejected:** copying workbook rows into tables, treating colours or codes as canonical policy, automatic import, and implementing multi-segment/on-call/payroll rules during foundation.
+
+## ADR-033 — One counted primary daily assignment defines the rostering MVP identity
+
+**Status:** Accepted — 2026-08-03. **Decision:** Enforce at most one assignment for `(doctor, roster period, roster day)` and retain optional duty code, time, credited-hours, and notes fields. **Rationale:** It provides a truthful counted-day foundation without pretending the workbook's multiple rows are understood. **Consequences:** Split duties and annotations require a later identity design. **Rejected:** spreadsheet-row identity and multiple same-day duties now.
+
+## ADR-034 — Roster-period required hours are explicit
+
+**Status:** Accepted — 2026-08-03. **Decision:** Store one explicit target per doctor and roster period with an explicit source. **Rationale:** Workbook contract labels do not establish their period or conversion. **Consequences:** No FTE or contracted-hours derivation exists. **Rejected:** automatic 80/40-hour interpretation.
+
+## ADR-035 — Daily staffing requirements are explicitly authored
+
+**Status:** Accepted — 2026-08-03. **Decision:** Persist the current non-negative requirement on every roster day; specific-date input overrides period weekday/weekend defaults. **Rationale:** The workbook's bottom-row counts are unconfirmed. **Consequences:** Requirements are auditable headcount inputs, not inferred demand. **Rejected:** workbook import, doctor-count inference, and dynamic colour logic.
+
+## ADR-036 — Roster generation remains behind a future boundary
+
+**Status:** Accepted — 2026-08-03. **Decision:** Do not implement a generator or interface until requests, availability, and resolved policy semantics are stable. The intended future boundary accepts a roster period and resolved roster policy and returns a generated result. **Rationale:** Premature optimization would encode guesses as policy. **Consequences:** Foundation UI cannot generate or simulate a roster. **Rejected:** OR-Tools, generic optimization packages, or spreadsheet heuristics in this slice.

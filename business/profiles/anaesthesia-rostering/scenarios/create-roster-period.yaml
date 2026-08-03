@@ -1,0 +1,7 @@
+identifier: SCENARIO-CREATE-ANAESTHESIA-ROSTER-PERIOD
+slug: create-roster-period
+profile: PROFILE-ANAESTHESIA-ROSTERING
+title: Create an anaesthesia roster period
+description: An administrator authors a bounded period, calendar days, staffing requirements, and explicit doctor targets.
+lifecycle: LIFECYCLE-ANAESTHESIA-ROSTER-PERIOD
+steps: [create_period, author_staffing, author_required_hours, collect_requests]

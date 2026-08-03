@@ -39,3 +39,7 @@ GNE reasons from profile vocabulary, schemas, policies, lifecycles, scenarios, d
 GeNEi is a provider-independent repository role, not a foundation model. Future engines must preserve evidence links, distinguish fact from inference, expose uncertainty, and never silently mutate accepted artifacts. Autonomous execution, provider adapters, and LLM tool calling are deferred.
 
 Do not make Eloquent or database rows canonical; edit accepted artifacts in place; infer relationships only from names; place generated output in `business/`; hide vocabulary solely in PHP; build generic CRUD, ERP, workflow, policy, tenancy, vector, settlement, or PDF engines in core; couple GNE to an AI provider; or present browser/PDF as canonical.
+
+## Anaesthesia rostering foundation
+
+The anaesthesia workbook is discovery evidence, not canonical executable source. The repository-authored `PROFILE-ANAESTHESIA-ROSTERING` declares confirmed policy language; host-owned operational tables store doctors, roster periods/days, explicit staffing requirements, explicit doctor-period required hours, and one primary daily assignment seam. These rows are neither Compilation Subjects nor repository artifacts. Application actions enforce mutations and append audit evidence. Unconfirmed legacy codes, generation, import, requests, call, overtime, payroll, and publication remain absent.

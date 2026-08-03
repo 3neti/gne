@@ -1,7 +1,8 @@
 <script setup lang="ts">
-import { Link } from '@inertiajs/vue3';
+import { Link, usePage } from '@inertiajs/vue3';
 import {
     Boxes,
+    CalendarClock,
     FileCheck2,
     FileText,
     FolderGit2,
@@ -32,8 +33,10 @@ import {
     scenarios,
 } from '@/routes';
 import { index as documentSets } from '@/routes/document_sets';
+import { dashboard as rosteringDashboard } from '@/routes/rostering';
 import type { NavItem } from '@/types';
 
+const page = usePage();
 const mainNavItems: NavItem[] = [
     {
         title: 'Dashboard',
@@ -48,6 +51,10 @@ const mainNavItems: NavItem[] = [
     { title: 'Document Sets', href: documentSets(), icon: FileText },
     { title: 'Materialization', href: materialization(), icon: FileCheck2 },
 ];
+
+if (page.props.auth.user.is_roster_administrator) {
+    mainNavItems.push({ title: 'Anaesthesia Rostering', href: rosteringDashboard(), icon: CalendarClock });
+}
 
 const footerNavItems: NavItem[] = [];
 </script>

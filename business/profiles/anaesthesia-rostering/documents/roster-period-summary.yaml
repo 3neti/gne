@@ -1,0 +1,20 @@
+identifier: DOCUMENT-ANAESTHESIA-ROSTER-PERIOD-SUMMARY
+revision: 1
+title: Anaesthesia Roster Period Summary
+scenario: SCENARIO-CREATE-ANAESTHESIA-ROSTER-PERIOD
+audience: [roster-administrator]
+primary_artifact_type: RosterPeriod
+artifacts: [RosterPeriod]
+sections:
+  - identifier: period
+    title: Roster Period
+    fields:
+      - identifier: title
+        label: Title
+        source: { artifact: RosterPeriod, path: payload.title }
+      - identifier: status
+        label: Status
+        source: { artifact: RosterPeriod, path: payload.status }
+actions: []
+attachments: []
+drivers: [browser-deferred]

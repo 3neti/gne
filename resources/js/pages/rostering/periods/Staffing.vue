@@ -1,0 +1,11 @@
+<script setup lang="ts">
+import { Form, Head } from '@inertiajs/vue3';
+import AppLayout from '@/layouts/AppLayout.vue';
+import { show } from '@/routes/rostering/periods';
+import { edit, update } from '@/routes/rostering/periods/staffing';
+type Day = { id: number; date: string; weekday: string; day_type: string; required_doctor_count: number };
+const props = defineProps<{ period: { identifier: string; title: string }; days: Day[] }>();
+const breadcrumbs = [{ title: props.period.title, href: show(props.period.identifier) }, { title: 'Staffing', href: edit(props.period.identifier) }];
+const inputClass = 'w-24 rounded-md border bg-background px-3 py-2 text-sm';
+</script>
+<template><Head title="Staffing requirements" /><AppLayout :breadcrumbs="breadcrumbs"><main class="flex flex-col gap-5 p-4 md:p-6"><div><h1 class="text-2xl font-semibold">Daily staffing requirements</h1><p class="text-muted-foreground">Bulk defaults apply first; submitted date values are explicit overrides.</p></div><Form v-bind="update.form(period.identifier)" class="grid gap-5" #default="{ processing }"><div class="flex flex-wrap gap-4 rounded-lg border p-4"><label class="grid gap-1 text-sm">Weekday default<input name="weekday_default" type="number" min="0" :class="inputClass" /></label><label class="grid gap-1 text-sm">Weekend default<input name="weekend_default" type="number" min="0" :class="inputClass" /></label></div><div class="overflow-x-auto rounded-lg border"><table class="w-full text-left text-sm"><thead class="bg-muted/50"><tr><th class="p-3">Date</th><th class="p-3">Day</th><th class="p-3">Type</th><th class="p-3">Required doctors</th></tr></thead><tbody><tr v-for="day in days" :key="day.id" class="border-t"><td class="p-3">{{ day.date }}</td><td class="p-3">{{ day.weekday }}</td><td class="p-3">{{ day.day_type.replaceAll('_', ' ') }}</td><td class="p-3"><input :name="`requirements[${day.id}]`" type="number" min="0" :value="day.required_doctor_count" :class="inputClass" :aria-label="`Required doctors for ${day.date}`" /></td></tr></tbody></table></div><button class="w-fit rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground" :disabled="processing">{{ processing ? 'Saving…' : 'Save requirements' }}</button></Form></main></AppLayout></template>

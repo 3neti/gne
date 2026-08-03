@@ -1,0 +1,3 @@
+identifier: POLICY-ANAESTHESIA-PUBLICATION-VALIDATION
+revision: 1
+rule: Publication requires a future explicit validation contract and is not operational in the foundation.

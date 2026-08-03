@@ -1,0 +1,12 @@
+identifier: LIFECYCLE-ANAESTHESIA-ROSTER-PERIOD
+title: Anaesthesia roster period lifecycle
+subject_type: AnaesthesiaRosterPeriod
+states: [draft, collecting_requests, ready_for_generation, generated, under_review, published, archived]
+transitions:
+  - { from: draft, to: collecting_requests, evidence: RosterPeriod }
+  - { from: collecting_requests, to: ready_for_generation, evidence: RosterPeriod }
+  - { from: ready_for_generation, to: generated, evidence: RosterPeriod }
+  - { from: generated, to: under_review, evidence: RosterPeriod }
+  - { from: under_review, to: published, evidence: RosterPeriod }
+  - { from: published, to: archived, evidence: RosterPeriod }
+  - { from: published, to: under_review, evidence: RosterPeriod }

@@ -2,6 +2,8 @@
 
 GNE is a repository-native **Business Compiler**: the business belongs to version-controlled files, while databases, browser views, documents, APIs, reports, and analytics are rebuildable projections.
 
+The anaesthesia rostering foundation is available to deliberately designated roster administrators at `/rostering`. It normalizes doctors, roster periods/days, explicit staffing headcounts, explicit doctor-period required hours, early lifecycle transitions, audit evidence, and a one-primary-assignment persistence seam. Run `php artisan db:seed --class=AnaesthesiaRosteringDemoSeeder` for fictional demonstration data and `php artisan gne:roster:validate --period=ROSTER-2026-09`. It does not generate, import, publish, or calculate payroll.
+
 The repository-native bootstrap now includes portable discovery, declaration-driven validation, semantic indexing, byte-complete fingerprinting, database materialization, subject-bound artifact chains, evidence-set document identity, and per-subject document/lifecycle inventories. It is not a production ERP, workflow engine, document renderer, or canonical artifact editor.
 
 Repository validation now checks accepted payloads against explicit profile-owned JSON Schema 2020-12 declarations and validates repository-authored documents against the GNE-owned definition grammar before compilation. See [Diff Review Workflow](docs/development/DIFF_REVIEW_WORKFLOW.md) for incremental review packaging.

@@ -34,6 +34,7 @@ class AppServiceProvider extends ServiceProvider
         $this->configureDefaults();
         Gate::define('view-subject', [CompilationSubjectPolicy::class, 'view']);
         Gate::define('view-repository-workbench', fn (User $user): bool => (bool) $user->is_operator);
+        Gate::define('view-rostering', fn (User $user): bool => (bool) $user->is_roster_administrator);
     }
 
     /**

@@ -1,0 +1,7 @@
+profile: PROFILE-ANAESTHESIA-ROSTERING
+terms:
+  - { term: Doctor, definition: A stable host-owned clinician record used in roster planning. }
+  - { term: Roster Period, definition: One explicitly bounded calendar planning window. }
+  - { term: Roster Day, definition: One calendar date inside a roster period with an authored staffing requirement. }
+  - { term: Required Hours, definition: An explicit non-negative target for one doctor in one roster period. }
+  - { term: Primary Daily Assignment, definition: The single counted assignment permitted for one doctor and roster day in the MVP. }

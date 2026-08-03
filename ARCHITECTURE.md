@@ -39,6 +39,19 @@ flowchart LR
 
 Browser and PDF are peer projections. GNE knows no Adobe details; x-document consumes only the external contract derived from `ResolvedDocument`. Settlement remains outside core and x-change optional. GeNEi may use different engines and must cite evidence.
 
+## Anaesthesia rostering host application boundary
+
+Anaesthesia rostering introduces operational host state without making the database canonical business policy. `business/profiles/anaesthesia-rostering` owns confirmed vocabulary, lifecycle, policy declarations, and schemas. Laravel models persist mutable operational records; transactional application actions own invariants and audit entries; policies authorize the distinct roster-administrator capability; Inertia pages call those actions through controllers and contain no roster rules.
+
+```text
+legacy workbook → discovery documents
+repository profile → policy language
+host actions → operational roster records + audit evidence
+host records → read/write roster UI
+```
+
+This boundary does not use Compilation Subject grants, x-document, x-change, import, or generation. One `(doctor, period, day)` assignment is the deliberate MVP identity.
+
 ## x-document anti-corruption contract
 
 `ResolvedDocument` remains GNE's internal compiler IR. `PrepareXDocumentCompilationRequest` is the only component that knows both that IR and the versioned DTOs under `App\Integration\XDocument`. It normalizes supported values, maps allowlisted metadata and descriptive evidence, validates the generated request against JSON Schema, and derives a request fingerprint from direct transfer inputs.

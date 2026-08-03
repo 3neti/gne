@@ -1,0 +1,3 @@
+identifier: POLICY-ANAESTHESIA-ACTIVE-DOCTOR-ELIGIBILITY
+revision: 1
+rule: Only active doctors may receive new primary assignments; inactive doctors remain historically visible.

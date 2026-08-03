@@ -1,6 +1,6 @@
 # GNE Compass
 
-**Current milestone:** Authenticated Lifecycle Storyboard Capture Closure
+**Current milestone:** Anaesthesia Rostering Foundation Vertical Slice
 **North star:** The business belongs to the repository. Everything operational is a projection.
 
 ## Completed
@@ -9,7 +9,7 @@ Canonical cognition, portable discovery, immutable artifacts, compiler projectio
 
 ## Immediate direction
 
-Preserve the deliberate authorization-before-resolution boundary and move next to a production artifact-authoring surface without broadening the MVP into enterprise tenancy or generic RBAC.
+Stabilize explicit doctor, period, staffing, required-hours, lifecycle, authorization, and audit foundations; then model **Requests and Availability** before any roster generation.
 
 ## Explicit deferrals
 
@@ -21,4 +21,4 @@ Validation supports the implemented document grammar and JSON Schema 2020-12 but
 
 ## Recommended next task
 
-**Deliberate Subject Authorization** — replace the broad authenticated demonstration gate with explicit subject-level authority while preserving repository-native identity and compiler/document boundaries.
+**Requests and Availability** — capture confirmed doctor constraints without importing workbook ambiguity or beginning generation.

@@ -1,0 +1,3 @@
+identifier: POLICY-ANAESTHESIA-EXPLICIT-REQUIRED-HOURS
+revision: 1
+rule: Required hours are explicitly authored per doctor and period; contract notation is not automatically converted.

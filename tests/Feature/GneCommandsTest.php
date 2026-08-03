@@ -41,7 +41,7 @@ it('materializes idempotent projections with stable repository identities', func
 it('rebuilds disposable projections non-interactively', function () {
     $this->artisan('gne:rebuild --force')->assertSuccessful();
     expect(base_path('.gne/semantic/repository.json'))->toBeFile()
-        ->and(DB::table('gne_profiles')->count())->toBe(2);
+        ->and(DB::table('gne_profiles')->count())->toBe(3);
 });
 
 it('explains and plans compilation honestly', function () {
