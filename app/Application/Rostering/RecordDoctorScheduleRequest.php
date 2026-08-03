@@ -4,6 +4,7 @@ namespace App\Application\Rostering;
 
 use App\Domain\Rostering\DoctorRequestStatus;
 use App\Domain\Rostering\DoctorRequestType;
+use App\Domain\Rostering\OverlappingEffectiveDoctorRequest;
 use App\Models\Doctor;
 use App\Models\DoctorScheduleRequest;
 use App\Models\RosterPeriod;
@@ -29,9 +30,10 @@ final readonly class RecordDoctorScheduleRequest
         if ($dates->contains(fn (string $date): bool => $date < $period->start_date->toDateString() || $date > $period->end_date->toDateString())) {
             throw new DomainException('Every schedule request date must fall inside the roster period.');
         }
-        $duplicate = DoctorScheduleRequest::query()->with('dates')->where('doctor_id', $doctor->id)->where('roster_period_id', $period->id)->where('request_type', $type->value)->where('status', DoctorRequestStatus::Accepted->value)->get()->contains(fn (DoctorScheduleRequest $request): bool => $request->dates->contains(fn ($requestDate): bool => $dates->contains($requestDate->date->toDateString())));
-        if ($status === DoctorRequestStatus::Accepted && $duplicate) {
-            throw new DomainException('An equivalent effective request already exists.');
+        $overlappingRequests = DoctorScheduleRequest::query()->with('dates')->where('doctor_id', $doctor->id)->where('roster_period_id', $period->id)->where('request_type', $type->value)->where('status', DoctorRequestStatus::Accepted->value)->get()->filter(fn (DoctorScheduleRequest $request): bool => $request->dates->contains(fn ($requestDate): bool => $dates->contains($requestDate->date->toDateString())));
+        if ($status === DoctorRequestStatus::Accepted && $overlappingRequests->isNotEmpty()) {
+            $overlappingDates = $overlappingRequests->flatMap(fn (DoctorScheduleRequest $request) => $request->dates->pluck('date')->map->toDateString())->intersect($dates)->unique()->sort()->values()->all();
+            throw new OverlappingEffectiveDoctorRequest($overlappingDates, $overlappingRequests->pluck('identifier')->sort()->values()->all());
         }
 
         return DB::transaction(function () use ($actor, $doctor, $period, $type, $dates, $status, $reason, $notes): DoctorScheduleRequest {

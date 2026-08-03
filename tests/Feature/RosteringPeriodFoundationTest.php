@@ -65,7 +65,7 @@ it('permits only declared early lifecycle transitions and audits them', function
 
 it('permits warning-bearing foundation inputs before ready for generation', function () {
     $administrator = User::factory()->rosterAdministrator()->create();
-    $period = createFoundationPeriod($administrator);
+    $period = createFoundationPeriod($administrator, ['default_weekday_requirement' => 0, 'default_weekend_requirement' => 0]);
     Doctor::factory()->create();
     app(TransitionRosterPeriod::class)->handle($administrator, $period, RosterPeriodStatus::CollectingRequests);
 

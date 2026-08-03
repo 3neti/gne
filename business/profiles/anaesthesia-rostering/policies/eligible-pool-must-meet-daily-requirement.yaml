@@ -1,0 +1,4 @@
+identifier: POLICY-ANAESTHESIA-ELIGIBLE-POOL-DAILY-MINIMUM
+title: Eligible pool must meet daily staffing input requirement
+rule: A roster period cannot become ready for generation when any date has fewer eligible doctors than its authored required-doctor count.
+clarification: Numeric input sufficiency does not prove that a valid or balanced roster can be generated.

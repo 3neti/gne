@@ -1,0 +1,4 @@
+identifier: POLICY-ANAESTHESIA-EXPLICIT-AVAILABILITY-EVIDENCE
+title: Explicit availability is accepted evidence
+rule: An explicitly available doctor has an accepted available request for the roster date; absence of blocking evidence is not explicit availability.
+provisional: false

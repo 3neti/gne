@@ -19,6 +19,6 @@
 | Import/export | Deferred | Characterization only | No production parser |
 | OpenAPI | Deferred | Stable actions/identifiers only | Later slice |
 
-The requests lifecycle scenario produces finalized JSON, linked static HTML, and a Chromium PDF while rolling operational demonstration state back by default.
+The requests lifecycle scenario produces finalized JSON, a four-week visual calendar, doctor matrix, linked static HTML, and a Chromium PDF while rolling operational demonstration state back by default. Exclusive effective-state counts, provisional unspecified eligibility, overlap rejection, and daily eligible-pool readiness are implemented and tested.
 
-The foundation integrity closure adds error-only readiness blocking, transactional assignment audit, domain duplicate rejection, a closed period-update allowlist, and the rollback-by-default `ANAESTHESIA-ROSTER-FOUNDATION-LIFECYCLE` proof. Missing active-doctor targets and zero staffing remain warnings. Requests, availability, generation, multiple duties, optimization, and arbitrary YAML execution remain deferred.
+The provisional unspecified-eligibility policy still requires department confirmation. Generation, multiple duties, optimization, and arbitrary YAML execution remain deferred.

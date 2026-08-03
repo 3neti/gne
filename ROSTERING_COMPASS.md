@@ -16,7 +16,7 @@ Foundation integrity is now executable through the allowlisted repository scenar
 
 ## Known limitations and questions
 
-One department and one simple administrator capability are assumed. Contracted-hour period meaning, employee-number semantics, holidays, staffing-row interpretation, duty-code mapping, call/overtime/leave effects, and multiple daily work segments remain unresolved. `off` is absence of assignment. There is no request model, roster grid, generator, publication, import/export, payroll, OpenAPI, or AI operation.
+One department and one simple administrator capability are assumed. Unspecified-doctor eligibility remains a provisional policy requiring department confirmation. Contracted-hour period meaning, employee-number semantics, holidays, staffing-row interpretation, duty-code mapping, call/overtime rules, and multiple daily work segments remain unresolved. `off` is absence of assignment. There is no assignment grid, generator, publication, import/export, payroll, OpenAPI, doctor self-service, or AI operation.
 
 ## Future slices
 
@@ -29,7 +29,7 @@ One department and one simple administrator capability are assumed. Contracted-h
 
 ## Current slice
 
-Administrator-entered requests and availability are implemented as audited host state. Accepted requests compile into an effective per-doctor/date calendar; hard conflicts block readiness and soft conflicts remain warnings. The repository lifecycle proof emits rollback-isolated JSON, HTML, and PDF evidence without generating assignments.
+Administrator-entered requests and availability are implemented as audited host state. Accepted requests compile into exclusive effective per-doctor/date states; explicit availability remains evidence, while unspecified active doctors are provisionally eligible. Daily eligible-pool shortages and hard conflicts block readiness; preferences remain overlays and soft conflicts remain warnings. The UI and repository lifecycle proof expose four weekly calendar bands and a doctor matrix through rollback-isolated JSON, HTML, and PDF evidence without generating assignments.
 
 ## Recommended next slice
 

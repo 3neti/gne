@@ -1,0 +1,5 @@
+identifier: POLICY-ANAESTHESIA-UNSPECIFIED-INTERIM-ELIGIBILITY
+title: Unspecified active doctors are provisionally eligible
+rule: Until confirmed by the anaesthesia department, an active roster-period doctor with no accepted available, unavailable, or leave request remains unspecified and is treated as eligible.
+provisional: true
+confirmation_required_from: anaesthesia_department

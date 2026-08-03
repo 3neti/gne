@@ -23,4 +23,4 @@ Validation supports the implemented document grammar and JSON Schema 2020-12 but
 
 ## Recommended next task
 
-**Requests and Availability** — capture confirmed doctor constraints without importing workbook ambiguity or beginning generation.
+**Manual Roster Editing** — allow an authorized administrator to construct a roster deliberately from validated availability inputs without introducing automatic generation.

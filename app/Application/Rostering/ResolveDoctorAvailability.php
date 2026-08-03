@@ -34,7 +34,9 @@ final class ResolveDoctorAvailability
                 $types = array_values($cellRequests->pluck('request_type')->map(fn (DoctorRequestType $type): string => $type->value)->unique()->values()->all());
                 $cellConflicts = $this->conflicts($doctor, $period, $date, $cellRequests, $types);
                 array_push($conflicts, ...$cellConflicts);
-                $availability[] = ['doctor_identifier' => $doctor->identifier, 'doctor_name' => $doctor->full_name, 'date' => $date, 'effective_status' => $this->effectiveStatus($types), 'blocking' => in_array('leave', $types, true) || in_array('unavailable', $types, true), 'preference' => $this->preference($types), 'request_identifiers' => $cellRequests->pluck('identifier')->sort()->values()->all(), 'request_types' => $types, 'conflict_codes' => array_map(fn (DoctorRequestConflict $conflict): string => $conflict->code, $cellConflicts), 'explanation' => $this->explanation($types)];
+                $effectiveStatus = $this->effectiveStatus($types);
+                $hardConflict = collect($cellConflicts)->contains(fn (DoctorRequestConflict $conflict): bool => $conflict->severity === FoundationValidationSeverity::Error);
+                $availability[] = ['doctor_identifier' => $doctor->identifier, 'doctor_name' => $doctor->full_name, 'date' => $date, 'effective_status' => $effectiveStatus, 'explicit_availability' => in_array('available', $types, true), 'blocking_status' => $hardConflict ? 'conflicted' : (in_array('leave', $types, true) ? 'leave' : (in_array('unavailable', $types, true) ? 'unavailable' : 'none')), 'preference' => $this->preference($types), 'conflicted' => $cellConflicts !== [], 'request_identifiers' => $cellRequests->pluck('identifier')->sort()->values()->all(), 'request_types' => $types, 'conflict_codes' => array_map(fn (DoctorRequestConflict $conflict): string => $conflict->code, $cellConflicts), 'explanation' => $this->explanation($types)];
             }
         }
         usort($conflicts, fn (DoctorRequestConflict $left, DoctorRequestConflict $right): int => [$left->severity === FoundationValidationSeverity::Error ? 0 : 1, $left->date, $left->doctorIdentifier, $left->code] <=> [$right->severity === FoundationValidationSeverity::Error ? 0 : 1, $right->date, $right->doctorIdentifier, $right->code]);
@@ -43,17 +45,33 @@ final class ResolveDoctorAvailability
             $date = $day->date->toDateString();
             $cells = $availabilityCollection->where('date', $date);
 
-            return ['date' => $date, 'weekday' => $day->date->format('l'), 'day_type' => $day->day_type->value, 'required_doctors' => $day->required_doctor_count, 'available_doctor_count' => $cells->whereIn('effective_status', ['available', 'unspecified'])->count(), 'explicit_available_count' => $cells->where('effective_status', 'available')->count(), 'unavailable_doctor_count' => $cells->where('effective_status', 'unavailable')->count(), 'leave_doctor_count' => $cells->where('effective_status', 'leave')->count(), 'preferred_work_count' => $cells->where('preference', 'preferred_work')->count(), 'preferred_off_count' => $cells->where('preference', 'preferred_off')->count(), 'conflict_count' => collect($conflicts)->where('date', $date)->count()];
+            $eligible = $cells->whereIn('effective_status', ['available', 'unspecified'])->count();
+            $conflictCount = collect($conflicts)->where('date', $date)->count();
+            $staffingInputStatus = match (true) {
+                $eligible < $day->required_doctor_count => 'insufficient_eligible_pool',
+                $conflictCount > 0 => 'request_conflict',
+                default => 'sufficient_eligible_pool',
+            };
+
+            return ['date' => $date, 'weekday' => $day->date->format('l'), 'day_type' => $day->day_type->value, 'required_doctor_count' => $day->required_doctor_count, 'active_doctor_count' => $cells->count(), 'eligible_doctor_count' => $eligible, 'explicit_available_count' => $cells->where('effective_status', 'available')->count(), 'unspecified_doctor_count' => $cells->where('effective_status', 'unspecified')->count(), 'unavailable_doctor_count' => $cells->where('effective_status', 'unavailable')->count(), 'leave_doctor_count' => $cells->where('effective_status', 'leave')->count(), 'preferred_work_count' => $cells->filter(fn (array $cell): bool => in_array($cell['preference'], ['preferred_work', 'conflicted'], true))->count(), 'preferred_off_count' => $cells->filter(fn (array $cell): bool => in_array($cell['preference'], ['preferred_off', 'conflicted'], true))->count(), 'conflict_count' => $conflictCount, 'staffing_input_status' => $staffingInputStatus];
         })->values()->all();
         $requirements = $period->doctorRequirements->keyBy('doctor_id');
         $doctorData = $doctors->map(function (Doctor $doctor) use ($availabilityCollection, $requirements): array {
             $cells = $availabilityCollection->where('doctor_identifier', $doctor->identifier);
             $datesFor = fn (string $type): array => $cells->filter(fn (array $cell): bool => in_array($type, $cell['request_types'], true))->pluck('date')->values()->all();
 
-            return ['identifier' => $doctor->identifier, 'name' => $doctor->full_name, 'required_hours' => $requirements->get($doctor->id)?->required_hours, 'standard_daily_hours' => $doctor->standard_daily_hours, 'available_dates' => $datesFor('available'), 'unavailable_dates' => $datesFor('unavailable'), 'leave_dates' => $datesFor('leave'), 'preferred_work_dates' => $datesFor('preferred_work'), 'preferred_off_dates' => $datesFor('preferred_off'), 'conflict_codes' => $cells->pluck('conflict_codes')->flatten()->unique()->values()->all()];
+            return ['identifier' => $doctor->identifier, 'name' => $doctor->full_name, 'required_hours' => $requirements->get($doctor->id)?->required_hours, 'standard_daily_hours' => $doctor->standard_daily_hours, 'explicit_available_dates' => $datesFor('available'), 'unspecified_date_count' => $cells->where('effective_status', 'unspecified')->count(), 'unavailable_dates' => $datesFor('unavailable'), 'leave_dates' => $datesFor('leave'), 'preferred_work_dates' => $datesFor('preferred_work'), 'preferred_off_dates' => $datesFor('preferred_off'), 'conflict_codes' => $cells->pluck('conflict_codes')->flatten()->unique()->values()->all()];
         })->values()->all();
 
-        return ['doctors' => array_values($doctorData), 'calendar' => array_values($calendar), 'availability' => $availability, 'conflicts' => $conflicts, 'requests' => array_values($requests->map(fn (DoctorScheduleRequest $request): array => ['identifier' => $request->identifier, 'doctor_identifier' => $request->doctor->identifier, 'doctor_name' => $request->doctor->full_name, 'request_type' => $request->request_type->value, 'status' => $request->status->value, 'dates' => $request->dates->pluck('date')->map->toDateString()->all(), 'reason' => $request->reason, 'notes' => $request->notes])->all())];
+        $weeks = collect($calendar)->chunk(7)->values()->map(fn (Collection $days, int $index): array => ['week' => $index + 1, 'dates' => $days->values()->all()])->all();
+        $matrix = $doctors->map(function (Doctor $doctor) use ($availabilityCollection): array {
+            $cells = $availabilityCollection->where('doctor_identifier', $doctor->identifier)->map(fn (array $cell): array => ['date' => $cell['date'], 'state' => $this->matrixState($cell), 'effective_status' => $cell['effective_status'], 'preference' => $cell['preference'], 'conflicted' => $cell['conflicted']])->values()->all();
+
+            return ['doctor_identifier' => $doctor->identifier, 'doctor_name' => $doctor->full_name, 'dates' => $cells];
+        })->values()->all();
+        $summary = ['explicit_available_total' => $availabilityCollection->where('effective_status', 'available')->count(), 'unspecified_total' => $availabilityCollection->where('effective_status', 'unspecified')->count(), 'unavailable_total' => $availabilityCollection->where('effective_status', 'unavailable')->count(), 'leave_total' => $availabilityCollection->where('effective_status', 'leave')->count()];
+
+        return ['doctors' => array_values($doctorData), 'calendar' => array_values($calendar), 'weeks' => $weeks, 'doctor_availability_matrix' => $matrix, 'availability_summary' => $summary, 'availability' => $availability, 'conflicts' => $conflicts, 'requests' => array_values($requests->map(fn (DoctorScheduleRequest $request): array => ['identifier' => $request->identifier, 'doctor_identifier' => $request->doctor->identifier, 'doctor_name' => $request->doctor->full_name, 'request_type' => $request->request_type->value, 'status' => $request->status->value, 'dates' => $request->dates->pluck('date')->map->toDateString()->all(), 'reason' => $request->reason, 'notes' => $request->notes])->all())];
     }
 
     /**
@@ -73,7 +91,7 @@ final class ResolveDoctorAvailability
         $findings = [];
         foreach ($rules as [$required, $severity, $code, $message, $correction]) {
             if (collect($required)->every(fn (string $type): bool => in_array($type, $types, true))) {
-                $findings[] = new DoctorRequestConflict($severity, $code, $doctor->identifier, $period->identifier, $date, array_values($requests->pluck('identifier')->sort()->values()->all()), array_values(collect($types)->sort()->values()->all()), $message, $correction);
+                $findings[] = new DoctorRequestConflict($severity, $code, $doctor->identifier, $period->identifier, $date, array_values($requests->pluck('identifier')->sort()->values()->all()), array_values(collect($types)->sort()->values()->all()), $message, $correction, $this->effectiveStatus($types));
             }
         }
 
@@ -96,5 +114,25 @@ final class ResolveDoctorAvailability
     private function explanation(array $types): string
     {
         return $types === [] ? 'No accepted request; eligibility is unspecified.' : 'Effective state derived from accepted request precedence: '.implode(', ', $types).'.';
+    }
+
+    /** @param array<string, mixed> $cell */
+    private function matrixState(array $cell): string
+    {
+        $state = match ($cell['effective_status']) {
+            'available' => 'A',
+            'unavailable' => 'U',
+            'leave' => 'L',
+            default => '–',
+        };
+        if ($cell['preference'] === 'preferred_work') {
+            $state = $state === '–' ? 'PW' : $state.'/PW';
+        } elseif ($cell['preference'] === 'preferred_off') {
+            $state = $state === '–' ? 'PO' : $state.'/PO';
+        } elseif ($cell['preference'] === 'conflicted') {
+            $state = $state === '–' ? 'PW/PO' : $state.'/PW/PO';
+        }
+
+        return $cell['conflicted'] ? $state.'!' : $state;
     }
 }

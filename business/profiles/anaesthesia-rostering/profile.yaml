@@ -16,6 +16,9 @@ policies:
   - policies/publication-validation.yaml
   - policies/request-conflict-precedence.yaml
   - policies/generation-readiness-requires-valid-requests.yaml
+  - policies/explicit-availability-is-evidence.yaml
+  - policies/unspecified-doctor-interim-eligibility.yaml
+  - policies/eligible-pool-must-meet-daily-requirement.yaml
 documents: [documents/roster-period-summary.yaml]
 schemas:
   - schemas/doctor.schema.json

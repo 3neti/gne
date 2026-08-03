@@ -26,3 +26,5 @@ A roster administrator registers and maintains fictional or real doctor records;
 No action in this specification generates a roster, imports the workbook, executes an assignment, calculates pay, or publishes a schedule.
 
 Foundation readiness permits warning findings and rejects error findings. Assignment acceptance includes immediate allowlisted audit evidence in the same transaction. Period updates accept only title and notes; status changes use the transition service. The lifecycle scenario runner demonstrates these rules without adding production workflow behavior.
+
+For requests and availability, accepted leave and unavailability are hard blocks; accepted availability is positive evidence but not permission; preferences are soft overlays. Until department policy is confirmed, an active doctor with no effective request remains provisionally eligible as `unspecified`. Readiness requires the resulting eligible pool to meet each day's explicit staffing demand and still makes no claim that generation will find a valid or balanced roster. Equivalent accepted requests may not overlap on any effective date.

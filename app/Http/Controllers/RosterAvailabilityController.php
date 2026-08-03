@@ -15,6 +15,6 @@ final class RosterAvailabilityController extends Controller
         Gate::authorize('view', $rosterPeriod);
         $projection = $resolve->handle($rosterPeriod);
 
-        return Inertia::render('rostering/periods/Availability', ['period' => ['identifier' => $rosterPeriod->identifier, 'title' => $rosterPeriod->title, 'start_date' => $rosterPeriod->start_date->toDateString(), 'end_date' => $rosterPeriod->end_date->toDateString(), 'status' => $rosterPeriod->status->value], 'calendar' => $projection['calendar'], 'doctors' => $projection['doctors'], 'availability' => $projection['availability'], 'conflicts' => array_map(fn ($conflict): array => $conflict->toArray(), $projection['conflicts'])]);
+        return Inertia::render('rostering/periods/Availability', ['period' => ['identifier' => $rosterPeriod->identifier, 'title' => $rosterPeriod->title, 'start_date' => $rosterPeriod->start_date->toDateString(), 'end_date' => $rosterPeriod->end_date->toDateString(), 'status' => $rosterPeriod->status->value], 'calendar' => $projection['calendar'], 'weeks' => $projection['weeks'], 'doctors' => $projection['doctors'], 'doctorAvailabilityMatrix' => $projection['doctor_availability_matrix'], 'availabilitySummary' => $projection['availability_summary'], 'availability' => $projection['availability'], 'conflicts' => array_map(fn ($conflict): array => $conflict->toArray(), $projection['conflicts'])]);
     }
 }

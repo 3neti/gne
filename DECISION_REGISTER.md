@@ -169,3 +169,15 @@ Each accepted decision is durable until superseded by another recorded decision.
 ## ADR-042 — Finalized scenario data drives static HTML and PDF evidence
 
 **Status:** Accepted — 2026-08-03. **Decision:** Render disposable HTML from the finalized scenario projection, then print it through existing Playwright/Chromium infrastructure. **Rationale:** Human review needs portable evidence without expanding x-document or creating a PDF subsystem. **Rejected:** direct drawing commands, PDF as canonical truth, and polished success artifacts for failed scenarios.
+
+## ADR-043 — Unspecified active doctors are provisionally eligible
+
+**Status:** Accepted provisionally — 2026-08-03. **Decision:** Treat explicit availability as positive evidence, not permission, and count an active doctor without an effective accepted request as `unspecified` and eligible for the MVP. **Rationale:** The current request grammar captures exceptions and preferences but no confirmed opt-in-only rule. **Consequences:** Reports distinguish explicit from unspecified eligibility and clearly require department confirmation before production. **Rejected:** treating silence as explicit availability, treating explicit availability as assignment authorization, and inventing an opt-in-only policy.
+
+## ADR-044 — Daily eligible-pool sufficiency gates readiness
+
+**Status:** Accepted — 2026-08-03. **Decision:** Require `explicit available + unspecified >= required doctor count` for every roster day before `ready_for_generation`. Use one mutually exclusive effective state per active doctor/date; retain preferences and conflicts as overlays. **Rationale:** Generation cannot begin with an obviously insufficient eligible pool, while readiness must not claim feasibility or balance. **Consequences:** Shortages are deterministic error findings; calendar counts reconcile to the active population. **Rejected:** UI-owned sufficiency, double-counted states, and readiness as a roster-validity guarantee.
+
+## ADR-045 — Availability artifacts render a visual calendar without implying assignments
+
+**Status:** Accepted — 2026-08-03. **Decision:** Project the resolved 28-day availability input as four weekly date-card bands plus a doctor-by-date matrix in UI, self-contained HTML, and Chromium PDF. Label all counts and states as availability inputs and prominently state that no assignments were generated. **Rationale:** Department review needs visually appreciable staffing evidence before manual or automatic roster construction exists. **Consequences:** The same server-derived semantics feed every presentation; colours are supplemented by text; artifacts remain disposable. **Rejected:** table-only reporting, UI-side eligibility calculation, and calendar marks that resemble assignments.

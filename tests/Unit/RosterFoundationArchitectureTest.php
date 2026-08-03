@@ -37,3 +37,10 @@ it('keeps request resolution in the application layer and generation out of the 
         ->and($scenario)->toContain("'record_requests'", "'prove_hard_conflict'", "'resolve_hard_conflict'")
         ->not->toContain('class_exists($step');
 });
+
+it('keeps availability semantics out of the Vue calendar', function () {
+    $source = file_get_contents(dirname(__DIR__, 2).'/resources/js/pages/rostering/periods/Availability.vue');
+
+    expect($source)->toContain('Eligibility is not an assignment', 'Unspecified', 'staffing_input_status')
+        ->not->toContain('eligible_doctor_count >=', "effective_status === 'unspecified'", 'RosterGenerator');
+});
