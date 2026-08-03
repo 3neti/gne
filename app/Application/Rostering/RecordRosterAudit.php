@@ -5,9 +5,12 @@ namespace App\Application\Rostering;
 use App\Models\RosterAuditEntry;
 use App\Models\User;
 
-final class RecordRosterAudit
+class RecordRosterAudit
 {
-    /** @param array<string, mixed>|null $previousValue @param array<string, mixed>|null $newValue */
+    /**
+     * @param  array<string, mixed>|null  $previousValue
+     * @param  array<string, mixed>|null  $newValue
+     */
     public function handle(?User $actor, string $action, string $entityType, string $entityIdentifier, ?array $previousValue, ?array $newValue, ?string $reason = null): RosterAuditEntry
     {
         return RosterAuditEntry::query()->create([

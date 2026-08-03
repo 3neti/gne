@@ -9,6 +9,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
+/** @property RequirementSource $source */
 #[Fillable(['doctor_id', 'roster_period_id', 'required_hours', 'source', 'notes'])]
 class DoctorRosterRequirement extends Model
 {

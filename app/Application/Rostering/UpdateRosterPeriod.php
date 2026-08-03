@@ -13,6 +13,8 @@ final readonly class UpdateRosterPeriod
     /** @param array<string, mixed> $attributes */
     public function handle(User $actor, RosterPeriod $period, array $attributes): RosterPeriod
     {
+        $attributes = array_intersect_key($attributes, array_flip(['title', 'notes']));
+
         return DB::transaction(function () use ($actor, $period, $attributes): RosterPeriod {
             $previous = $period->toArray();
             $period->update($attributes);

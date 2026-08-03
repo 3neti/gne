@@ -11,6 +11,11 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
+/**
+ * @property AssignmentStatus $status
+ * @property AssignmentSource $source
+ * @property DutyCode $duty_code
+ */
 #[Fillable(['identifier', 'doctor_id', 'roster_period_id', 'roster_day_id', 'status', 'source', 'duty_code', 'start_time', 'end_time', 'credited_hours', 'notes', 'created_by'])]
 class RosterAssignment extends Model
 {

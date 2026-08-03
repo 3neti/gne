@@ -9,7 +9,12 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Support\Carbon;
 
+/**
+ * @property Carbon $date
+ * @property RosterDayType $day_type
+ */
 #[Fillable(['roster_period_id', 'date', 'day_type', 'required_doctor_count', 'notes'])]
 class RosterDay extends Model
 {

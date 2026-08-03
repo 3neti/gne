@@ -10,6 +10,10 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
+/**
+ * @property EmploymentType $employment_type
+ * @property ContractedHoursPeriod|null $contracted_hours_period
+ */
 #[Fillable(['identifier', 'full_name', 'employee_identifier', 'employment_type', 'active', 'contracted_hours', 'contracted_hours_period', 'standard_daily_hours', 'notes'])]
 class Doctor extends Model
 {

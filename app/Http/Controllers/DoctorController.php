@@ -10,6 +10,7 @@ use App\Domain\Rostering\EmploymentType;
 use App\Http\Requests\StoreDoctorRequest;
 use App\Http\Requests\UpdateDoctorRequest;
 use App\Models\Doctor;
+use BackedEnum;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Gate;
@@ -68,9 +69,12 @@ class DoctorController extends Controller
         return ['identifier' => $doctor->identifier, 'full_name' => $doctor->full_name, 'employee_identifier' => $doctor->employee_identifier, 'employment_type' => $doctor->employment_type->value, 'active' => $doctor->active, 'contracted_hours' => $doctor->contracted_hours, 'contracted_hours_period' => $doctor->contracted_hours_period?->value, 'standard_daily_hours' => $doctor->standard_daily_hours, 'notes' => $doctor->notes];
     }
 
-    /** @param array<int, object> $cases @return list<array{value: string, label: string}> */
+    /**
+     * @param  list<BackedEnum>  $cases
+     * @return list<array{value: string, label: string}>
+     */
     private function enumOptions(array $cases): array
     {
-        return array_map(fn ($case): array => ['value' => $case->value, 'label' => str($case->value)->replace('_', ' ')->title()->toString()], $cases);
+        return array_map(fn (BackedEnum $case): array => ['value' => (string) $case->value, 'label' => str((string) $case->value)->replace('_', ' ')->title()->toString()], $cases);
     }
 }

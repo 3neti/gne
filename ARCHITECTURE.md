@@ -128,3 +128,7 @@ Missing-evidence reporting currently reflects the first unresolved direct source
 Compilation planning reports expected `DocumentResolutionException` failures as unresolved definitions. Missing definitions are HTTP 404, while existing definitions lacking acceptable evidence are HTTP 422. Parser defects, infrastructure failures, type errors, and other unexpected exceptions propagate rather than being normalized into compilation results.
 
 Laravel authentication protects the control plane. Public ceremonies may later use signed links, OTP, or transaction credentials without accounts. Organization, Repository, Membership, Role, and Authority need deliberate future modeling; generic teams are not enabled.
+
+## Rostering foundation integrity
+
+Roster readiness is derived by `ValidateRosterFoundation`; warnings remain reportable while only errors block `ready_for_generation`. `CreateRosterAssignment` owns the assignment mutation and immediate allowlisted audit record in one transaction. Duplicate primary identity is a domain failure; unrelated database and audit failures propagate and roll back. A repository-authored, operation-allowlisted scenario exercises these services under a rollback-by-default boundary. It is development evidence, not a workflow runtime.

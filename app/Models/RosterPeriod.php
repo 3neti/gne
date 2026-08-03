@@ -9,7 +9,13 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Support\Carbon;
 
+/**
+ * @property RosterPeriodStatus $status
+ * @property Carbon $start_date
+ * @property Carbon $end_date
+ */
 #[Fillable(['identifier', 'title', 'start_date', 'end_date', 'status', 'notes', 'created_by', 'published_at'])]
 class RosterPeriod extends Model
 {

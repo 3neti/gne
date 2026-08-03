@@ -51,6 +51,8 @@ The Property Reservation MVP now has a complete isolated acceptance proof from a
 
 `business/` is canonical source, `app/` interprets and projects it, and `.gne/` is disposable generated state. Configuration version 1 requires relative canonical/generated paths and an optional enabled-profile list in `gne.yaml`.
 
+Anaesthesia foundation integrity can be exercised without persisting demo state using `php artisan gne:roster:lifecycle:run --scenario=ANAESTHESIA-ROSTER-FOUNDATION-LIFECYCLE --json`. The repository scenario is allowlisted; it cannot resolve services or execute arbitrary code. See [Foundation Lifecycle Scenario](docs/rostering/FOUNDATION_LIFECYCLE_SCENARIO.md).
+
 Canonical orientation: [GENEI.md](GENEI.md), [ARCHITECTURE.md](ARCHITECTURE.md), [GRAMMAR.md](GRAMMAR.md), [DECISION_REGISTER.md](DECISION_REGISTER.md), [COMPASS.md](COMPASS.md), and [IMPLEMENTATION_STATUS.md](IMPLEMENTATION_STATUS.md).
 
 ## Repository-native storyboard

@@ -17,3 +17,5 @@
 | Publication | Deferred | — | No freeze/reopen |
 | Import/export | Deferred | Characterization only | No production parser |
 | OpenAPI | Deferred | Stable actions/identifiers only | Later slice |
+
+The foundation integrity closure adds error-only readiness blocking, transactional assignment audit, domain duplicate rejection, a closed period-update allowlist, and the rollback-by-default `ANAESTHESIA-ROSTER-FOUNDATION-LIFECYCLE` proof. Missing active-doctor targets and zero staffing remain warnings. Requests, availability, generation, multiple duties, optimization, and arbitrary YAML execution remain deferred.

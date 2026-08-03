@@ -11,6 +11,8 @@ Canonical cognition, portable discovery, immutable artifacts, compiler projectio
 
 Stabilize explicit doctor, period, staffing, required-hours, lifecycle, authorization, and audit foundations; then model **Requests and Availability** before any roster generation.
 
+The foundation integrity proof is now repository-authored and rollback-by-default. Warning-bearing readiness, error blocking, assignment audit atomicity, duplicate rejection, and audit rollback are exercised through one allowlisted scenario.
+
 ## Explicit deferrals
 
 Autonomous GeNEi execution; AI provider adapters; LLM tool calling; embeddings/vector search; x-change integration; PDF, Adobe, binary attachment transport, output storage, background synchronization, retries, queues, webhooks, contract downgrade negotiation, batch compilation, Git commit automation; repository federation; enterprise governance; multi-organization membership; arbitrary profile inheritance; generalized policy/workflow engines; distributed materialization; database-vendor certification; production audit/compliance controls.

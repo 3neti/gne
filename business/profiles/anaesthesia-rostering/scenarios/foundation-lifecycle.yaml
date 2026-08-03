@@ -1,0 +1,12 @@
+identifier: ANAESTHESIA-ROSTER-FOUNDATION-LIFECYCLE
+slug: foundation-lifecycle
+profile: PROFILE-ANAESTHESIA-ROSTERING
+title: Anaesthesia rostering foundation lifecycle integrity proof
+description: Deterministic, allowlisted proof of readiness classification and assignment mutation integrity.
+lifecycle: LIFECYCLE-ANAESTHESIA-ROSTER-PERIOD
+steps:
+  - { id: warning-readiness, title: Warning-bearing readiness is permitted, operation: warning_readiness }
+  - { id: error-readiness, title: Foundation errors block readiness, operation: error_readiness }
+  - { id: assignment-audit, title: Assignment and audit commit together, operation: assignment_audit }
+  - { id: duplicate-rejection, title: Duplicate assignments are rejected without audit, operation: duplicate_rejection }
+  - { id: audit-rollback, title: Audit failure rolls back assignment mutation, operation: audit_rollback }

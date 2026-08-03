@@ -3,6 +3,7 @@
 use App\Application\Rostering\CreateRosterAssignment;
 use App\Application\Rostering\CreateRosterPeriod;
 use App\Application\Rostering\TransitionRosterPeriod;
+use App\Domain\Rostering\DuplicatePrimaryRosterAssignment;
 use App\Domain\Rostering\InvalidRosterTransition;
 use App\Domain\Rostering\RosterPeriodStatus;
 use App\Models\Doctor;
@@ -11,7 +12,6 @@ use App\Models\RosterAuditEntry;
 use App\Models\RosterDay;
 use App\Models\RosterPeriod;
 use App\Models\User;
-use Illuminate\Database\QueryException;
 
 function createFoundationPeriod(User $administrator, array $overrides = []): RosterPeriod
 {
@@ -63,13 +63,16 @@ it('permits only declared early lifecycle transitions and audits them', function
     expect(fn () => app(TransitionRosterPeriod::class)->handle($administrator, $period->fresh(), RosterPeriodStatus::Published))->toThrow(InvalidRosterTransition::class);
 });
 
-it('requires complete foundation inputs before ready for generation', function () {
+it('permits warning-bearing foundation inputs before ready for generation', function () {
     $administrator = User::factory()->rosterAdministrator()->create();
     $period = createFoundationPeriod($administrator);
     Doctor::factory()->create();
     app(TransitionRosterPeriod::class)->handle($administrator, $period, RosterPeriodStatus::CollectingRequests);
 
-    expect(fn () => app(TransitionRosterPeriod::class)->handle($administrator, $period->fresh(), RosterPeriodStatus::ReadyForGeneration))->toThrow(InvalidRosterTransition::class, 'no findings');
+    $result = app(TransitionRosterPeriod::class)->handle($administrator, $period->fresh(), RosterPeriodStatus::ReadyForGeneration);
+
+    expect($result->period->status)->toBe(RosterPeriodStatus::ReadyForGeneration)
+        ->and($result->warnings())->not->toBeEmpty();
 });
 
 it('enforces one primary assignment and preserves its optional seam', function () {
@@ -81,8 +84,9 @@ it('enforces one primary assignment and preserves its optional seam', function (
     $assignment = app(CreateRosterAssignment::class)->handle($administrator, $doctor, $period, $day, optional: ['start_time' => '08:00', 'end_time' => '16:30', 'credited_hours' => 7.5, 'notes' => 'Foundation proof']);
 
     expect($assignment->duty_code->value)->toBe('standard_day')->and($assignment->credited_hours)->toBe('7.50')->and($assignment->notes)->toBe('Foundation proof');
-    expect(fn () => app(CreateRosterAssignment::class)->handle($administrator, $doctor, $period, $day))->toThrow(QueryException::class);
+    expect(fn () => app(CreateRosterAssignment::class)->handle($administrator, $doctor, $period, $day))->toThrow(DuplicatePrimaryRosterAssignment::class);
     expect(RosterAssignment::query()->count())->toBe(1);
+    expect(RosterAuditEntry::query()->where('action', 'roster_assignment.created')->count())->toBe(1);
 });
 
 it('rejects assignment for inactive doctor or day outside the period', function () {

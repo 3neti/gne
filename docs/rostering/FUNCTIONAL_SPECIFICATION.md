@@ -24,3 +24,5 @@ The numbered requirements below preserve the approved FR-001–FR-014 handoff vo
 A roster administrator registers and maintains fictional or real doctor records; creates a bounded roster period with explicit weekday/weekend headcount defaults; reviews every created day; overrides individual dates; authors one required-hours target per doctor; advances through the two enabled early transitions; and inspects deterministic structural findings and audit evidence. An ordinary authenticated user has no rostering access.
 
 No action in this specification generates a roster, imports the workbook, executes an assignment, calculates pay, or publishes a schedule.
+
+Foundation readiness permits warning findings and rejects error findings. Assignment acceptance includes immediate allowlisted audit evidence in the same transaction. Period updates accept only title and notes; status changes use the transition service. The lifecycle scenario runner demonstrates these rules without adding production workflow behavior.

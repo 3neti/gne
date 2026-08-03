@@ -12,6 +12,8 @@ Repository-authored profile policy describes the language. Host-owned Laravel re
 
 Implemented UI: rostering dashboard, doctors, period list/create/detail, daily staffing, doctor required hours, and assignment empty state. Implemented tests cover the central invariants and dependency exclusions.
 
+Foundation integrity is now executable through the allowlisted repository scenario. Readiness preserves warnings while blocking errors; assignment creation and its safe audit evidence commit or roll back together; period edits cannot bypass lifecycle transitions.
+
 ## Known limitations and questions
 
 One department and one simple administrator capability are assumed. Contracted-hour period meaning, employee-number semantics, holidays, staffing-row interpretation, duty-code mapping, call/overtime/leave effects, and multiple daily work segments remain unresolved. `off` is absence of assignment. There is no request model, roster grid, generator, publication, import/export, payroll, OpenAPI, or AI operation.

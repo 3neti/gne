@@ -6,7 +6,7 @@ version: 1
 canonical: true
 vocabulary: vocabulary.yaml
 lifecycles: [lifecycles/roster-period.yaml]
-scenarios: [scenarios/create-roster-period.yaml]
+scenarios: [scenarios/create-roster-period.yaml, scenarios/foundation-lifecycle.yaml]
 policies:
   - policies/active-doctor-eligibility.yaml
   - policies/roster-period-boundaries.yaml

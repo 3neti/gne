@@ -145,3 +145,15 @@ Each accepted decision is durable until superseded by another recorded decision.
 ## ADR-036 — Roster generation remains behind a future boundary
 
 **Status:** Accepted — 2026-08-03. **Decision:** Do not implement a generator or interface until requests, availability, and resolved policy semantics are stable. The intended future boundary accepts a roster period and resolved roster policy and returns a generated result. **Rationale:** Premature optimization would encode guesses as policy. **Consequences:** Foundation UI cannot generate or simulate a roster. **Rejected:** OR-Tools, generic optimization packages, or spreadsheet heuristics in this slice.
+
+## ADR-037 — Foundation readiness is blocked by errors, not warnings
+
+**Status:** Accepted — 2026-08-03. **Decision:** Preserve all deterministic findings in the transition result while blocking `ready_for_generation` only when an error exists. **Rationale:** Missing explicit targets and zero staffing are visible, remediable warnings in the foundation grammar. **Rejected:** treating every finding as a lifecycle veto or hiding warnings after transition.
+
+## ADR-038 — Assignment mutation and audit form one transaction
+
+**Status:** Accepted — 2026-08-03. **Decision:** Create an assignment and its safe `roster_assignment.created` audit evidence atomically. Translate only the known primary-assignment uniqueness race into a domain exception. **Rationale:** Accepted mutations require immediate evidence; rejected attempts are not mutation events. **Rejected:** best-effort audit, raw uniqueness exceptions as domain behavior, and broad database-exception normalization.
+
+## ADR-039 — Lifecycle scenarios are allowlisted, isolated proofs
+
+**Status:** Accepted — 2026-08-03. **Decision:** Repository YAML may select only a closed operation vocabulary executed through application services, with rollback by default. **Rationale:** Durable examples should prove lifecycle behavior without becoming arbitrary code execution or a workflow engine. **Rejected:** PHP class names in YAML, service-container lookup, SQL/shell steps, direct status mutation, and implicit persistent demo state.
