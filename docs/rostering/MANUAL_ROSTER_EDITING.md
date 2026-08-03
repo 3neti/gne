@@ -22,3 +22,9 @@ Create, move, and replace reject inactive doctors, dates outside the period, dup
 `ValidateRoster` reports understaffing as an error. Overstaffing, below/above target hours, and unhonoured preferred-off requests are warnings while draft or under review. The browser consumes only `BuildRosterCalendar` and `BuildDoctorHoursSummary`; it does not calculate business totals.
 
 Only roster administrators may view full manual roster, revision, and audit surfaces or submit/preview mutations. Publication, automatic generation, optimization, overnight duties, multiple daily segments, payroll, doctor self-service, and overrides are deferred.
+
+Every period-owned audit record stores the exact `roster_period_id` within the mutation transaction. `ListRosterPeriodAuditEntries` is the authoritative read boundary for the roster page, complete history, scenarios, and artifacts. It excludes other periods and unscoped doctor administration without searching JSON, parsing identifiers, or filtering only by action. Historical rows that cannot be deterministically backfilled remain unscoped and never enter a period history.
+
+The main roster page shows current revision, total revisions, latest reason, roster state after revision, action counts, and the latest 20 revision/audit entries. Complete period-owned history remains available from `/rostering/periods/{period}/revisions` and `/rostering/periods/{period}/audit`. A revision is a business-level roster version; an audit entry is operational evidence that an action occurred.
+
+Future draft generation must create one top-level roster revision with many change records, one generation audit, and one final validation snapshot. It must not invoke the manual assignment command repeatedly in a way that creates one top-level revision per generated row. No generator exists yet.

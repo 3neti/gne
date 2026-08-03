@@ -16,14 +16,16 @@ The numbered requirements below preserve the approved FR-001–FR-014 handoff vo
 | FR-010 — Review and approval | Deferred | Lifecycle vocabulary only | Review UI and authority |
 | FR-011 — Publication | Deferred | Status/policy vocabulary only | Freeze, release, reopen |
 | FR-012 — Import and export | Deferred | Workbook characterization only | Confirmed mapping, CSV/XLSX |
-| FR-013 — Reporting and analytics | Manual roster reporting implemented | Assigned calendar, matrix, staffing, doctor hours, validation, revision/audit JSON/HTML/PDF | Payroll, SLA, operational analytics |
-| FR-014 — Integration and automation | Assignment/audit subset implemented | Stable audited request and assignment actions with public identifiers | OpenAPI, AI operation, generator interface |
+| FR-013 — Reporting and analytics | Manual roster reporting implemented | Assigned calendar, matrix, staffing, doctor hours, concise operator history, complete revision/audit JSON and detailed HTML | Payroll, SLA, operational analytics |
+| FR-014 — Integration and automation | Exact-period audit subset implemented | Stable audited request and assignment actions with explicit `roster_period_id`; cross-period isolation proven through one query boundary | Enterprise audit certification, OpenAPI, AI operation, generator interface |
 
 ## Foundation user journeys
 
 A roster administrator registers and maintains fictional or real doctor records; creates a bounded roster period with explicit weekday/weekend headcount defaults; reviews every created day; overrides individual dates; authors one required-hours target per doctor; advances through the two enabled early transitions; and inspects deterministic structural findings and audit evidence. An ordinary authenticated user has no rostering access.
 
 No action in this specification automatically generates a roster, imports the workbook, calculates pay, or publishes a schedule. Authorised administrators now deliberately create and revise assignments.
+
+Manual revision validation records the state of the whole roster immediately after the command, not whether that command was itself invalid. Manual actions create one top-level revision each. A future generation command must create one top-level revision containing many assignment changes; generation remains deferred.
 
 Foundation readiness permits warning findings and rejects error findings. Assignment acceptance includes immediate allowlisted audit evidence in the same transaction. Period updates accept only title and notes; status changes use the transition service. The lifecycle scenario runner demonstrates these rules without adding production workflow behavior.
 

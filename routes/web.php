@@ -8,6 +8,7 @@ use App\Http\Controllers\RepositoryWorkbenchController;
 use App\Http\Controllers\ResolvedDocumentController;
 use App\Http\Controllers\RosterAssignmentController;
 use App\Http\Controllers\RosterAvailabilityController;
+use App\Http\Controllers\RosterHistoryController;
 use App\Http\Controllers\RosteringDashboardController;
 use App\Http\Controllers\RosterPeriodController;
 use App\Http\Controllers\RosterStaffingController;
@@ -43,6 +44,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::get('periods/{roster_period}/requirements', [DoctorRosterRequirementController::class, 'edit'])->name('periods.requirements.edit');
         Route::put('periods/{roster_period}/requirements', [DoctorRosterRequirementController::class, 'update'])->name('periods.requirements.update');
         Route::get('periods/{roster_period}/roster', [RosterAssignmentController::class, 'index'])->name('periods.roster.show');
+        Route::get('periods/{roster_period}/revisions', [RosterHistoryController::class, 'revisions'])->name('periods.revisions.index');
+        Route::get('periods/{roster_period}/audit', [RosterHistoryController::class, 'audit'])->name('periods.audit.index');
         Route::get('periods/{roster_period}/assignments', [RosterAssignmentController::class, 'index'])->name('periods.assignments.index');
         Route::post('periods/{roster_period}/assignments', [RosterAssignmentController::class, 'store'])->name('periods.assignments.store');
         Route::delete('periods/{roster_period}/assignments/{roster_assignment}', [RosterAssignmentController::class, 'destroy'])->name('periods.assignments.destroy');

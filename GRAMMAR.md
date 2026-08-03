@@ -102,6 +102,10 @@ A **Captured and Verified Frame** has status `captured_and_verified`, the observ
 | Roster Revision | Immutable monotonic per-period snapshot recording one committed manual action, its structured changes, and post-mutation validation. |
 | Assigned Hours | Sum of explicit credited hours for one doctor's assignments in one roster period. |
 | Staffing Status | Derived comparison of assigned count with required count: `understaffed`, `fully_staffed`, or `overstaffed`. |
+| Roster Audit Scope | Explicit nullable `roster_period_id` recorded with a rostering mutation; period-owned reports accept only exact foreign-key matches. |
+| Operator Roster History | Concise exact-period summary of revision and audit evidence for routine review. |
+| Complete Roster History | Exhaustive exact-period revision and audit evidence retained in JSON and detailed HTML. |
+| Roster State After Revision | Validation state of the complete roster immediately after a revision; it does not classify the mutation command itself. |
 # Anaesthesia rostering grammar
 
 **Doctor** is a stable host clinician record. **Roster Period** is an inclusive calendar planning window. **Roster Day** is one date in that period with an explicit non-negative staffing requirement. **Doctor Roster Requirement** is one explicit non-negative required-hours target for a doctor and period. **Primary Daily Assignment** is the sole counted assignment allowed for one doctor and roster day in the foundation. **Roster Administrator** is the host-owned capability permitted to mutate these records. **Roster Audit Entry** is append-only structured evidence of a major mutation.

@@ -25,7 +25,7 @@ final readonly class TransitionDoctorScheduleRequest
         return DB::transaction(function () use ($actor, $request, $target, $reason): DoctorScheduleRequest {
             $oldStatus = $request->status;
             $request->update(['status' => $target, 'reviewed_at' => now(), 'reviewed_by' => $actor->id]);
-            $this->audit->record($actor, 'doctor_request.'.$target->value, 'doctor_schedule_request', $request->identifier, ['status' => $oldStatus->value], ['status' => $target->value], $reason);
+            $this->audit->record($actor, 'doctor_request.'.$target->value, 'doctor_schedule_request', $request->identifier, ['status' => $oldStatus->value], ['status' => $target->value], $reason, $request->rosterPeriod);
 
             return $request->fresh(['doctor', 'rosterPeriod', 'dates']);
         });

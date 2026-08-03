@@ -32,7 +32,7 @@ final readonly class TransitionRosterPeriod
             $from = $period->status;
             $previous = $period->toArray();
             $period->update(['status' => $target]);
-            $this->audit->record($actor, 'roster_period.transitioned', 'roster_period', $period->identifier, $previous, $period->fresh()->toArray(), $reason);
+            $this->audit->record($actor, 'roster_period.transitioned', 'roster_period', $period->identifier, $previous, $period->fresh()->toArray(), $reason, $period);
 
             return new RosterTransitionResult($period->fresh(), $from, $target, $findings);
         });

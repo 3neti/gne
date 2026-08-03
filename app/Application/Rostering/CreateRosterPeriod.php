@@ -43,7 +43,7 @@ final readonly class CreateRosterPeriod
                 ]);
                 $date = $date->addDay();
             }
-            $this->audit->record($actor, 'roster_period.created', 'roster_period', $period->identifier, null, $period->fresh()->toArray());
+            $this->audit->record($actor, 'roster_period.created', 'roster_period', $period->identifier, null, $period->fresh()->toArray(), rosterPeriod: $period);
 
             return $period->fresh('days');
         });

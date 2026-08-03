@@ -4,6 +4,7 @@ namespace App\Application\Rostering;
 
 use App\Contracts\Rostering\RosterAuditRecorder;
 use App\Models\RosterAuditEntry;
+use App\Models\RosterPeriod;
 use App\Models\User;
 
 final class RecordRosterAudit implements RosterAuditRecorder
@@ -12,10 +13,11 @@ final class RecordRosterAudit implements RosterAuditRecorder
      * @param  array<string, mixed>|null  $previousValue
      * @param  array<string, mixed>|null  $newValue
      */
-    public function record(?User $actor, string $action, string $entityType, string $entityIdentifier, ?array $previousValue, ?array $newValue, ?string $reason = null): RosterAuditEntry
+    public function record(?User $actor, string $action, string $entityType, string $entityIdentifier, ?array $previousValue, ?array $newValue, ?string $reason = null, ?RosterPeriod $rosterPeriod = null): RosterAuditEntry
     {
         return RosterAuditEntry::query()->create([
             'actor_id' => $actor?->id,
+            'roster_period_id' => $rosterPeriod?->id,
             'action' => $action,
             'entity_type' => $entityType,
             'entity_identifier' => $entityIdentifier,

@@ -2,6 +2,7 @@
 
 namespace App\Application\Rostering;
 
+use App\Contracts\Rostering\RosterAuditRecorder;
 use App\Domain\Rostering\DoctorRequestType;
 use App\Domain\Rostering\DuplicatePrimaryRosterAssignment;
 use App\Domain\Rostering\InvalidRosterAssignment;
@@ -10,7 +11,6 @@ use App\Domain\Rostering\RosterLifecycleScenarioDefinition;
 use App\Domain\Rostering\RosterPeriodStatus;
 use App\Models\Doctor;
 use App\Models\RosterAssignment;
-use App\Models\RosterAuditEntry;
 use App\Models\RosterPeriod;
 use App\Models\User;
 use Carbon\CarbonImmutable;
@@ -25,7 +25,8 @@ final readonly class RunManualRosterScenario
         private RecordAcceptedDoctorScheduleRequest $recordRequest, private CreateRosterAssignment $create,
         private PreviewRosterMutation $preview, private MoveRosterAssignment $move,
         private ReplaceRosterAssignment $replace, private RemoveRosterAssignment $remove,
-        private BuildRosterCalendar $calendar,
+        private BuildRosterCalendar $calendar, private ListRosterPeriodAuditEntries $listAudit,
+        private RosterAuditRecorder $audit,
     ) {}
 
     public function handle(RosterLifecycleScenarioDefinition $scenario, bool $keepState = false): ManualRosterScenarioResult
@@ -112,9 +113,17 @@ final readonly class RunManualRosterScenario
                 throw new RuntimeException('The manual roster scenario must finish valid with warnings.');
             }
 
+            $unrelatedPeriod = RosterPeriod::query()->firstOrCreate(['identifier' => 'ROSTER-2026-09'], ['title' => 'Unrelated isolation proof', 'start_date' => '2026-10-01', 'end_date' => '2026-10-01', 'created_by' => $actor->id]);
+            $this->audit->record($actor, 'roster_period.isolation_proof', 'roster_period', $unrelatedPeriod->identifier, null, ['isolation_fixture' => true], rosterPeriod: $unrelatedPeriod);
+
             $revisions = $period->revisions()->with(['changes', 'creator'])->orderBy('revision_number')->get()->map(fn ($revision): array => ['identifier' => $revision->identifier, 'revision_number' => $revision->revision_number, 'actor' => $revision->creator?->name, 'reason' => $revision->reason, 'summary' => $revision->summary, 'validation_status' => $revision->validation_status, 'created_at' => $revision->created_at?->toIso8601String(), 'changes' => $revision->changes->map(fn ($change): array => ['change_type' => $change->change_type, 'entity_identifier' => $change->entity_identifier, 'before' => $change->before_value, 'after' => $change->after_value])->all()])->all();
-            $audits = RosterAuditEntry::query()->oldest()->get()->map(fn (RosterAuditEntry $entry): array => ['action' => $entry->action, 'entity_identifier' => $entry->entity_identifier, 'reason' => $entry->reason])->all();
-            $report = ['format' => 'gne-anaesthesia-manual-roster/1.0', 'scenario' => ['identifier' => $scenario->identifier, 'title' => $scenario->title, 'passed' => true], 'roster' => ['identifier' => $period->identifier, 'title' => $period->title, 'status' => $period->fresh()->status->value, 'revision' => count($revisions), 'validation_status' => $validation['status'], 'start_date' => '2026-09-01', 'end_date' => '2026-09-28'], 'proofs' => $proofs, ...$projection, 'revisions' => $revisions, 'audit' => $audits];
+            $audits = $this->listAudit->handle($period)->map(fn ($entry): array => ['action' => $entry->action, 'entity_type' => $entry->entity_type, 'entity_identifier' => $entry->entity_identifier, 'reason' => $entry->reason, 'created_at' => $entry->created_at?->toIso8601String()])->all();
+            $auditCounts = collect($audits)->countBy('action')->sortKeys()->all();
+            $recentRevisions = collect($revisions)->sortByDesc('revision_number')->take(10)->values()->all();
+            $recentAudit = collect($audits)->reverse()->take(20)->values()->all();
+            $notableRevisions = collect($revisions)->filter(fn (array $revision): bool => in_array($revision['summary']['operation'] ?? null, ['move', 'replace', 'remove'], true) || str_contains(mb_strtolower($revision['reason']), 'restore') || str_contains(mb_strtolower($revision['reason']), 'overstaffing'))->values()->all();
+            $unrelatedIdentifiers = collect($audits)->filter(fn (array $entry): bool => $entry['entity_identifier'] === 'ROSTER-2026-09' || str_starts_with($entry['entity_identifier'], 'DOCTOR-'))->count();
+            $report = ['format' => 'gne-anaesthesia-manual-roster/1.1', 'scenario' => ['identifier' => $scenario->identifier, 'title' => $scenario->title, 'passed' => true], 'roster' => ['identifier' => $period->identifier, 'title' => $period->title, 'status' => $period->fresh()->status->value, 'revision' => count($revisions), 'validation_status' => $validation['status'], 'start_date' => '2026-09-01', 'end_date' => '2026-09-28'], 'isolation' => ['selected_roster_period' => $period->identifier, 'period_scoped_audit_count' => count($audits), 'unrelated_identifiers_present' => $unrelatedIdentifiers], 'proofs' => $proofs, ...$projection, 'revision_summary' => ['current_revision' => count($revisions), 'total_revisions' => count($revisions), 'first_revision_at' => $revisions[0]['created_at'] ?? null, 'latest_revision_at' => $revisions[array_key_last($revisions)]['created_at'] ?? null, 'current_validation_status' => $validation['status'], 'mutation_counts' => collect($revisions)->countBy(fn (array $revision): string => (string) ($revision['summary']['operation'] ?? 'unknown'))->sortKeys()->all(), 'recent' => $recentRevisions, 'notable' => $notableRevisions], 'revisions' => $revisions, 'audit_summary' => ['total' => count($audits), 'by_action' => $auditCounts], 'recent_audit' => $recentAudit, 'complete_audit' => $audits];
             $result = new ManualRosterScenarioResult($report, $keepState);
             $keepState ? DB::commit() : DB::rollBack();
 
@@ -141,7 +150,7 @@ final readonly class RunManualRosterScenario
     /** @return array{assignments: int, revisions: int, audits: int} */
     private function counts(RosterPeriod $period): array
     {
-        return ['assignments' => $period->assignments()->count(), 'revisions' => $period->revisions()->count(), 'audits' => RosterAuditEntry::query()->count()];
+        return ['assignments' => $period->assignments()->count(), 'revisions' => $period->revisions()->count(), 'audits' => $this->listAudit->handle($period)->count()];
     }
 
     /** @return array{RosterAssignment, RosterAssignment} */

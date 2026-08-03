@@ -21,7 +21,7 @@ final readonly class CreateRosterRevision
         $revisionNumber = (int) $period->revisions()->max('revision_number') + 1;
         $revision = RosterRevision::query()->create(['identifier' => sprintf('%s-REV-%04d', $period->identifier, $revisionNumber), 'roster_period_id' => $period->id, 'revision_number' => $revisionNumber, 'created_by' => $actor?->id, 'reason' => $reason, 'summary' => $summary, 'validation_status' => $validation->status(), 'validation_snapshot' => $validation->toArray()]);
         $revision->changes()->createMany($changes);
-        $this->audit->record($actor, 'roster_revision.created', 'roster_revision', $revision->identifier, null, ['roster_period_identifier' => $period->identifier, 'revision_number' => $revisionNumber, 'summary' => $summary, 'validation_status' => $validation->status()], $reason);
+        $this->audit->record($actor, 'roster_revision.created', 'roster_revision', $revision->identifier, null, ['roster_period_identifier' => $period->identifier, 'revision_number' => $revisionNumber, 'summary' => $summary, 'validation_status' => $validation->status()], $reason, $period);
 
         return $revision->fresh(['changes', 'creator']);
     }

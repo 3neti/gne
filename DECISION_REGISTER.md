@@ -193,3 +193,15 @@ Each accepted decision is durable until superseded by another recorded decision.
 ## ADR-048 — Assigned-roster artifacts are distinct from availability evidence
 
 **Status:** Accepted — 2026-08-03. **Decision:** Render the manual scenario from finalized assignment projections and label it “Manually Authored Draft — Not Yet Published.” **Rationale:** Eligibility is an input while assignments are deliberate decisions. **Consequences:** The report includes assigned names, staffing, hours, validation, revisions, and audit without claiming automatic generation or publication. **Rejected:** reusing availability cards as an assigned roster and treating PDF as canonical.
+
+## ADR-049 — Rostering audit evidence is scoped by exact roster period
+
+**Status:** Accepted — 2026-08-03. **Decision:** Record nullable `roster_period_id` on every period-owned rostering audit inside the mutation transaction and query period history only through `ListRosterPeriodAuditEntries` using that foreign key. Doctor administration may remain unscoped. Deterministic backfill uses direct model identity or explicit structured `roster_period_id`; unresolved rows remain unscoped and cannot enter a period report. **Rationale:** Audit evidence must never leak between business periods, and scope cannot be reconstructed later from action names, prefixes, or free text. **Consequences:** UI, lifecycle reports, JSON, HTML, and PDF share one exact-period boundary; period deletion nulls the foreign key while immutable textual identity remains. **Rejected:** global action filtering, payload searches at report time, and identifier-prefix matching.
+
+## ADR-050 — Operator artifacts summarize history while machine evidence remains complete
+
+**Status:** Accepted — 2026-08-03. **Decision:** Show current totals, mutation/action counts, notable operations, and recent entries in the primary UI/PDF; retain all revisions and exact-period audits in report JSON and dedicated HTML/history routes. Label revision validation as roster state after revision. **Rationale:** Administrators need a reviewable artifact without losing durable proof. **Rejected:** raw hundreds-row PDF dumps and truncating machine evidence.
+
+## ADR-051 — Draft generation owns one top-level roster revision
+
+**Status:** Accepted — 2026-08-03. **Decision:** A future automatic draft-generation command creates one top-level roster revision containing many revision changes, one generation audit event, and one post-generation validation snapshot. Manual add/remove/move/replace commands continue to create one revision per administrator action. **Rationale:** A generated draft is one business command, not hundreds of independent administrator actions. **Consequences:** The future generator must own revision scope and may reuse lower-level persistence only without creating per-assignment top-level revisions. **Rejected:** calling the manual command once per generated assignment and producing hundreds of top-level revisions. No generator is implemented by this ADR.

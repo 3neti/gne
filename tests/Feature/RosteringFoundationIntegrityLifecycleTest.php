@@ -11,6 +11,7 @@ use App\Domain\Rostering\RosterPeriodStatus;
 use App\Models\Doctor;
 use App\Models\RosterAssignment;
 use App\Models\RosterAuditEntry;
+use App\Models\RosterPeriod;
 use App\Models\User;
 
 it('blocks readiness only when foundation validation contains an error', function () {
@@ -32,7 +33,7 @@ it('rolls back assignment creation when audit recording fails', function () {
     $period = readyFoundationPeriod($actor, createFoundationPeriod($actor));
     $audit = new class implements RosterAuditRecorder
     {
-        public function record(?User $actor, string $action, string $entityType, string $entityIdentifier, ?array $previousValue, ?array $newValue, ?string $reason = null): RosterAuditEntry
+        public function record(?User $actor, string $action, string $entityType, string $entityIdentifier, ?array $previousValue, ?array $newValue, ?string $reason = null, ?RosterPeriod $rosterPeriod = null): RosterAuditEntry
         {
             throw new RuntimeException('Audit unavailable.');
         }

@@ -51,7 +51,9 @@ it('creates previews and mutates a roster with one immutable revision per action
     $created = app(CreateRosterAssignment::class)->mutate($actor, $ana, $period, $firstDay, ['notes' => 'Manual proof']);
     expect($created->assignment?->credited_hours)->toBe('8.00')
         ->and($created->revision?->revision_number)->toBe(1)
-        ->and($period->fresh()->status)->toBe(RosterPeriodStatus::Generated);
+        ->and($period->fresh()->status)->toBe(RosterPeriodStatus::Generated)
+        ->and(RosterAuditEntry::query()->where('entity_identifier', $created->assignment?->identifier)->value('roster_period_id'))->toBe($period->id)
+        ->and(RosterAuditEntry::query()->where('entity_identifier', $created->revision?->identifier)->value('roster_period_id'))->toBe($period->id);
 
     $moved = app(MoveRosterAssignment::class)->handle($actor, $created->assignment, $secondDay, 'Move proof');
     expect($moved->revision?->revision_number)->toBe(2)
@@ -132,7 +134,7 @@ it('rolls assignment revision and audit back together when audit recording fails
     $period = manualRosterPeriod($actor, [$doctor]);
     app()->instance(RosterAuditRecorder::class, new class implements RosterAuditRecorder
     {
-        public function record(?User $actor, string $action, string $entityType, string $entityIdentifier, ?array $previousValue, ?array $newValue, ?string $reason = null): RosterAuditEntry
+        public function record(?User $actor, string $action, string $entityType, string $entityIdentifier, ?array $previousValue, ?array $newValue, ?string $reason = null, ?RosterPeriod $rosterPeriod = null): RosterAuditEntry
         {
             throw new RuntimeException('Controlled audit failure.');
         }

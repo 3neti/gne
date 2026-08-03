@@ -19,7 +19,7 @@ final readonly class UpdateRosterPeriod
         return DB::transaction(function () use ($actor, $period, $attributes): RosterPeriod {
             $previous = $period->toArray();
             $period->update($attributes);
-            $this->audit->record($actor, 'roster_period.updated', 'roster_period', $period->identifier, $previous, $period->fresh()->toArray());
+            $this->audit->record($actor, 'roster_period.updated', 'roster_period', $period->identifier, $previous, $period->fresh()->toArray(), rosterPeriod: $period);
 
             return $period->fresh();
         });

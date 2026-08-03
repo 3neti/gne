@@ -60,3 +60,25 @@ it('keeps manual roster rules in application services and generation absent', fu
         ->and($audit)->toContain('interface RosterAuditRecorder', 'public function record')
         ->and($controller.$page.$preview)->not->toContain('RosterGenerator', 'OR-Tools', 'PhpSpreadsheet', 'published');
 });
+
+it('owns all roster-period audit reads through the exact-period query service', function () {
+    $root = dirname(__DIR__, 2);
+    $assignmentController = file_get_contents($root.'/app/Http/Controllers/RosterAssignmentController.php');
+    $historyController = file_get_contents($root.'/app/Http/Controllers/RosterHistoryController.php');
+    $manualScenario = file_get_contents($root.'/app/Application/Rostering/RunManualRosterScenario.php');
+    $queryService = file_get_contents($root.'/app/Application/Rostering/ListRosterPeriodAuditEntries.php');
+
+    expect($assignmentController.$historyController.$manualScenario)->toContain('ListRosterPeriodAuditEntries')
+        ->not->toContain('RosterAuditEntry::query()')
+        ->and($queryService)->toContain('whereBelongsTo($rosterPeriod)', "orderBy('created_at')", "orderBy('id')")
+        ->not->toContain('new_value', 'entity_identifier', 'reason');
+});
+
+it('records generated-draft revision ownership without implementing a generator', function () {
+    $root = dirname(__DIR__, 2);
+    $decisionRegister = file_get_contents($root.'/DECISION_REGISTER.md');
+    $application = collect((new Filesystem)->allFiles($root.'/app/Application/Rostering'))->map(fn ($file): string => $file->getContents())->implode("\n");
+
+    expect($decisionRegister)->toContain('one top-level roster revision', 'many revision changes')
+        ->and($application)->not->toContain('GenerateDraftRoster', 'RosterGenerator', 'OptimizeRoster');
+});

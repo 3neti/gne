@@ -25,7 +25,7 @@ final readonly class RemoveRosterAssignment
             $doctor = $assignment->doctor->identifier;
             $identifier = $assignment->identifier;
             $assignment->delete();
-            $this->audit->record($actor, 'roster_assignment.removed', 'roster_assignment', $identifier, $before, null, $reason ?? 'Manual assignment removed.');
+            $this->audit->record($actor, 'roster_assignment.removed', 'roster_assignment', $identifier, $before, null, $reason ?? 'Manual assignment removed.', $period);
             $validation = $this->validate->handle($period->fresh());
             $revision = $this->createRevision->handle($actor, $period, $reason ?? 'Manual assignment removed.', ['operation' => 'remove', 'doctor_identifier' => $doctor, 'date' => $date], $validation, [['change_type' => 'removed', 'entity_identifier' => $identifier, 'before_value' => $before, 'after_value' => null]]);
 

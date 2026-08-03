@@ -46,7 +46,7 @@ final readonly class CreateRosterAssignment
                 $assignment = RosterAssignment::query()->create(['identifier' => 'PENDING', 'doctor_id' => $doctor->id, 'roster_period_id' => $period->id, 'roster_day_id' => $day->id, 'status' => AssignmentStatus::Assigned, 'source' => $optional['source'] ?? AssignmentSource::ManuallyAdded, 'duty_code' => $optional['duty_code'] ?? DutyCode::StandardDay, 'start_time' => $optional['start_time'] ?? null, 'end_time' => $optional['end_time'] ?? null, 'credited_hours' => $optional['credited_hours'] ?? $doctor->standard_daily_hours, 'notes' => $optional['notes'] ?? null, 'created_by' => $actor?->id]);
                 $assignment->update(['identifier' => sprintf('ASSIGNMENT-%06d', $assignment->id)]);
                 $after = $this->payload($assignment->fresh(['doctor', 'rosterDay', 'rosterPeriod']));
-                $this->audit->record($actor, 'roster_assignment.created', 'roster_assignment', $assignment->identifier, null, $after, $optional['reason'] ?? 'Manual assignment added.');
+                $this->audit->record($actor, 'roster_assignment.created', 'roster_assignment', $assignment->identifier, null, $after, $optional['reason'] ?? 'Manual assignment added.', $period);
                 if ($period->status === RosterPeriodStatus::ReadyForGeneration && $actor) {
                     $this->transitionPeriod->handle($actor, $period->fresh(), RosterPeriodStatus::Generated, 'First manual roster assignment created.');
                 }

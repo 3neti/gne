@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Application\Rostering\BuildRosterCalendar;
 use App\Application\Rostering\CreateRosterAssignment;
+use App\Application\Rostering\ListRosterPeriodAuditEntries;
 use App\Application\Rostering\MoveRosterAssignment;
 use App\Application\Rostering\PreviewRosterMutation;
 use App\Application\Rostering\RemoveRosterAssignment;
@@ -16,7 +17,6 @@ use App\Http\Requests\ReplaceRosterAssignmentRequest;
 use App\Http\Requests\StoreRosterAssignmentRequest;
 use App\Models\Doctor;
 use App\Models\RosterAssignment;
-use App\Models\RosterAuditEntry;
 use App\Models\RosterDay;
 use App\Models\RosterPeriod;
 use Illuminate\Http\RedirectResponse;
@@ -27,12 +27,15 @@ use LogicException;
 
 class RosterAssignmentController extends Controller
 {
-    public function index(RosterPeriod $rosterPeriod, BuildRosterCalendar $build): Response
+    public function index(RosterPeriod $rosterPeriod, BuildRosterCalendar $build, ListRosterPeriodAuditEntries $listAudit): Response
     {
         Gate::authorize('view', $rosterPeriod);
         $projection = $build->handle($rosterPeriod);
 
-        return Inertia::render('rostering/periods/Assignments', ['period' => ['identifier' => $rosterPeriod->identifier, 'title' => $rosterPeriod->title, 'status' => $rosterPeriod->status->value, 'start_date' => $rosterPeriod->start_date->toDateString(), 'end_date' => $rosterPeriod->end_date->toDateString()], ...$projection, 'doctors' => $rosterPeriod->doctorRequirements->filter(fn ($requirement): bool => $requirement->doctor->active)->sortBy(fn ($requirement): string => $requirement->doctor->identifier)->map(fn ($requirement): array => ['identifier' => $requirement->doctor->identifier, 'name' => $requirement->doctor->full_name])->values()->all(), 'revisions' => $rosterPeriod->revisions->sortByDesc('revision_number')->map(fn ($revision): array => ['identifier' => $revision->identifier, 'revision_number' => $revision->revision_number, 'reason' => $revision->reason, 'summary' => $revision->summary, 'validation_status' => $revision->validation_status, 'created_at' => $revision->created_at?->toIso8601String()])->values()->all(), 'audit' => RosterAuditEntry::query()->whereIn('action', ['roster_assignment.created', 'roster_assignment.removed', 'roster_assignment.moved', 'roster_assignment.replaced', 'roster_revision.created'])->latest()->limit(50)->get()->map(fn (RosterAuditEntry $entry): array => ['action' => $entry->action, 'entity_identifier' => $entry->entity_identifier, 'reason' => $entry->reason, 'created_at' => $entry->created_at?->toIso8601String()])->all(), 'feedback' => session('roster_feedback'), 'preview' => session('roster_preview')]);
+        $revisions = $rosterPeriod->revisions()->orderByDesc('revision_number')->get();
+        $audit = $listAudit->handle($rosterPeriod);
+
+        return Inertia::render('rostering/periods/Assignments', ['period' => ['identifier' => $rosterPeriod->identifier, 'title' => $rosterPeriod->title, 'status' => $rosterPeriod->status->value, 'start_date' => $rosterPeriod->start_date->toDateString(), 'end_date' => $rosterPeriod->end_date->toDateString()], ...$projection, 'doctors' => $rosterPeriod->doctorRequirements->filter(fn ($requirement): bool => $requirement->doctor->active)->sortBy(fn ($requirement): string => $requirement->doctor->identifier)->map(fn ($requirement): array => ['identifier' => $requirement->doctor->identifier, 'name' => $requirement->doctor->full_name])->values()->all(), 'revision_summary' => ['current_revision' => $revisions->first()?->revision_number ?? 0, 'total_revisions' => $revisions->count(), 'latest_reason' => $revisions->first()?->reason, 'current_validation_status' => $revisions->first()?->validation_status ?? $projection['validation']['status']], 'revisions' => $revisions->take(20)->map(fn ($revision): array => ['identifier' => $revision->identifier, 'revision_number' => $revision->revision_number, 'reason' => $revision->reason, 'summary' => $revision->summary, 'validation_status' => $revision->validation_status, 'created_at' => $revision->created_at?->toIso8601String()])->values()->all(), 'audit_summary' => ['total' => $audit->count(), 'by_action' => $audit->countBy('action')->sortKeys()->all()], 'audit' => $audit->reverse()->take(20)->values()->map(fn ($entry): array => ['action' => $entry->action, 'entity_identifier' => $entry->entity_identifier, 'reason' => $entry->reason, 'created_at' => $entry->created_at?->toIso8601String()])->all(), 'feedback' => session('roster_feedback'), 'preview' => session('roster_preview')]);
     }
 
     public function store(StoreRosterAssignmentRequest $request, RosterPeriod $rosterPeriod, CreateRosterAssignment $create): RedirectResponse

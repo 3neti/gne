@@ -29,7 +29,7 @@ final readonly class MoveRosterAssignment
             $assignment->update(['roster_day_id' => $targetDay->id, 'source' => AssignmentSource::ManuallyChanged]);
             $assignment->load('rosterDay');
             $after = $this->payload($assignment);
-            $this->audit->record($actor, 'roster_assignment.moved', 'roster_assignment', $assignment->identifier, $before, $after, $reason ?? 'Manual assignment moved.');
+            $this->audit->record($actor, 'roster_assignment.moved', 'roster_assignment', $assignment->identifier, $before, $after, $reason ?? 'Manual assignment moved.', $assignment->rosterPeriod);
             $validation = $this->validate->handle($assignment->rosterPeriod->fresh());
             $revision = $this->createRevision->handle($actor, $assignment->rosterPeriod, $reason ?? 'Manual assignment moved.', ['operation' => 'move', 'doctor_identifier' => $assignment->doctor->identifier, 'from_date' => $sourceDate, 'to_date' => $targetDay->date->toDateString()], $validation, [['change_type' => 'moved', 'entity_identifier' => $assignment->identifier, 'before_value' => $before, 'after_value' => $after]]);
 

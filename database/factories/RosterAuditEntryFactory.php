@@ -3,6 +3,7 @@
 namespace Database\Factories;
 
 use App\Models\RosterAuditEntry;
+use App\Models\RosterPeriod;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
@@ -27,5 +28,10 @@ class RosterAuditEntryFactory extends Factory
             'new_value' => ['active' => true],
             'reason' => null,
         ];
+    }
+
+    public function forRosterPeriod(?RosterPeriod $rosterPeriod = null): static
+    {
+        return $this->state(fn (): array => ['roster_period_id' => $rosterPeriod?->id ?? RosterPeriod::factory()]);
     }
 }

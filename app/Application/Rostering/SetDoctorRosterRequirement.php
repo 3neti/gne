@@ -29,7 +29,7 @@ final readonly class SetDoctorRosterRequirement
                 ['required_hours' => $requiredHours, 'source' => $source, 'notes' => $notes],
             );
             $action = $previous === null ? 'doctor_requirement.created' : 'doctor_requirement.updated';
-            $this->audit->record($actor, $action, 'doctor_roster_requirement', $period->identifier.'@'.$doctor->identifier, $previous, $requirement->toArray());
+            $this->audit->record($actor, $action, 'doctor_roster_requirement', $period->identifier.'@'.$doctor->identifier, $previous, $requirement->toArray(), rosterPeriod: $period);
 
             return $requirement;
         });

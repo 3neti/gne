@@ -32,7 +32,7 @@ final readonly class SetDailyStaffingRequirement
                 }
                 $previous = $day->toArray();
                 $day->update(['required_doctor_count' => $next]);
-                $this->audit->record($actor, 'roster_day.staffing_changed', 'roster_day', $period->identifier.'@'.$day->date->toDateString(), $previous, $day->fresh()->toArray());
+                $this->audit->record($actor, 'roster_day.staffing_changed', 'roster_day', $period->identifier.'@'.$day->date->toDateString(), $previous, $day->fresh()->toArray(), rosterPeriod: $period);
             });
         });
     }

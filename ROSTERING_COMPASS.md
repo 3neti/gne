@@ -10,7 +10,7 @@ The supplied four-week workbook proved the need to preserve doctor identity, con
 
 Repository-authored profile policy describes the language. Host-owned Laravel records persist doctors, periods, days, explicit staffing and required hours, assignment seams, authorization, and audit evidence. Transactional application actions own mutations; Inertia pages are read/write delivery surfaces without business rules.
 
-Implemented UI: rostering dashboard, doctors, period list/create/detail, daily staffing, doctor required hours, availability, and a real manual assignment calendar/matrix with add, remove, move, replace, preview, validation, hours, revision, and audit feedback. Implemented tests cover the central invariants and dependency exclusions.
+Implemented UI: rostering dashboard, doctors, period list/create/detail, daily staffing, doctor required hours, availability, and a real manual assignment calendar/matrix with add, remove, move, replace, preview, validation, hours, exact-period revision summary, audit summary, and period-owned complete history. Implemented tests cover cross-period isolation, atomic evidence, and dependency exclusions.
 
 Foundation integrity is now executable through the allowlisted repository scenario. Readiness preserves warnings while blocking errors; assignment creation and its safe audit evidence commit or roll back together; period edits cannot bypass lifecycle transitions.
 

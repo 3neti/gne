@@ -10,14 +10,13 @@ use App\Domain\Rostering\RequestsAvailabilityScenarioResult;
 use App\Domain\Rostering\RosterLifecycleScenarioDefinition;
 use App\Domain\Rostering\RosterPeriodStatus;
 use App\Models\Doctor;
-use App\Models\RosterAuditEntry;
 use App\Models\User;
 use Illuminate\Support\Facades\DB;
 use RuntimeException;
 
 final readonly class RunRequestsAvailabilityScenario
 {
-    public function __construct(private RegisterDoctor $registerDoctor, private CreateRosterPeriod $createPeriod, private SetDoctorRosterRequirement $setRequirement, private TransitionRosterPeriod $transitionPeriod, private RecordAcceptedDoctorScheduleRequest $recordAccepted, private TransitionDoctorScheduleRequest $transitionRequest, private ResolveDoctorAvailability $resolve, private ValidateDoctorRequests $validateRequests) {}
+    public function __construct(private RegisterDoctor $registerDoctor, private CreateRosterPeriod $createPeriod, private SetDoctorRosterRequirement $setRequirement, private TransitionRosterPeriod $transitionPeriod, private RecordAcceptedDoctorScheduleRequest $recordAccepted, private TransitionDoctorScheduleRequest $transitionRequest, private ResolveDoctorAvailability $resolve, private ValidateDoctorRequests $validateRequests, private ListRosterPeriodAuditEntries $listAudit) {}
 
     public function handle(RosterLifecycleScenarioDefinition $scenario, bool $keepState = false): RequestsAvailabilityScenarioResult
     {
@@ -59,9 +58,8 @@ final readonly class RunRequestsAvailabilityScenario
             $projection = $this->resolve->handle($period->fresh());
             $steps[] = ['sequence' => 6, 'id' => 'report', 'status' => 'passed', 'explanation' => 'Finalized availability projection contains no generated assignments.'];
             $conflicts = array_map(fn ($conflict): array => $conflict->toArray(), $projection['conflicts']);
-            $requestIdentifiers = $requests->pluck('identifier')->all();
             $explanation = 'The roster period is ready for generation because no foundation or request-validation errors remain. The currently eligible doctor pool is sufficient for all dates under the interim assumption that unspecified active doctors are eligible. This does not guarantee that a valid or balanced roster can be generated.';
-            $report = ['format' => 'gne-rostering-requests-availability/1.1', 'scenario' => ['identifier' => $scenario->identifier, 'title' => $scenario->title, 'passed' => true], 'lifecycle' => ['period_identifier' => $period->identifier, 'title' => $period->title, 'start_date' => '2026-09-01', 'end_date' => '2026-09-28', 'status' => $period->fresh()->status->value, 'explanation' => $explanation], 'steps' => $steps, 'doctors' => $projection['doctors'], 'calendar' => ['dates' => $projection['calendar'], 'weeks' => $projection['weeks']], 'doctor_availability_matrix' => $projection['doctor_availability_matrix'], 'availability_summary' => $projection['availability_summary'], 'requests' => $projection['requests'], 'availability' => $projection['availability'], 'conflicts' => $conflicts, 'validation' => ['errors' => collect($conflicts)->where('severity', 'error')->count(), 'warnings' => collect($conflicts)->where('severity', 'warning')->count()], 'audit' => RosterAuditEntry::query()->where(fn ($query) => $query->where(fn ($query) => $query->where('entity_type', 'roster_period')->where('entity_identifier', $period->identifier))->orWhere(fn ($query) => $query->where('entity_type', 'doctor_schedule_request')->whereIn('entity_identifier', $requestIdentifiers)))->oldest()->get()->map(fn (RosterAuditEntry $entry): array => ['action' => $entry->action, 'entity_identifier' => $entry->entity_identifier])->all(), 'assignment_count' => $period->assignments()->count()];
+            $report = ['format' => 'gne-rostering-requests-availability/1.1', 'scenario' => ['identifier' => $scenario->identifier, 'title' => $scenario->title, 'passed' => true], 'lifecycle' => ['period_identifier' => $period->identifier, 'title' => $period->title, 'start_date' => '2026-09-01', 'end_date' => '2026-09-28', 'status' => $period->fresh()->status->value, 'explanation' => $explanation], 'steps' => $steps, 'doctors' => $projection['doctors'], 'calendar' => ['dates' => $projection['calendar'], 'weeks' => $projection['weeks']], 'doctor_availability_matrix' => $projection['doctor_availability_matrix'], 'availability_summary' => $projection['availability_summary'], 'requests' => $projection['requests'], 'availability' => $projection['availability'], 'conflicts' => $conflicts, 'validation' => ['errors' => collect($conflicts)->where('severity', 'error')->count(), 'warnings' => collect($conflicts)->where('severity', 'warning')->count()], 'audit' => $this->listAudit->handle($period)->map(fn ($entry): array => ['action' => $entry->action, 'entity_identifier' => $entry->entity_identifier])->all(), 'assignment_count' => $period->assignments()->count()];
             $result = new RequestsAvailabilityScenarioResult($report, $keepState);
             $keepState ? DB::commit() : DB::rollBack();
 

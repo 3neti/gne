@@ -20,7 +20,8 @@ it('bulk applies staffing defaults while a specific date remains explicitly over
     expect($specificDay->fresh()->required_doctor_count)->toBe(9)
         ->and($period->days()->where('day_type', 'normal')->whereKeyNot($specificDay->id)->get()->every(fn ($day): bool => $day->required_doctor_count === 7))->toBeTrue()
         ->and($period->days()->where('day_type', 'weekend')->get()->every(fn ($day): bool => $day->required_doctor_count === 4))->toBeTrue()
-        ->and(RosterAuditEntry::query()->where('action', 'roster_day.staffing_changed')->count())->toBe(28);
+        ->and(RosterAuditEntry::query()->where('action', 'roster_day.staffing_changed')->count())->toBe(28)
+        ->and(RosterAuditEntry::query()->where('action', 'roster_day.staffing_changed')->where('roster_period_id', $period->id)->count())->toBe(28);
 });
 
 it('creates and updates one explicit doctor-period target with source preserved', function () {
@@ -35,7 +36,8 @@ it('creates and updates one explicit doctor-period target with source preserved'
         ->and($updated->required_hours)->toBe('128.00')
         ->and(DoctorRosterRequirement::query()->count())->toBe(1)
         ->and(RosterAuditEntry::query()->where('action', 'doctor_requirement.created')->count())->toBe(1)
-        ->and(RosterAuditEntry::query()->where('action', 'doctor_requirement.updated')->count())->toBe(1);
+        ->and(RosterAuditEntry::query()->where('action', 'doctor_requirement.updated')->count())->toBe(1)
+        ->and(RosterAuditEntry::query()->whereIn('action', ['doctor_requirement.created', 'doctor_requirement.updated'])->where('roster_period_id', $period->id)->count())->toBe(2);
 });
 
 it('rejects negative staffing and required hours at the authorized HTTP boundary', function () {

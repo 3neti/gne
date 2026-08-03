@@ -61,7 +61,7 @@ it('creates and audits atomically and rolls back when audit fails', function () 
     $period = requestPeriod($actor);
     $audit = new class implements RosterAuditRecorder
     {
-        public function record(?User $actor, string $action, string $entityType, string $entityIdentifier, ?array $previousValue, ?array $newValue, ?string $reason = null): RosterAuditEntry
+        public function record(?User $actor, string $action, string $entityType, string $entityIdentifier, ?array $previousValue, ?array $newValue, ?string $reason = null, ?RosterPeriod $rosterPeriod = null): RosterAuditEntry
         {
             throw new RuntimeException('Audit unavailable');
         }
@@ -157,7 +157,9 @@ it('audits explicit acceptance and rejection transitions and excludes rejected e
 
     expect($availability['2026-09-11']['effective_status'])->toBe('unspecified')
         ->and($availability['2026-09-12']['effective_status'])->toBe('available')
-        ->and($actions)->toContain('doctor_request.rejected', 'doctor_request.accepted');
+        ->and($actions)->toContain('doctor_request.rejected', 'doctor_request.accepted')
+        ->and(RosterAuditEntry::query()->where('entity_type', 'doctor_schedule_request')->whereNull('roster_period_id')->count())->toBe(0)
+        ->and(RosterAuditEntry::query()->where('entity_type', 'doctor_schedule_request')->pluck('roster_period_id')->unique()->all())->toBe([$period->id]);
 });
 
 it('accepts non-contiguous administrator dates and filters by date and conflict', function () {

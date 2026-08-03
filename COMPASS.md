@@ -9,7 +9,7 @@ Canonical cognition, portable discovery, immutable artifacts, compiler projectio
 
 ## Immediate direction
 
-Manual roster editing now proves human-authored assignments, request-aware validation, rolled-back previews, immutable revisions, and atomic audit evidence. Availability remains contextual evidence; only an administrator command creates an assignment.
+Manual roster editing now proves human-authored assignments, request-aware validation, rolled-back previews, immutable revisions, and atomic exact-period audit evidence. One scoped query boundary prevents cross-period leakage. Operator surfaces summarize recent history while complete JSON and detailed HTML retain every revision and audit entry. Availability remains contextual evidence; only an administrator command creates an assignment.
 
 The foundation integrity proof is now repository-authored and rollback-by-default. Warning-bearing readiness, error blocking, assignment audit atomicity, duplicate rejection, and audit rollback are exercised through one allowlisted scenario.
 

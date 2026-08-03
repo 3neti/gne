@@ -29,7 +29,7 @@ final readonly class ReplaceRosterAssignment
             $assignment->update(['doctor_id' => $replacement->id, 'source' => AssignmentSource::ManuallyChanged, 'credited_hours' => $replacement->standard_daily_hours]);
             $assignment->load('doctor');
             $after = $this->payload($assignment);
-            $this->audit->record($actor, 'roster_assignment.replaced', 'roster_assignment', $assignment->identifier, $before, $after, $reason ?? 'Assigned doctor replaced manually.');
+            $this->audit->record($actor, 'roster_assignment.replaced', 'roster_assignment', $assignment->identifier, $before, $after, $reason ?? 'Assigned doctor replaced manually.', $assignment->rosterPeriod);
             $validation = $this->validate->handle($assignment->rosterPeriod->fresh());
             $revision = $this->createRevision->handle($actor, $assignment->rosterPeriod, $reason ?? 'Assigned doctor replaced manually.', ['operation' => 'replace', 'from_doctor' => $originalDoctor, 'to_doctor' => $replacement->identifier, 'date' => $assignment->rosterDay->date->toDateString()], $validation, [['change_type' => 'replaced', 'entity_identifier' => $assignment->identifier, 'before_value' => $before, 'after_value' => $after]]);
 

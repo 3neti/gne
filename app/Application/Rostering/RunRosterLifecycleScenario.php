@@ -23,6 +23,7 @@ final readonly class RunRosterLifecycleScenario
         private TransitionRosterPeriod $transition,
         private CreateRosterAssignment $createAssignment,
         private PrepareMissingRosterDayScenarioFixture $prepareMissingRosterDay,
+        private ListRosterPeriodAuditEntries $listAudit,
     ) {}
 
     public function handle(RosterLifecycleScenarioDefinition $scenario, bool $keepState = false): RosterLifecycleScenarioResult
@@ -95,17 +96,17 @@ final readonly class RunRosterLifecycleScenario
         $period->refresh();
         $assignment = $this->createAssignment->handle($actor, $doctor, $period, $period->days()->orderBy('date')->firstOrFail());
 
-        return ['created' => true, 'audit_recorded' => RosterAuditEntry::query()->where('entity_identifier', $assignment->identifier)->where('action', 'roster_assignment.created')->exists()];
+        return ['created' => true, 'audit_recorded' => $this->listAudit->handle($period, ['roster_assignment.created'])->contains('entity_identifier', $assignment->identifier)];
     }
 
     /** @return array<string, mixed> */
     private function duplicateRejection(User $actor, Doctor $doctor, RosterPeriod $period): array
     {
-        $auditCount = RosterAuditEntry::query()->count();
+        $auditCount = $this->listAudit->handle($period)->count();
         try {
             $this->createAssignment->handle($actor, $doctor, $period, $period->days()->orderBy('date')->firstOrFail());
         } catch (DuplicatePrimaryRosterAssignment) {
-            return ['rejected' => true, 'audit_count_unchanged' => RosterAuditEntry::query()->count() === $auditCount];
+            return ['rejected' => true, 'audit_count_unchanged' => $this->listAudit->handle($period)->count() === $auditCount];
         }
 
         throw new RuntimeException('The duplicate assignment was not rejected.');
@@ -121,7 +122,7 @@ final readonly class RunRosterLifecycleScenario
              * @param  array<string, mixed>|null  $previousValue
              * @param  array<string, mixed>|null  $newValue
              */
-            public function record(?User $actor, string $action, string $entityType, string $entityIdentifier, ?array $previousValue, ?array $newValue, ?string $reason = null): RosterAuditEntry
+            public function record(?User $actor, string $action, string $entityType, string $entityIdentifier, ?array $previousValue, ?array $newValue, ?string $reason = null, ?RosterPeriod $rosterPeriod = null): RosterAuditEntry
             {
                 throw new RuntimeException('Controlled audit failure.');
             }

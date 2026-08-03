@@ -43,9 +43,9 @@ final readonly class RecordDoctorScheduleRequest
             $request->update(['identifier' => sprintf('REQUEST-%06d', $request->id)]);
             $request->dates()->createMany($dates->map(fn (string $date): array => ['date' => $date])->all());
             $payload = $this->auditPayload($request->fresh('dates'));
-            $this->audit->record($actor, 'doctor_request.created', 'doctor_schedule_request', $request->identifier, null, $payload);
+            $this->audit->record($actor, 'doctor_request.created', 'doctor_schedule_request', $request->identifier, null, $payload, rosterPeriod: $period);
             if ($status === DoctorRequestStatus::Accepted) {
-                $this->audit->record($actor, 'doctor_request.accepted', 'doctor_schedule_request', $request->identifier, ['status' => DoctorRequestStatus::Submitted->value], $payload);
+                $this->audit->record($actor, 'doctor_request.accepted', 'doctor_schedule_request', $request->identifier, ['status' => DoctorRequestStatus::Submitted->value], $payload, rosterPeriod: $period);
             }
 
             return $request->fresh(['doctor', 'rosterPeriod', 'dates']);

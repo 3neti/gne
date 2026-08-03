@@ -65,6 +65,12 @@ class RosterPeriod extends Model
         return $this->hasMany(DoctorScheduleRequest::class);
     }
 
+    /** @return HasMany<RosterAuditEntry, $this> */
+    public function auditEntries(): HasMany
+    {
+        return $this->hasMany(RosterAuditEntry::class);
+    }
+
     /** @return array<string, string> */
     protected function casts(): array
     {
