@@ -31,6 +31,8 @@ policies:
   - policies/assignment-count-balance.yaml
   - policies/stable-identifier-tie-break.yaml
   - policies/generation-requires-valid-inputs.yaml
+  - policies/generation-quality-is-assessed-against-feasibility.yaml
+  - policies/structural-excess-is-not-individual-imbalance.yaml
 documents: [documents/roster-period-summary.yaml]
 schemas:
   - schemas/doctor.schema.json

@@ -12,13 +12,13 @@ The supplied four-week workbook proved the need to preserve doctor identity, con
 
 Repository-authored profile policy describes the language. Host-owned Laravel records persist doctors, periods, days, explicit staffing and required hours, assignment seams, authorization, and audit evidence. Transactional application actions own mutations; Inertia pages are read/write delivery surfaces without business rules.
 
-Implemented UI: rostering dashboard, doctors, period list/create/detail, daily staffing, doctor required hours, availability, and a real manual assignment calendar/matrix with add, remove, move, replace, preview, validation, hours, exact-period revision summary, audit summary, and period-owned complete history. Deterministic generation artifacts now show assigned doctors in weekly calendars, complete date lists, and four weekly matrices while separating revision-1 generation state from revision-2 current state. Implemented tests cover cross-period isolation, atomic evidence, artifact completeness, and dependency exclusions.
+Implemented UI: rostering dashboard, doctors, period list/create/detail, daily staffing, doctor required hours, availability, and a real manual assignment calendar/matrix with add, remove, move, replace, preview, validation, hours, exact-period revision summary, audit summary, and period-owned complete history. Deterministic generation now calculates pre-proposal feasibility and revision-1 quality, preserves selected/next-best ranking facts, and distinguishes raw, structural, and residual hours variance. Human roster UI and artifacts show names while machine JSON retains identifiers.
 
 Foundation integrity is now executable through the allowlisted repository scenario. Readiness preserves warnings while blocking errors; assignment creation and its safe audit evidence commit or roll back together; period edits cannot bypass lifecycle transitions.
 
 ## Known limitations and questions
 
-One department and one simple administrator capability are assumed. Unspecified-doctor eligibility remains a provisional policy requiring department confirmation. Contracted-hour period meaning, employee-number semantics, holidays, staffing-row interpretation, call/overtime rules, and multiple daily work segments remain unresolved. `off` is absence of assignment. The active duty vocabulary is only `standard_day`. There is no generator, publication, import/export, payroll, OpenAPI, doctor self-service, or AI operation.
+One department and one simple administrator capability are assumed. Unspecified-doctor eligibility remains a provisional policy requiring department confirmation. Contracted-hour period meaning, employee-number semantics, holidays, staffing-row interpretation, call/overtime rules, and multiple daily work segments remain unresolved. `off` is absence of assignment. The active duty vocabulary is only `standard_day`. Generation is deterministic greedy and initial-only; there is no publication, import/export, payroll, OpenAPI, doctor self-service, fatigue enforcement, or AI operation.
 
 ## Future slices
 
@@ -35,4 +35,4 @@ Administrator-entered requests and availability are implemented as audited host 
 
 ## Recommended next slice
 
-**Draft Generation Quality and Explainability Hardening** — evaluate the now-visible balance, target-hour variance, preference outcome, and ranking explanations without introducing optimization or publication.
+**Generation Policy Calibration with Department Inputs** — validate provisional unspecified eligibility, target-hour meaning, weekend observations, and acceptable balance thresholds with the department before publication.

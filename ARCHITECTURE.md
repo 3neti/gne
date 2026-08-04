@@ -2,6 +2,10 @@
 
 Draft generation follows `repository policy → ResolvedRosterPolicy → RosterGenerationInput → RosterGenerator → GeneratedRosterResult`. The replaceable generator is computation-only; preview, atomic persistence, shared validation, revision, period-scoped audit, lifecycle, UI, and artifacts remain outside it.
 
+`AnalyzeRosterGenerationFeasibility` consumes only normalized period days, active doctors, daily credited hours, and authored target hours. `AnalyzeDraftRosterQuality` then evaluates the immutable generation result without mutating roster state. Raw doctor variance is separated into an allocated share of aggregate structural variance and residual allocation variance. The current equal-target standard-day scenario has +8 raw hours, +8 structural allocation, and zero residual hours for every doctor. Quality belongs to revision 1; a later manual correction may invalidate the current roster but cannot rewrite historical generator quality.
+
+Candidate ranking traces are emitted by the generator because only it knows the facts it actually compared. Browser and report renderers consume prepared feasibility, quality, names, provenance, and trace facts; they do not recalculate ranking or fairness. Human-facing roster projections show doctor names only. Stable identifiers remain in DTOs, database relations, JSON, audit, and hidden UI keys.
+
 Generated-roster reporting captures one prepared projection immediately after generation and another after later manual correction. JSON, HTML, and PDF consume those snapshots; renderers do not reconstruct roster meaning. Staffing totals remain a summary, while a roster calendar must expose assignment identity, date, provenance, and findings.
 
 GNE is a standalone Laravel control plane around a repository-native compiler. Dependency direction is commands/controllers and infrastructure → domain services and values → repository evidence. Domain primitives have no Eloquent dependency.

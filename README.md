@@ -59,6 +59,8 @@ The requests and availability proof runs with `php artisan gne:roster:lifecycle:
 
 Manual roster administrators can now preview, add, remove, move, and replace assignments at `/rostering/periods/{period}/roster`. Every committed action is atomically validated, revised, audited, and explicitly scoped to that roster period; unscoped doctor administration and other periods cannot enter its history. The primary UI/PDF summarize history, while `/rostering/periods/{period}/revisions`, `/rostering/periods/{period}/audit`, report JSON, and detailed HTML preserve complete evidence. Run `php artisan gne:roster:lifecycle:run --scenario=ANAESTHESIA-MANUAL-ROSTER --artifact --json` to produce rollback-isolated assigned-calendar JSON, static HTML, and PDF under `.gne/reports/rostering/manual-roster/`. See [Manual Roster Editing](docs/rostering/MANUAL_ROSTER_EDITING.md).
 
+Draft-generation preview now calculates aggregate feasibility before proposing assignments and assesses the generated revision against that feasibility. In the canonical scenario, 1,440 staffing-demand hours exceed 1,360 combined target hours by an unavoidable 80 hours; the generator distributes that structural excess evenly, leaving zero residual doctor imbalance. Human roster views and PDF use doctor names, while report JSON and audit evidence retain stable identifiers. See [Draft Generation Quality](docs/rostering/DRAFT_GENERATION_QUALITY.md).
+
 Canonical orientation: [GENEI.md](GENEI.md), [ARCHITECTURE.md](ARCHITECTURE.md), [GRAMMAR.md](GRAMMAR.md), [DECISION_REGISTER.md](DECISION_REGISTER.md), [COMPASS.md](COMPASS.md), and [IMPLEMENTATION_STATUS.md](IMPLEMENTATION_STATUS.md).
 
 ## Repository-native storyboard

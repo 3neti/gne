@@ -73,11 +73,17 @@ it('owns all roster-period audit reads through the exact-period query service', 
         ->not->toContain('new_value', 'entity_identifier', 'reason');
 });
 
-it('records generated-draft revision ownership without implementing a generator', function () {
+it('keeps generated-draft quality read-only and outside presentation', function () {
     $root = dirname(__DIR__, 2);
     $decisionRegister = file_get_contents($root.'/DECISION_REGISTER.md');
-    $application = collect((new Filesystem)->allFiles($root.'/app/Application/Rostering'))->map(fn ($file): string => $file->getContents())->implode("\n");
+    $feasibility = file_get_contents($root.'/app/Application/Rostering/AnalyzeRosterGenerationFeasibility.php');
+    $quality = file_get_contents($root.'/app/Application/Rostering/AnalyzeDraftRosterQuality.php');
+    $renderer = file_get_contents($root.'/app/Infrastructure/Rostering/RenderDraftGenerationReport.php');
 
-    expect($decisionRegister)->toContain('one top-level roster revision', 'many revision changes')
-        ->and($application)->not->toContain('GenerateDraftRoster', 'RosterGenerator', 'OptimizeRoster');
+    expect($decisionRegister)->toContain('one top-level roster revision', 'many revision changes', 'Structural variance and residual allocation imbalance are distinct')
+        ->and($feasibility)->toContain('RosterGenerationInput')->not->toContain('RosterPeriod', 'Doctor::', 'DB::')
+        ->and($quality)->toContain('GeneratedRosterResult', 'DraftRosterQualityResult')->not->toContain('save(', 'update(', 'create(', 'DB::')
+        ->and($renderer)->toContain("['generation']['quality']", "['generation']['feasibility']")
+        ->not->toContain('raw_variance =', 'structuralHoursVariance /')
+        ->and($feasibility.$quality.$renderer)->not->toContain('random_int', 'mt_rand', 'OR-Tools', 'OptimizeRoster', 'published');
 });

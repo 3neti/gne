@@ -8,15 +8,15 @@ The numbered requirements below preserve the approved FR-001–FR-014 handoff vo
 | FR-002 — Roster-period management | Implemented | Stable period, inclusive day expansion, explicit early lifecycle | Revisions, reopen, publication |
 | FR-003 — Staffing and required-hours inputs | Implemented | Weekday/weekend defaults, date overrides, explicit doctor-period targets | Demand/contract derivation |
 | FR-004 — Requests and availability | Implemented for administrator entry | Normalized dates, explicit statuses, conflict validation, availability calendar | Doctor self-service deferred |
-| FR-005 — Leave handling and draft generation | Implemented | Accepted leave/unavailability are hard generation filters; deterministic balanced-greedy draft generation is explainable and explicitly non-optimal | Doctor self-service and legacy mapping |
-| FR-006 — Preferences and generation results | Implemented | Preview exposes roster, staffing, hours, preference outcomes, findings, explanations, and fingerprint | Mathematical optimization |
+| FR-005 — Leave handling and draft generation | Implemented | Accepted leave/unavailability are hard filters; deterministic non-optimal generation includes direct-input feasibility, structural/residual variance, and quality diagnostics | Doctor self-service, legacy mapping, optimization |
+| FR-006 — Preferences and generation results | Implemented | Preview exposes feasibility, balance, weekend, preference, availability-use, findings, ranking traces, and fingerprint | Mathematical optimization |
 | FR-007 — On-call and specialist coverage | Deferred | — | Department confirmation |
 | FR-008 — Roster construction and validation | Generation and manual editing implemented | Common eligibility, staffing, hours, preference validation; preview, batch generation, add/remove/move/replace | Multiple duties |
-| FR-009 — Validation, fairness, and explanations | Substantially implemented | Structured generation ranking facts, reason codes, errors, warnings, and shared validation | Optimal fairness, fatigue, specialist coverage |
+| FR-009 — Validation, fairness, and explanations | Substantially implemented | Selected and next-best ranking facts, precise preference outcomes, operator-readable explanations, residual balance, errors, warnings, and shared validation | Optimal fairness, fatigue, specialist coverage |
 | FR-010 — Review and approval | Deferred | Lifecycle vocabulary only | Review UI and authority |
 | FR-011 — Publication | Deferred | Status/policy vocabulary only | Freeze, release, reopen |
 | FR-012 — Import and export | Deferred | Workbook characterization only | Confirmed mapping, CSV/XLSX |
-| FR-013 — Reporting and analytics | Manual roster reporting implemented | Assigned calendar, matrix, staffing, doctor hours, concise operator history, complete revision/audit JSON and detailed HTML | Payroll, SLA, operational analytics |
+| FR-013 — Reporting and analytics | Manual and generated roster reporting implemented | Assigned calendar, matrix, staffing, target-adjusted hours, weekends, availability use, preferences, concise operator history, complete JSON/HTML/PDF evidence | Payroll, SLA, operational analytics |
 | FR-014 — Integration and automation | Generation-run and exact-period audit subset implemented | One run, one batch revision, many changes, one generation audit; stable period scope | Enterprise certification, OpenAPI, AI operation |
 
 ## Foundation user journeys

@@ -12,7 +12,7 @@ use Illuminate\Support\Facades\DB;
 
 final readonly class GenerateDraftRoster
 {
-    public function __construct(private BuildRosterGenerationInput $input, private ResolveRosterPolicy $policy, private RosterGenerator $generator, private PersistGeneratedRosterBatch $persist, private ValidateRoster $validate, private CreateRosterRevision $revision, private RosterAuditRecorder $audit, private TransitionRosterPeriod $transition) {}
+    public function __construct(private BuildRosterGenerationInput $input, private ResolveRosterPolicy $policy, private RosterGenerator $generator, private AnalyzeGeneratedRoster $analyze, private PersistGeneratedRosterBatch $persist, private ValidateRoster $validate, private CreateRosterRevision $revision, private RosterAuditRecorder $audit, private TransitionRosterPeriod $transition) {}
 
     /** @return array<string, mixed> */
     public function handle(User $actor, RosterPeriod $period): array
@@ -22,7 +22,7 @@ final readonly class GenerateDraftRoster
         }
         $input = $this->input->handle($period);
         $policy = $this->policy->handle();
-        $result = $this->generator->generate($input, $policy);
+        $result = $this->analyze->handle($input, $this->generator->generate($input, $policy));
         if ($result->hasErrors()) {
             throw new InvalidRosterGeneration('Generated proposal contains mandatory errors and was not committed.');
         }

@@ -9,7 +9,7 @@ use App\Models\RosterPeriod;
 
 final readonly class ValidateRoster
 {
-    public function __construct(private ResolveDoctorAvailability $availability, private BuildDoctorHoursSummary $hours) {}
+    public function __construct(private ResolveDoctorAvailability $availability, private BuildDoctorHoursSummary $hours, private BuildRosterGenerationInput $generationInput, private AnalyzeRosterGenerationFeasibility $feasibility) {}
 
     public function handle(RosterPeriod $period): RosterValidationResult
     {
@@ -42,11 +42,26 @@ final readonly class ValidateRoster
             }
         }
 
-        foreach ($this->hours->handle($period) as $doctor) {
-            if ($doctor['status'] === 'below_target') {
-                $findings[] = new RosterValidationFinding(FoundationValidationSeverity::Warning, 'DOCTOR_HOURS_BELOW_TARGET', 'Assigned hours are below the doctor target.', ['doctor_identifier' => $doctor['doctor_identifier'], 'variance' => $doctor['variance']]);
-            } elseif ($doctor['status'] === 'above_target') {
-                $findings[] = new RosterValidationFinding(FoundationValidationSeverity::Warning, 'DOCTOR_HOURS_ABOVE_TARGET', 'Assigned hours exceed the doctor target.', ['doctor_identifier' => $doctor['doctor_identifier'], 'variance' => $doctor['variance']]);
+        if ($period->generationRuns()->exists()) {
+            $feasibility = $this->feasibility->handle($this->generationInput->handle($period));
+            $structuralAllocation = count($period->doctorRequirements) === 0 ? 0.0 : (float) $feasibility->structuralHoursVariance / $period->doctorRequirements->count();
+            $threshold = (float) ($feasibility->standardCreditedHoursPerSlot ?? 8);
+            if ((float) $feasibility->structuralHoursVariance > 0) {
+                $findings[] = new RosterValidationFinding(FoundationValidationSeverity::Warning, 'TARGET_HOURS_BELOW_STAFFING_DEMAND', $feasibility->explanation, ['structural_hours_variance' => $feasibility->structuralHoursVariance]);
+            }
+            foreach ($this->hours->handle($period) as $doctor) {
+                $residual = (float) $doctor['variance'] - $structuralAllocation;
+                if (abs($residual) > $threshold) {
+                    $findings[] = new RosterValidationFinding(FoundationValidationSeverity::Warning, 'DOCTOR_RESIDUAL_HOURS_IMBALANCE', 'Assigned hours differ materially from the feasibility-adjusted fair share.', ['doctor_identifier' => $doctor['doctor_identifier'], 'raw_variance' => $doctor['variance'], 'allocated_structural_variance' => number_format($structuralAllocation, 2, '.', ''), 'residual_variance' => number_format($residual, 2, '.', '')]);
+                }
+            }
+        } else {
+            foreach ($this->hours->handle($period) as $doctor) {
+                if ($doctor['status'] === 'below_target') {
+                    $findings[] = new RosterValidationFinding(FoundationValidationSeverity::Warning, 'DOCTOR_HOURS_BELOW_TARGET', 'Assigned hours are below the doctor target.', ['doctor_identifier' => $doctor['doctor_identifier'], 'variance' => $doctor['variance']]);
+                } elseif ($doctor['status'] === 'above_target') {
+                    $findings[] = new RosterValidationFinding(FoundationValidationSeverity::Warning, 'DOCTOR_HOURS_ABOVE_TARGET', 'Assigned hours exceed the doctor target.', ['doctor_identifier' => $doctor['doctor_identifier'], 'variance' => $doctor['variance']]);
+                }
             }
         }
 

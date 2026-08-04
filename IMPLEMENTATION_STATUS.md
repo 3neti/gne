@@ -1,7 +1,7 @@
 # Implementation Status
 
 | Intended capability | Current implementation | Test coverage | Limitations | Status | Next action |
-| Anaesthesia draft generation | Deterministic preview, atomic initial commit, explanations, batch history, UI, separate generation/current projections, assigned weekly calendars, complete date lists, weekly doctor matrices, and JSON/HTML/PDF evidence | Unit, feature, scenario, architecture, artifact and visual PDF inspection | Greedy, initial-only, standard-day | Implemented | Quality hardening |
+| Anaesthesia draft generation | Deterministic feasibility-aware preview, atomic initial commit, selected-over ranking traces, structural/residual balance, weekend/preference/availability diagnostics, human-name UI/artifacts, separate generation/current projections, and JSON/HTML/PDF evidence | Unit, feature, scenario, architecture, artifact and visual PDF inspection | Greedy, initial-only, standard-day, provisional unspecified eligibility, descriptive consecutive-day metrics only | Implemented | Department policy calibration before publication |
 |---|---|---|---|---|---|
 | Canonical cognition | Root documentation and business source | Architecture checks | Bootstrap vocabulary only | Implemented | Preserve durability |
 | Configuration | Version-1 YAML parser with safe relative paths | Unit/command | No extensible config language | Implemented | Evolve only from need |

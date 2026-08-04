@@ -225,3 +225,19 @@ Accepted. A staffing-count table is a staffing summary, not a roster calendar. G
 ## ADR-051 — Draft generation owns one top-level roster revision
 
 **Status:** Accepted — 2026-08-03. **Decision:** A future automatic draft-generation command creates one top-level roster revision containing many revision changes, one generation audit event, and one post-generation validation snapshot. Manual add/remove/move/replace commands continue to create one revision per administrator action. **Rationale:** A generated draft is one business command, not hundreds of independent administrator actions. **Consequences:** The future generator must own revision scope and may reuse lower-level persistence only without creating per-assignment top-level revisions. **Rejected:** calling the manual command once per generated assignment and producing hundreds of top-level revisions. No generator is implemented by this ADR.
+
+## ADR-052 — Draft quality is assessed relative to aggregate feasibility
+
+**Status:** Accepted — 2026-08-04. **Decision:** Calculate staffing-demand hours and combined doctor target hours from normalized direct inputs before generation, then interpret generated quality relative to their difference. **Rationale:** A generator cannot satisfy aggregate targets that conflict with mandatory staffing demand. **Consequences:** The canonical scenario reports 1,440 demand hours, 1,360 target hours, and 80 unavoidable excess hours before assignment proposal. **Rejected:** treating every above-target hour as a generator defect and deriving feasibility from generated output.
+
+## ADR-053 — Structural variance and residual allocation imbalance are distinct
+
+**Status:** Accepted — 2026-08-04. **Decision:** Report raw doctor variance, allocated structural variance, and residual variance separately. Residual variance beyond one standard shift is the initial conservative imbalance-warning threshold. **Rationale:** Equal distribution of unavoidable excess is balanced even when every doctor is above an authored target. **Consequences:** Ten equal +8-hour raw variances become zero residual variance in the canonical scenario. **Rejected:** ten undifferentiated above-target warnings and claims of mathematical optimality.
+
+## ADR-054 — Human roster projections use names while machine evidence retains identifiers
+
+**Status:** Accepted — 2026-08-04. **Decision:** Normal UI, HTML, and PDF calendars, matrices, hours, preferences, and explanations show doctor names without stable identifiers. JSON, audit, domain identity, persistence, route values, and hidden technical keys retain identifiers. **Rationale:** Duty rosters are read by people; stable IDs are machine evidence. **Rejected:** database-export presentation and removal of identifiers from canonical evidence.
+
+## ADR-055 — Manual corrections do not rewrite historical generation quality
+
+**Status:** Accepted — 2026-08-04. **Decision:** Assess generator quality against revision 1 and report later manual roster validity separately. **Rationale:** A human move that creates under- and overstaffing is not evidence that the earlier deterministic proposal was poor. **Consequences:** Artifacts compare generation state with current state while keeping one immutable historical quality result. **Rejected:** rescoring the generator from the manually corrected current roster.

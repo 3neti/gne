@@ -1,6 +1,6 @@
 # GNE Compass
 
-**Current milestone:** Anaesthesia Generated Roster Artifact Closure
+**Current milestone:** Anaesthesia Draft Generation Quality and Explainability Hardening
 **North star:** The business belongs to the repository. Everything operational is a projection.
 
 ## Completed
@@ -10,6 +10,8 @@ Canonical cognition, portable discovery, immutable artifacts, compiler projectio
 ## Immediate direction
 
 Manual roster editing now proves human-authored assignments, request-aware validation, rolled-back previews, immutable revisions, and atomic exact-period audit evidence. One scoped query boundary prevents cross-period leakage. Operator surfaces summarize recent history while complete JSON and detailed HTML retain every revision and audit entry. Availability remains contextual evidence; only an administrator command creates an assignment.
+
+Draft generation now explains feasibility before proposing assignments. Aggregate structural variance is allocated for quality interpretation, leaving residual variance as the doctor-level balance signal. The canonical generated revision is fully staffed with zero residual imbalance; its later manual correction is reported as a separate current-state validity defect. Ranking traces, weekends, preferences, explicit availability use, and descriptive consecutive runs are visible without claiming optimization or fatigue enforcement.
 
 The foundation integrity proof is now repository-authored and rollback-by-default. Warning-bearing readiness, error blocking, assignment audit atomicity, duplicate rejection, and audit rollback are exercised through one allowlisted scenario.
 
@@ -23,4 +25,4 @@ Validation supports the implemented document grammar and JSON Schema 2020-12 but
 
 ## Recommended next task
 
-**Draft Generation Quality and Explainability Hardening** — assess balance and preference quality now that assignment identity, provenance, and post-correction consequences are visually reviewable.
+**Generation Policy Calibration with Department Inputs** — confirm provisional unspecified eligibility, target-hour interpretation, and acceptable descriptive balance thresholds before publication is designed.

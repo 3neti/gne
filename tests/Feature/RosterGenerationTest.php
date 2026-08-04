@@ -32,6 +32,8 @@ it('previews deterministically without durable effects', function () {
 
     expect($first->fingerprint)->toBe($second->fingerprint)
         ->and($first->assignments)->toHaveCount(2)
+        ->and($first->feasibility?->classification)->toBe('targets_exactly_match_demand')
+        ->and($first->quality?->classification)->toBe('balanced_within_feasibility')
         ->and($period->assignments()->count())->toBe(0)
         ->and(RosterGenerationRun::count())->toBe(0)
         ->and(RosterRevision::count())->toBe(0)
@@ -85,6 +87,6 @@ it('allows administrators to inspect generation and denies ordinary users', func
     [$actor, $period] = generationFixture();
     $ordinary = User::factory()->create();
 
-    $this->actingAs($actor)->get(route('rostering.periods.generation.show', $period))->assertOk()->assertInertia(fn ($page) => $page->component('rostering/periods/Generation')->where('readiness.doctor_count', 2));
+    $this->actingAs($actor)->get(route('rostering.periods.generation.show', $period))->assertOk()->assertInertia(fn ($page) => $page->component('rostering/periods/Generation')->where('readiness.doctor_count', 2)->where('feasibility.classification', 'targets_exactly_match_demand'));
     $this->actingAs($ordinary)->get(route('rostering.periods.generation.show', $period))->assertForbidden();
 });

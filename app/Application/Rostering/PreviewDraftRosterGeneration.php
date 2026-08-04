@@ -10,7 +10,7 @@ use App\Models\RosterPeriod;
 
 final readonly class PreviewDraftRosterGeneration
 {
-    public function __construct(private BuildRosterGenerationInput $input, private ResolveRosterPolicy $policy, private RosterGenerator $generator) {}
+    public function __construct(private BuildRosterGenerationInput $input, private ResolveRosterPolicy $policy, private RosterGenerator $generator, private AnalyzeGeneratedRoster $analyze) {}
 
     public function handle(RosterPeriod $period): GeneratedRosterResult
     {
@@ -22,6 +22,6 @@ final readonly class PreviewDraftRosterGeneration
             throw new InvalidRosterGeneration('Initial draft generation cannot overwrite existing assignments.');
         }
 
-        return $this->generator->generate($input, $this->policy->handle());
+        return $this->analyze->handle($input, $this->generator->generate($input, $this->policy->handle()));
     }
 }

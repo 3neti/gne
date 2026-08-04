@@ -1,0 +1,3 @@
+identifier: POLICY-STRUCTURAL-EXCESS-NOT-INDIVIDUAL-IMBALANCE
+revision: 1
+rule: Treat evenly allocated unavoidable structural hours variance separately from residual individual allocation imbalance.

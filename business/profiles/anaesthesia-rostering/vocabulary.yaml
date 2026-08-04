@@ -10,3 +10,11 @@ terms:
   - { term: Manual Roster Assignment, definition: "An authorised deliberate placement of one active doctor on one roster date." }
   - { term: Roster Revision, definition: "An immutable validation snapshot and structured change record created for one committed roster mutation." }
   - { term: Roster Mutation Preview, definition: "A rolled-back simulation of a proposed add, remove, move, or replace action with no durable audit or revision." }
+  - { term: Staffing-demand Hours, definition: "The credited hours required to fill all authored staffing slots in a roster period." }
+  - { term: Combined Target Hours, definition: "The sum of active doctors' authored required-hour targets for one roster period." }
+  - { term: Structural Hours Variance, definition: "The direct difference between staffing-demand hours and combined target hours before generation." }
+  - { term: Residual Hours Variance, definition: "A doctor's raw assigned-hours variance after subtracting an allocated share of structural variance." }
+  - { term: Generation Quality, definition: "A deterministic assessment of generated staffing, balance, preferences, availability use, and limitations relative to feasibility." }
+  - { term: Preference Fulfillment, definition: "The observed effect and outcome of an accepted preferred-work or preferred-off request." }
+  - { term: Explicit Availability Use, definition: "Assignments and request outcomes supported by an explicit available request, distinguished from provisional unspecified eligibility." }
+  - { term: Weekend Distribution, definition: "A descriptive per-doctor count of weekday, Saturday, and Sunday assignments." }
