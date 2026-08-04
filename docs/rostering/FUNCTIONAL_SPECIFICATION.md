@@ -8,11 +8,11 @@ The numbered requirements below preserve the approved FR-001–FR-014 handoff vo
 | FR-002 — Roster-period management | Implemented | Stable period, inclusive day expansion, explicit early lifecycle | Revisions, reopen, publication |
 | FR-003 — Staffing and required-hours inputs | Implemented | Weekday/weekend defaults, date overrides, explicit doctor-period targets | Demand/contract derivation |
 | FR-004 — Requests and availability | Implemented for administrator entry | Normalized dates, explicit statuses, conflict validation, availability calendar | Doctor self-service deferred |
-| FR-005 — Leave handling and draft generation | Implemented | Accepted leave/unavailability are hard filters; deterministic non-optimal generation includes direct-input feasibility, structural/residual variance, and quality diagnostics | Doctor self-service, legacy mapping, optimization |
-| FR-006 — Preferences and generation results | Implemented | Preview exposes feasibility, balance, weekend, preference, availability-use, findings, ranking traces, and fingerprint | Mathematical optimization |
+| FR-005 — Leave handling and draft generation | Partially implemented | Accepted leave/unavailability are hard filters; deterministic generation consumes explicit provisional or confirmed policy | Final department policy calibration, doctor self-service, legacy mapping, optimization |
+| FR-006 — Preferences and generation results | Implemented | Preview exposes policy and feasibility diagnostics, balance, weekend, preference, availability-use, findings, ranking traces, and fingerprint | Mathematical optimization |
 | FR-007 — On-call and specialist coverage | Deferred | — | Department confirmation |
-| FR-008 — Roster construction and validation | Generation and manual editing implemented | Common eligibility, staffing, hours, preference validation; preview, batch generation, add/remove/move/replace | Multiple duties |
-| FR-009 — Validation, fairness, and explanations | Substantially implemented | Selected and next-best ranking facts, precise preference outcomes, operator-readable explanations, residual balance, errors, warnings, and shared validation | Optimal fairness, fatigue, specialist coverage |
+| FR-008 — Roster construction and validation | Implemented for supported calibrated policies | Common resolved policy governs unspecified eligibility and structural-allocation validation; preview, generation and manual operations remain supported | Multiple duties and unconfirmed advanced rules |
+| FR-009 — Validation, fairness, and explanations | Implemented | Explanations cite governing policy and provenance; unresolved allocation returns policy calibration required instead of a fairness claim | Optimal fairness, fatigue, specialist coverage |
 | FR-010 — Review and approval | Deferred | Lifecycle vocabulary only | Review UI and authority |
 | FR-011 — Publication | Deferred | Status/policy vocabulary only | Freeze, release, reopen |
 | FR-012 — Import and export | Deferred | Workbook characterization only | Confirmed mapping, CSV/XLSX |

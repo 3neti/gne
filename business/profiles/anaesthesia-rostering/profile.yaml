@@ -6,7 +6,7 @@ version: 1
 canonical: true
 vocabulary: vocabulary.yaml
 lifecycles: [lifecycles/roster-period.yaml]
-scenarios: [scenarios/create-roster-period.yaml, scenarios/foundation-lifecycle.yaml, scenarios/requests-and-availability.yaml, scenarios/manual-roster.yaml, scenarios/draft-roster-generation.yaml]
+scenarios: [scenarios/create-roster-period.yaml, scenarios/foundation-lifecycle.yaml, scenarios/requests-and-availability.yaml, scenarios/manual-roster.yaml, scenarios/draft-roster-generation.yaml, scenarios/generation-policy-calibration.yaml]
 policies:
   - policies/active-doctor-eligibility.yaml
   - policies/roster-period-boundaries.yaml
@@ -33,6 +33,14 @@ policies:
   - policies/generation-requires-valid-inputs.yaml
   - policies/generation-quality-is-assessed-against-feasibility.yaml
   - policies/structural-excess-is-not-individual-imbalance.yaml
+  - policies/unspecified-availability.yaml
+  - policies/required-hours-meaning.yaml
+  - policies/structural-hours-allocation.yaml
+  - policies/weekend-distribution.yaml
+  - policies/consecutive-day-limit.yaml
+  - policies/target-hours-cap.yaml
+  - policies/employment-type-eligibility.yaml
+  - policies/preference-strength.yaml
 documents: [documents/roster-period-summary.yaml]
 schemas:
   - schemas/doctor.schema.json

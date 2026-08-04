@@ -1,0 +1,10 @@
+identifier: POLICY-ANAESTHESIA-PREFERENCE-STRENGTH
+key: preference_strength
+revision: 1
+status: provisional
+selected_value: soft_preference
+effective_date: null
+decision_authority: anaesthesia_department
+question: How strongly should preferred work and preferred off influence assignments?
+generation_impact: quality
+provenance: Preferences remain soft ranking signals pending confirmation.

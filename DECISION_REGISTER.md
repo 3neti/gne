@@ -241,3 +241,9 @@ Accepted. A staffing-count table is a staffing summary, not a roster calendar. G
 ## ADR-055 — Manual corrections do not rewrite historical generation quality
 
 **Status:** Accepted — 2026-08-04. **Decision:** Assess generator quality against revision 1 and report later manual roster validity separately. **Rationale:** A human move that creates under- and overstaffing is not evidence that the earlier deterministic proposal was poor. **Consequences:** Artifacts compare generation state with current state while keeping one immutable historical quality result. **Rejected:** rescoring the generator from the manually corrected current roster.
+# Anaesthesia generation policy calibration
+
+- Department policy is authored as versioned repository source and explicit operational confirmations compile into `ResolvedRosterPolicy`.
+- Unresolved structural allocation prevents individual residual-fairness claims.
+- Historical generation runs retain the exact policy fingerprint used at generation time.
+- Provisional policies remain visible in generation, validation, explanations, UI, and artifacts.

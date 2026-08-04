@@ -12,6 +12,7 @@ use App\Http\Controllers\RosterGenerationController;
 use App\Http\Controllers\RosterHistoryController;
 use App\Http\Controllers\RosteringDashboardController;
 use App\Http\Controllers\RosterPeriodController;
+use App\Http\Controllers\RosterPolicyCalibrationController;
 use App\Http\Controllers\RosterStaffingController;
 use App\Http\Controllers\ShowCompiledBrowserDocumentController;
 use App\Http\Controllers\StoryboardFrameController;
@@ -34,6 +35,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('storyboards/{storyboard}/frames/{frame}', StoryboardFrameController::class)->name('storyboards.frames.show');
 
     Route::prefix('rostering')->name('rostering.')->group(function () {
+        Route::get('policy-calibration', [RosterPolicyCalibrationController::class, 'index'])->name('policy_calibration.index');
+        Route::post('policy-calibration', [RosterPolicyCalibrationController::class, 'store'])->name('policy_calibration.store');
         Route::get('/', RosteringDashboardController::class)->name('dashboard');
         Route::resource('doctors', DoctorController::class)->except(['show']);
         Route::resource('requests', DoctorScheduleRequestController::class)->parameters(['requests' => 'doctor_schedule_request'])->except(['destroy']);

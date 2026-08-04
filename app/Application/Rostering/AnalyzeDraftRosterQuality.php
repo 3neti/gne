@@ -4,20 +4,27 @@ namespace App\Application\Rostering;
 
 use App\Domain\Rostering\DraftRosterQualityResult;
 use App\Domain\Rostering\GeneratedRosterResult;
+use App\Domain\Rostering\ResolvedRosterPolicy;
 use App\Domain\Rostering\RosterGenerationFeasibility;
 use App\Domain\Rostering\RosterGenerationInput;
 use Carbon\CarbonImmutable;
 
 final readonly class AnalyzeDraftRosterQuality
 {
-    public function handle(RosterGenerationInput $input, GeneratedRosterResult $result, RosterGenerationFeasibility $feasibility): DraftRosterQualityResult
+    public function __construct(private ?AllocateStructuralVariance $allocator = null) {}
+
+    public function handle(RosterGenerationInput $input, GeneratedRosterResult $result, RosterGenerationFeasibility $feasibility, ?ResolvedRosterPolicy $policy = null): DraftRosterQualityResult
     {
-        $doctorCount = max(count($input->doctors), 1);
-        $structuralAllocation = (float) $feasibility->structuralHoursVariance / $doctorCount;
+        $policy ??= new ResolvedRosterPolicy('PROFILE-ANAESTHESIA-ROSTERING', 1, 'balanced_greedy', '1.0', [], 'sha256:legacy-test-default');
+        $allocation = ($this->allocator ?? new AllocateStructuralVariance)->handle($input, $feasibility, $policy);
         $names = collect($input->doctors)->pluck('name', 'identifier');
         $assignments = collect($result->assignments);
-        $hours = collect($result->doctorHours)->map(function (array $doctor) use ($structuralAllocation, $names, $feasibility): array {
+        $hours = collect($result->doctorHours)->map(function (array $doctor) use ($allocation, $names, $feasibility): array {
             $rawVariance = (float) $doctor['variance'];
+            if (! $allocation->isResolved()) {
+                return [...$doctor, 'doctor_name' => $names->get($doctor['doctor_identifier']), 'raw_variance' => number_format($rawVariance, 2, '.', ''), 'allocated_structural_variance' => null, 'residual_variance' => null, 'quality_status' => 'policy_calibration_required'];
+            }
+            $structuralAllocation = (float) ($allocation->allocations[$doctor['doctor_identifier']] ?? 0);
             $residual = $rawVariance - $structuralAllocation;
             $threshold = (float) ($feasibility->standardCreditedHoursPerSlot ?? 8);
             $status = match (true) {
@@ -62,7 +69,7 @@ final readonly class AnalyzeDraftRosterQuality
         $explicitRequests = collect($input->availability)->where('explicit_availability', true);
         $explicitHonored = $explicitRequests->filter(fn (array $cell): bool => $assignments->contains(fn (array $assignment): bool => $assignment['doctor_identifier'] === $cell['doctor_identifier'] && $assignment['date'] === $cell['date']))->count();
         $rawVariances = $hours->pluck('raw_variance')->map(fn (string $value): float => (float) $value);
-        $residuals = $hours->pluck('residual_variance')->map(fn (string $value): float => (float) $value);
+        $residuals = $hours->pluck('residual_variance')->filter(fn ($value): bool => $value !== null)->map(fn (string $value): float => (float) $value);
         $assignedHours = $hours->pluck('assigned_hours')->map(fn (string $value): float => (float) $value)->sort()->values();
         $assignmentCounts = $hours->pluck('assignment_count');
         $weekendCounts = $weekends->pluck('weekend_assignments');
@@ -72,6 +79,7 @@ final readonly class AnalyzeDraftRosterQuality
         $residualRange = ($residuals->max() ?? 0) - ($residuals->min() ?? 0);
         $classification = match (true) {
             $result->hasErrors() => 'invalid',
+            ! $allocation->isResolved() => 'policy_calibration_required',
             $allStaffed && abs($residualRange) < 0.005 => 'balanced_within_feasibility',
             $residualRange <= (float) ($feasibility->standardCreditedHoursPerSlot ?? 8) => 'acceptable_with_warnings',
             default => 'materially_imbalanced',
@@ -80,11 +88,14 @@ final readonly class AnalyzeDraftRosterQuality
         if ((float) $feasibility->structuralHoursVariance > 0) {
             $findings[] = ['severity' => 'warning', 'code' => 'TARGET_HOURS_BELOW_STAFFING_DEMAND', 'message' => $feasibility->explanation];
         }
+        if (! $allocation->isResolved()) {
+            $findings[] = ['severity' => 'warning', 'code' => 'STRUCTURAL_ALLOCATION_POLICY_UNRESOLVED', 'message' => $allocation->explanation, 'policy_identifier' => $allocation->policyIdentifier];
+        }
         foreach ($hours->where('quality_status', 'material_residual_imbalance') as $doctor) {
             $findings[] = ['severity' => 'warning', 'code' => 'DOCTOR_RESIDUAL_HOURS_IMBALANCE', 'doctor_identifier' => $doctor['doctor_identifier'], 'message' => 'Assigned hours differ materially from the feasibility-adjusted fair share.'];
         }
 
-        return new DraftRosterQualityResult($classification, $hours->all(), $weekends->all(), $patterns->all(), ['minimum_assigned_hours' => number_format((float) ($assignedHours->min() ?? 0), 2, '.', ''), 'maximum_assigned_hours' => number_format((float) ($assignedHours->max() ?? 0), 2, '.', ''), 'assigned_hours_range' => number_format((float) (($assignedHours->max() ?? 0) - ($assignedHours->min() ?? 0)), 2, '.', ''), 'mean_assigned_hours' => number_format((float) $assignedHours->avg(), 2, '.', ''), 'median_assigned_hours' => number_format((float) $assignedHours->median(), 2, '.', ''), 'raw_variance_range' => number_format((float) (($rawVariances->max() ?? 0) - ($rawVariances->min() ?? 0)), 2, '.', ''), 'residual_variance_range' => number_format((float) $residualRange, 2, '.', ''), 'assignment_count_range' => (int) (($assignmentCounts->max() ?? 0) - ($assignmentCounts->min() ?? 0)), 'weekend_assignment_range' => (int) (($weekendCounts->max() ?? 0) - ($weekendCounts->min() ?? 0)), 'preferred_work_honored' => $preferences->where('type', 'preferred_work')->where('honored', true)->count(), 'preferred_work_unhonored' => $preferences->where('type', 'preferred_work')->where('honored', false)->count(), 'preferred_work_fulfillment_rate' => $this->rate($preferences->where('type', 'preferred_work')->where('honored', true)->count(), $preferences->where('type', 'preferred_work')->count()), 'preferred_off_honored' => $preferences->where('type', 'preferred_off')->where('honored', true)->count(), 'preferred_off_violated' => $preferences->where('type', 'preferred_off')->where('honored', false)->count(), 'maximum_consecutive_assigned_days' => (int) ($patterns->max('maximum_consecutive_assigned_days') ?? 0), 'fully_staffed_dates' => $fullyStaffed], ['explicit_availability_requests' => $explicitRequests->count(), 'honored_explicit_availability_requests' => $explicitHonored, 'unhonored_explicit_availability_requests' => $explicitRequests->count() - $explicitHonored, 'explicit_availability_assignments' => $explicitAssignments, 'unspecified_eligibility_assignments' => $assignments->count() - $explicitAssignments, 'explicit_availability_fulfillment_rate' => $this->rate($explicitHonored, $explicitRequests->count())], $findings, ['Consecutive-day reporting is descriptive only; no fatigue or rest-period policy is enforced.', 'Unspecified active doctors remain provisionally eligible.', 'The deterministic greedy generator does not claim mathematical optimality.', 'One primary standard-day assignment per doctor and date is modeled.']);
+        return new DraftRosterQualityResult($classification, $hours->all(), $weekends->all(), $patterns->all(), ['structural_allocation' => $allocation->toArray(), 'minimum_assigned_hours' => number_format((float) ($assignedHours->min() ?? 0), 2, '.', ''), 'maximum_assigned_hours' => number_format((float) ($assignedHours->max() ?? 0), 2, '.', ''), 'assigned_hours_range' => number_format((float) (($assignedHours->max() ?? 0) - ($assignedHours->min() ?? 0)), 2, '.', ''), 'mean_assigned_hours' => number_format((float) $assignedHours->avg(), 2, '.', ''), 'median_assigned_hours' => number_format((float) $assignedHours->median(), 2, '.', ''), 'raw_variance_range' => number_format((float) (($rawVariances->max() ?? 0) - ($rawVariances->min() ?? 0)), 2, '.', ''), 'residual_variance_range' => $allocation->isResolved() ? number_format((float) $residualRange, 2, '.', '') : null, 'assignment_count_range' => (int) (($assignmentCounts->max() ?? 0) - ($assignmentCounts->min() ?? 0)), 'weekend_assignment_range' => (int) (($weekendCounts->max() ?? 0) - ($weekendCounts->min() ?? 0)), 'preferred_work_honored' => $preferences->where('type', 'preferred_work')->where('honored', true)->count(), 'preferred_work_unhonored' => $preferences->where('type', 'preferred_work')->where('honored', false)->count(), 'preferred_work_fulfillment_rate' => $this->rate($preferences->where('type', 'preferred_work')->where('honored', true)->count(), $preferences->where('type', 'preferred_work')->count()), 'preferred_off_honored' => $preferences->where('type', 'preferred_off')->where('honored', true)->count(), 'preferred_off_violated' => $preferences->where('type', 'preferred_off')->where('honored', false)->count(), 'maximum_consecutive_assigned_days' => (int) ($patterns->max('maximum_consecutive_assigned_days') ?? 0), 'fully_staffed_dates' => $fullyStaffed], ['explicit_availability_requests' => $explicitRequests->count(), 'honored_explicit_availability_requests' => $explicitHonored, 'unhonored_explicit_availability_requests' => $explicitRequests->count() - $explicitHonored, 'explicit_availability_assignments' => $explicitAssignments, 'unspecified_eligibility_assignments' => $assignments->count() - $explicitAssignments, 'explicit_availability_fulfillment_rate' => $this->rate($explicitHonored, $explicitRequests->count())], $findings, [($policy->policies['consecutive_day_limit'] ?? null)?->isProvisional() !== false ? 'Consecutive-day reporting is provisional and informational only.' : 'Consecutive-day reporting follows confirmed department policy.', ($policy->policies['unspecified_availability'] ?? null)?->isProvisional() !== false ? 'Unspecified eligibility uses a provisional policy that has not been confirmed by the department.' : 'Unspecified eligibility follows confirmed department policy.', 'The deterministic greedy generator does not claim mathematical optimality.', 'One primary standard-day assignment per doctor and date is modeled.']);
     }
 
     private function rate(int $honored, int $total): string

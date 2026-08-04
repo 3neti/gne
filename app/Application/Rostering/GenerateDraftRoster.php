@@ -22,7 +22,10 @@ final readonly class GenerateDraftRoster
         }
         $input = $this->input->handle($period);
         $policy = $this->policy->handle();
-        $result = $this->analyze->handle($input, $this->generator->generate($input, $policy));
+        if ($policy->calibrationStatus()->blocksGeneration()) {
+            throw new InvalidRosterGeneration('Generation is blocked until mandatory department policies are calibrated.');
+        }
+        $result = $this->analyze->handle($input, $this->generator->generate($input, $policy), $policy);
         if ($result->hasErrors()) {
             throw new InvalidRosterGeneration('Generated proposal contains mandatory errors and was not committed.');
         }

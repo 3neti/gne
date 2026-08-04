@@ -1,0 +1,10 @@
+identifier: POLICY-ANAESTHESIA-EMPLOYMENT-TYPE-ELIGIBILITY
+key: employment_type_eligibility
+revision: 1
+status: provisional
+selected_value: all_active_types_eligible
+effective_date: null
+decision_authority: anaesthesia_department
+question: How do full-time, part-time, visiting, and locum categories affect eligibility?
+generation_impact: mandatory
+provenance: All active demonstration doctors remain eligible pending department confirmation.

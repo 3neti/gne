@@ -1,0 +1,10 @@
+identifier: POLICY-ANAESTHESIA-WEEKEND-DISTRIBUTION
+key: weekend_distribution
+revision: 1
+status: provisional
+selected_value: informational
+effective_date: null
+decision_authority: anaesthesia_department
+question: How should Saturday, Sunday, and holiday work be distributed and enforced?
+generation_impact: quality
+provenance: Weekend counts are informational pending thresholds and employment rules.

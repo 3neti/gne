@@ -36,3 +36,6 @@ Administrator-entered requests and availability are implemented as audited host 
 ## Recommended next slice
 
 **Generation Policy Calibration with Department Inputs** — validate provisional unspecified eligibility, target-hour meaning, weekend observations, and acceptable balance thresholds with the department before publication.
+# Policy calibration boundary
+
+Department decision -> authored/calibrated policy -> `ResolvedRosterPolicy` -> generation, validation, quality, and explanations. Safe provisional choices remain visible. No optimizer, publication, or workbook inference is introduced.

@@ -1,0 +1,10 @@
+identifier: POLICY-ANAESTHESIA-REQUIRED-HOURS-MEANING
+key: required_hours_meaning
+revision: 1
+status: provisional
+selected_value: roster_period_target
+effective_date: null
+decision_authority: anaesthesia_department
+question: What does required hours mean, and which duties reduce or count toward it?
+generation_impact: quality
+provenance: Treated as a roster-period planning target pending confirmation.

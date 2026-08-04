@@ -1,0 +1,10 @@
+identifier: POLICY-ANAESTHESIA-CONSECUTIVE-DAY-LIMIT
+key: consecutive_day_limit
+revision: 1
+status: provisional
+selected_value: informational
+effective_date: null
+decision_authority: anaesthesia_department
+question: What consecutive-day and rest limit should apply?
+generation_impact: quality
+provenance: Consecutive-day counts are informational; no fatigue rule is inferred.

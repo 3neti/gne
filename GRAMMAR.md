@@ -123,3 +123,10 @@ The active duty vocabulary is only `standard_day`, `leave`, and `unavailable`. A
 **Human Roster Identity** is the doctor name shown on normal calendars, matrices, hours, preferences, explanations, and PDF. **Machine Roster Identity** is the stable doctor identifier retained in JSON, internal references, audit, persistence, and technical keys. Consecutive-day and weekend distributions are descriptive quality evidence, not fatigue or rest policies.
 
 **Explicit Availability** is accepted positive evidence and is not assignment permission. **Unspecified Availability** means no effective accepted request exists for an active doctor/date; it is provisionally eligible until department policy is confirmed. **Blocking Status** is leave, unavailable, conflicted, or none. **Eligible Doctor Pool** is the exclusive count of effectively available plus unspecified active doctors. **Staffing Input Sufficiency** means that pool meets the authored daily requirement; it does not guarantee a valid or balanced roster. **Doctor Availability Matrix** is a derived doctor-by-date report using `A`, `U`, `L`, `PW`, `PO`, `-`, and `!`; it is not a roster.
+# Rostering policy calibration terms
+
+- **Policy Calibration**: an explicit department decision applied to a repository-authored policy definition.
+- **Provisional Policy**: a visible safe fallback not yet confirmed by the department.
+- **Resolved Roster Policy**: the closed, fingerprinted policy set consumed by all roster compiler services.
+- **Structural Hours Allocation**: the declared distribution of aggregate staffing excess or deficit. Supported values are equal, proportional to target hours, and unresolved.
+- **Policy Calibration Required**: quality state used when technical feasibility is known but individual fairness cannot be classified honestly.

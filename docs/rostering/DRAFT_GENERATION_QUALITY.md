@@ -9,3 +9,5 @@ The quality projection reports assigned-hour and assignment-count ranges, weeken
 The generator records the top three eligible candidates at each selection with the exact lexicographic facts it used: preferred work, explicit availability, remaining target hours, assignment ratio/count, preferred off, and stable identifier. Operator HTML translates reason codes into readable text. JSON retains codes, names, stable identifiers, and next-best facts.
 
 Quality belongs to generated revision 1. A later manual move is validated and presented as current roster state, but it does not retroactively change the historical generation score. The algorithm remains deterministic greedy, initial-only, standard-day, and non-optimal.
+
+Structural allocation is no longer derived from doctor count implicitly. Equal and proportional-to-target allocation require an explicit policy. When policy is unresolved, aggregate feasibility remains available, doctor allocations and residuals are null, and classification is `policy_calibration_required`. Provisional weekend and consecutive-day policies remain informational and visibly unconfirmed.

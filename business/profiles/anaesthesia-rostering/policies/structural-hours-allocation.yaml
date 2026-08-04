@@ -1,0 +1,10 @@
+identifier: POLICY-ANAESTHESIA-STRUCTURAL-HOURS-ALLOCATION
+key: structural_hours_allocation
+revision: 1
+status: provisional
+selected_value: equal_per_eligible_doctor
+effective_date: null
+decision_authority: anaesthesia_department
+question: How should unavoidable extra or short staffing hours be distributed?
+generation_impact: quality
+provenance: Equal allocation is explicit for the homogeneous demonstration only; department confirmation is pending.

@@ -1,0 +1,11 @@
+identifier: ANAESTHESIA-GENERATION-POLICY-CALIBRATION
+title: Anaesthesia generation policy calibration
+description: Demonstrates explicit policy provenance, allocation comparisons, unresolved-policy diagnostics, and rollback-by-default reporting.
+profile: PROFILE-ANAESTHESIA-ROSTERING
+lifecycle: LIFECYCLE-ANAESTHESIA-ROSTER-PERIOD
+steps:
+  - { id: load-policy, title: Load provisional policy set, operation: load_policy_calibration }
+  - { id: compare-allocation, title: Compare allocation policies, operation: compare_structural_allocation }
+  - { id: unresolved-policy, title: Prove unresolved fairness behavior, operation: report_policy_diagnostics }
+  - { id: provenance, title: Preserve fingerprint provenance, operation: verify_policy_provenance }
+  - { id: artifacts, title: Emit department meeting artifacts, operation: render_policy_calibration_artifacts }

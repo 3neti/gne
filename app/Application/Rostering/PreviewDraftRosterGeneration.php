@@ -21,7 +21,11 @@ final readonly class PreviewDraftRosterGeneration
         if ($input->existingAssignmentCount > 0) {
             throw new InvalidRosterGeneration('Initial draft generation cannot overwrite existing assignments.');
         }
+        $policy = $this->policy->handle();
+        if ($policy->calibrationStatus()->blocksGeneration()) {
+            throw new InvalidRosterGeneration('Generation is blocked until mandatory department policies are calibrated: '.implode(', ', $policy->calibrationStatus()->unresolvedMandatory).'.');
+        }
 
-        return $this->analyze->handle($input, $this->generator->generate($input, $this->policy->handle()));
+        return $this->analyze->handle($input, $this->generator->generate($input, $policy), $policy);
     }
 }

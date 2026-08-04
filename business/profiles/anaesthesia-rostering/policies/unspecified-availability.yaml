@@ -1,0 +1,10 @@
+identifier: POLICY-ANAESTHESIA-UNSPECIFIED-AVAILABILITY
+key: unspecified_availability
+revision: 1
+status: provisional
+selected_value: eligible_unless_blocked
+effective_date: null
+decision_authority: anaesthesia_department
+question: May a doctor with no accepted request be assigned?
+generation_impact: mandatory
+provenance: Current demonstration assumption; department confirmation is pending.

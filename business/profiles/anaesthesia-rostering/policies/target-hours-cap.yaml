@@ -1,0 +1,10 @@
+identifier: POLICY-ANAESTHESIA-TARGET-HOURS-CAP
+key: target_hours_cap
+revision: 1
+status: provisional
+selected_value: soft_target
+effective_date: null
+decision_authority: anaesthesia_department
+question: Are target hours a soft target, a minimum, or a hard maximum?
+generation_impact: quality
+provenance: Targets are treated as soft planning targets pending confirmation.

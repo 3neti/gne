@@ -34,3 +34,6 @@
 Runtime baselines: `3neti/x-document` at `29853fae23939cba0b440db3ae04e351c499a78e`; `3neti/x-document-laravel` at `b299d5bfbe7bdf93ecaf840431349804b676a6c7`. Composer resolves both as symlinked `dev-main` path packages; `gne:mvp:smoke` verifies these actual Git commits rather than trusting version labels.
 
 MVP readiness: **Operator-ready local demonstration with deliberate subject authorization achieved**. Target-environment and production readiness are not claimed.
+# Anaesthesia generation policy calibration
+
+Implemented: eight-policy register, department questionnaire, closed resolved values for unspecified availability and structural allocation, policy diagnostics, deterministic equal/proportional allocation, unresolved fairness classification, audited confirmation UI, and policy provenance. Department decisions remain provisional until explicitly confirmed. Publication, advanced fatigue rules, optimization, and regeneration remain deferred.

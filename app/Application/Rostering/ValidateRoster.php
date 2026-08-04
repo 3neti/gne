@@ -9,12 +9,13 @@ use App\Models\RosterPeriod;
 
 final readonly class ValidateRoster
 {
-    public function __construct(private ResolveDoctorAvailability $availability, private BuildDoctorHoursSummary $hours, private BuildRosterGenerationInput $generationInput, private AnalyzeRosterGenerationFeasibility $feasibility) {}
+    public function __construct(private ResolveDoctorAvailability $availability, private BuildDoctorHoursSummary $hours, private BuildRosterGenerationInput $generationInput, private AnalyzeRosterGenerationFeasibility $feasibility, private ResolveRosterPolicy $resolvePolicy, private AllocateStructuralVariance $allocator) {}
 
     public function handle(RosterPeriod $period): RosterValidationResult
     {
         $period->load(['days', 'assignments.doctor', 'assignments.rosterDay', 'doctorRequirements.doctor', 'scheduleRequests.dates']);
         $availability = collect($this->availability->handle($period)['availability'])->keyBy(fn (array $cell): string => $cell['doctor_identifier'].'|'.$cell['date']);
+        $policy = $this->resolvePolicy->handle();
         $findings = [];
 
         foreach ($period->assignments->sortBy('identifier') as $assignment) {
@@ -26,6 +27,9 @@ final readonly class ValidateRoster
             $cell = $availability->get($assignment->doctor->identifier.'|'.$date);
             if (in_array($cell['effective_status'] ?? null, ['leave', 'unavailable'], true)) {
                 $findings[] = new RosterValidationFinding(FoundationValidationSeverity::Error, 'ASSIGNMENT_BLOCKED_BY_REQUEST', 'The assignment conflicts with accepted leave or unavailability.', [...$context, 'effective_status' => $cell['effective_status']]);
+            }
+            if ($policy->unspecifiedAvailability()->value === 'explicit_availability_required' && ! ($cell['explicit_availability'] ?? false)) {
+                $findings[] = new RosterValidationFinding(FoundationValidationSeverity::Error, 'ASSIGNMENT_REQUIRES_EXPLICIT_AVAILABILITY', 'Department policy requires explicit accepted availability for assignment.', [...$context, 'policy_identifier' => $policy->policies['unspecified_availability']->identifier]);
             }
             if (($cell['preference'] ?? null) === 'preferred_off' || ($cell['preference'] ?? null) === 'conflicted') {
                 $findings[] = new RosterValidationFinding(FoundationValidationSeverity::Warning, 'ASSIGNMENT_PREFERRED_OFF', 'The doctor is assigned despite a preferred-off request.', $context);
@@ -43,16 +47,22 @@ final readonly class ValidateRoster
         }
 
         if ($period->generationRuns()->exists()) {
-            $feasibility = $this->feasibility->handle($this->generationInput->handle($period));
-            $structuralAllocation = count($period->doctorRequirements) === 0 ? 0.0 : (float) $feasibility->structuralHoursVariance / $period->doctorRequirements->count();
+            $input = $this->generationInput->handle($period);
+            $feasibility = $this->feasibility->handle($input);
+            $allocation = $this->allocator->handle($input, $feasibility, $policy);
             $threshold = (float) ($feasibility->standardCreditedHoursPerSlot ?? 8);
             if ((float) $feasibility->structuralHoursVariance > 0) {
                 $findings[] = new RosterValidationFinding(FoundationValidationSeverity::Warning, 'TARGET_HOURS_BELOW_STAFFING_DEMAND', $feasibility->explanation, ['structural_hours_variance' => $feasibility->structuralHoursVariance]);
             }
-            foreach ($this->hours->handle($period) as $doctor) {
-                $residual = (float) $doctor['variance'] - $structuralAllocation;
-                if (abs($residual) > $threshold) {
-                    $findings[] = new RosterValidationFinding(FoundationValidationSeverity::Warning, 'DOCTOR_RESIDUAL_HOURS_IMBALANCE', 'Assigned hours differ materially from the feasibility-adjusted fair share.', ['doctor_identifier' => $doctor['doctor_identifier'], 'raw_variance' => $doctor['variance'], 'allocated_structural_variance' => number_format($structuralAllocation, 2, '.', ''), 'residual_variance' => number_format($residual, 2, '.', '')]);
+            if (! $allocation->isResolved()) {
+                $findings[] = new RosterValidationFinding(FoundationValidationSeverity::Warning, 'STRUCTURAL_ALLOCATION_POLICY_UNRESOLVED', $allocation->explanation, ['policy_identifier' => $allocation->policyIdentifier]);
+            } else {
+                foreach ($this->hours->handle($period) as $doctor) {
+                    $structuralAllocation = (float) ($allocation->allocations[$doctor['doctor_identifier']] ?? 0);
+                    $residual = (float) $doctor['variance'] - $structuralAllocation;
+                    if (abs($residual) > $threshold) {
+                        $findings[] = new RosterValidationFinding(FoundationValidationSeverity::Warning, 'DOCTOR_RESIDUAL_HOURS_IMBALANCE', 'Assigned hours differ materially from the department policy-adjusted fair share.', ['doctor_identifier' => $doctor['doctor_identifier'], 'raw_variance' => $doctor['variance'], 'allocated_structural_variance' => number_format($structuralAllocation, 2, '.', ''), 'residual_variance' => number_format($residual, 2, '.', ''), 'policy_identifier' => $allocation->policyIdentifier]);
+                    }
                 }
             }
         } else {

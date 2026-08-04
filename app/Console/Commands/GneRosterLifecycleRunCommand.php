@@ -4,14 +4,17 @@ namespace App\Console\Commands;
 
 use App\Application\Rostering\RunDraftRosterGenerationScenario;
 use App\Application\Rostering\RunManualRosterScenario;
+use App\Application\Rostering\RunPolicyCalibrationScenario;
 use App\Application\Rostering\RunRequestsAvailabilityScenario;
 use App\Application\Rostering\RunRosterLifecycleScenario;
 use App\Domain\Rostering\RosterLifecycleScenarioDefinition;
 use App\Infrastructure\Rostering\PrintDraftGenerationPdf;
 use App\Infrastructure\Rostering\PrintManualRosterPdf;
+use App\Infrastructure\Rostering\PrintPolicyCalibrationPdf;
 use App\Infrastructure\Rostering\PrintRequestsAvailabilityPdf;
 use App\Infrastructure\Rostering\RenderDraftGenerationReport;
 use App\Infrastructure\Rostering\RenderManualRosterReport;
+use App\Infrastructure\Rostering\RenderPolicyCalibrationReport;
 use App\Infrastructure\Rostering\RenderRequestsAvailabilityReport;
 use Illuminate\Console\Command;
 use Illuminate\Filesystem\Filesystem;
@@ -22,9 +25,9 @@ final class GneRosterLifecycleRunCommand extends Command
 
     protected $description = 'Run the allowlisted anaesthesia roster foundation lifecycle proof';
 
-    public function handle(RunRosterLifecycleScenario $runner, RunRequestsAvailabilityScenario $requestsRunner, RunManualRosterScenario $manualRunner, RunDraftRosterGenerationScenario $generationRunner, RenderRequestsAvailabilityReport $render, PrintRequestsAvailabilityPdf $print, RenderManualRosterReport $manualRender, PrintManualRosterPdf $manualPrint, RenderDraftGenerationReport $generationRender, PrintDraftGenerationPdf $generationPrint, Filesystem $files): int
+    public function handle(RunRosterLifecycleScenario $runner, RunRequestsAvailabilityScenario $requestsRunner, RunManualRosterScenario $manualRunner, RunDraftRosterGenerationScenario $generationRunner, RunPolicyCalibrationScenario $policyRunner, RenderRequestsAvailabilityReport $render, PrintRequestsAvailabilityPdf $print, RenderManualRosterReport $manualRender, PrintManualRosterPdf $manualPrint, RenderDraftGenerationReport $generationRender, PrintDraftGenerationPdf $generationPrint, RenderPolicyCalibrationReport $policyRender, PrintPolicyCalibrationPdf $policyPrint, Filesystem $files): int
     {
-        if (! in_array($this->option('scenario'), ['ANAESTHESIA-ROSTER-FOUNDATION-LIFECYCLE', 'ANAESTHESIA-ROSTER-REQUESTS-AND-AVAILABILITY', 'ANAESTHESIA-MANUAL-ROSTER', 'ANAESTHESIA-DRAFT-ROSTER-GENERATION'], true)) {
+        if (! in_array($this->option('scenario'), ['ANAESTHESIA-ROSTER-FOUNDATION-LIFECYCLE', 'ANAESTHESIA-ROSTER-REQUESTS-AND-AVAILABILITY', 'ANAESTHESIA-MANUAL-ROSTER', 'ANAESTHESIA-DRAFT-ROSTER-GENERATION', 'ANAESTHESIA-GENERATION-POLICY-CALIBRATION'], true)) {
             $this->error('Unknown roster lifecycle scenario.');
 
             return self::FAILURE;
@@ -33,15 +36,18 @@ final class GneRosterLifecycleRunCommand extends Command
         $requestsScenario = $this->option('scenario') === 'ANAESTHESIA-ROSTER-REQUESTS-AND-AVAILABILITY';
         $manualScenario = $this->option('scenario') === 'ANAESTHESIA-MANUAL-ROSTER';
         $generationScenario = $this->option('scenario') === 'ANAESTHESIA-DRAFT-ROSTER-GENERATION';
-        $source = $generationScenario ? 'draft-roster-generation.yaml' : ($manualScenario ? 'manual-roster.yaml' : ($requestsScenario ? 'requests-and-availability.yaml' : 'foundation-lifecycle.yaml'));
+        $policyScenario = $this->option('scenario') === 'ANAESTHESIA-GENERATION-POLICY-CALIBRATION';
+        $source = $policyScenario ? 'generation-policy-calibration.yaml' : ($generationScenario ? 'draft-roster-generation.yaml' : ($manualScenario ? 'manual-roster.yaml' : ($requestsScenario ? 'requests-and-availability.yaml' : 'foundation-lifecycle.yaml')));
         $definition = RosterLifecycleScenarioDefinition::fromFile($root.'/business/profiles/anaesthesia-rostering/scenarios/'.$source);
-        $result = $generationScenario
+        $result = $policyScenario
+            ? $policyRunner->handle($definition)
+            : ($generationScenario
             ? $generationRunner->handle($definition, (bool) $this->option('keep-state'))
             : ($manualScenario
             ? $manualRunner->handle($definition, (bool) $this->option('keep-state'))
             : ($requestsScenario
                 ? $requestsRunner->handle($definition, (bool) $this->option('keep-state'))
-                : $runner->handle($definition, (bool) $this->option('keep-state'))));
+                : $runner->handle($definition, (bool) $this->option('keep-state')))));
         $payload = $result->toArray();
         if ($requestsScenario && $this->option('artifact')) {
             $artifactRoot = rtrim((string) ($this->option('output') ?: base_path('.gne/reports/rostering/requests-and-availability')), '/');
@@ -73,17 +79,27 @@ final class GneRosterLifecycleRunCommand extends Command
             $files->put($artifactRoot.'/report.json', $json);
             $payload['artifacts']['json'] = ['path' => 'report.json', 'sha256' => hash('sha256', $json), 'byte_length' => strlen($json)];
         }
+        if ($policyScenario && $this->option('artifact')) {
+            $artifactRoot = rtrim((string) ($this->option('output') ?: base_path('.gne/reports/rostering/policy-calibration')), '/');
+            $files->ensureDirectoryExists($artifactRoot);
+            $html = $policyRender->handle($artifactRoot, $payload);
+            $pdf = $policyPrint->handle($artifactRoot);
+            $payload['artifacts'] = ['status' => 'final', 'html' => $html, 'pdf' => $pdf];
+            $json = json_encode($payload, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES | JSON_THROW_ON_ERROR)."\n";
+            $files->put($artifactRoot.'/report.json', $json);
+            $payload['artifacts']['json'] = ['path' => 'report.json', 'sha256' => hash('sha256', $json), 'byte_length' => strlen($json)];
+        }
         if ($this->option('json')) {
             $this->line(json_encode($payload, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES | JSON_THROW_ON_ERROR));
         } else {
-            $scenarioIdentifier = ($requestsScenario || $manualScenario || $generationScenario) ? $payload['scenario']['identifier'] : $payload['scenario'];
+            $scenarioIdentifier = ($requestsScenario || $manualScenario || $generationScenario || $policyScenario) ? $payload['scenario']['identifier'] : $payload['scenario'];
             $this->info("Roster lifecycle scenario: {$scenarioIdentifier}");
             foreach ($payload['steps'] ?? [] as $step) {
                 $this->line(strtoupper($step['status'])." {$step['sequence']}. ".($step['title'] ?? $step['id']));
             }
         }
 
-        $passed = ($requestsScenario || $manualScenario || $generationScenario) ? $payload['scenario']['passed'] : $payload['passed'];
+        $passed = ($requestsScenario || $manualScenario || $generationScenario || $policyScenario) ? $payload['scenario']['passed'] : $payload['passed'];
 
         return $passed ? self::SUCCESS : self::FAILURE;
     }
