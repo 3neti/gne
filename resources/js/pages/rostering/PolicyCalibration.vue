@@ -7,10 +7,14 @@ type Policy = { identifier: string; key: string; revision: number; status: strin
 const { policy, abilities } = defineProps<{ policy: { policies: Record<string, Policy>; calibration: { confirmed: string[]; provisional: string[]; unresolved_mandatory: string[]; unresolved_quality: string[]; blocks_generation: boolean; effective_policy_fingerprint: string } }; abilities: { edit_policy_calibration: boolean; confirm_policy_calibration: boolean } }>();
 const form = useForm({ policy_key: '', selected_value: '', effective_from: '', source_reference: '', notes: '' });
 function select(policy: Policy) {
- form.policy_key = policy.key; form.selected_value = policy.selected_value; form.effective_from = policy.effective_date ?? ''; form.source_reference = policy.source_reference; form.notes = ''; 
+    form.policy_key = policy.key;
+    form.selected_value = policy.selected_value;
+    form.effective_from = policy.effective_date ?? '';
+    form.source_reference = policy.source_reference;
+    form.notes = '';
 }
 function confirm() {
- form.post(store().url, { preserveScroll: true }); 
+    form.post(store().url, { preserveScroll: true });
 }
 </script>
 
