@@ -1,6 +1,6 @@
 # Roster Policy Resolution Uses Explicit Effective Dates and Closed Decisions
 
-**Status:** Accepted  
+**Status:** Accepted
 **Date:** 2026-08-05
 
 ## Decision
