@@ -8,3 +8,7 @@ decision_authority: anaesthesia_department
 question: May a doctor with no accepted request be assigned?
 generation_impact: mandatory
 provenance: Current demonstration assumption; department confirmation is pending.
+options:
+  - { value: eligible_unless_blocked, label: Eligible unless blocked, description: An active doctor may be assigned unless leave or unavailability blocks the date., impact: Preserves the current broad eligible pool., confirmation_required: true }
+  - { value: explicit_availability_required, label: Explicit availability required, description: Only doctors with accepted availability may be assigned., impact: May reduce eligible cells and make dates understaffable., confirmation_required: true }
+  - { value: unresolved, label: Leave unresolved, description: No safe assignment rule has been selected., impact: Blocks generation preview., confirmation_required: false }

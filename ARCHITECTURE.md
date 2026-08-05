@@ -157,3 +157,5 @@ Operator history and machine history are distinct projections. The roster UI and
 # Generation policy calibration
 
 Anaesthesia generation policy is repository-authored, explicitly calibrated, and compiled into `ResolvedRosterPolicy`. The same immutable object governs eligibility, generation, validation, quality, and explanations. Unresolved structural allocation cannot produce an individual residual-fairness claim. Operational confirmations are append-only audited revisions; historical generation fingerprints are immutable.
+
+`RosterPolicyEvaluationContext` makes time an explicit compiler input. Repository definitions plus operational decision revisions plus that context produce the only `ResolvedRosterPolicy` consumed by generation and validation. Confirmed revisions are active only inside their effective window; future, expired, and rejected revisions cannot displace the current choice. Superseded revisions remain available only for historical dates inside their closed window. Generation runs persist the complete resolved snapshot, fingerprint, and evaluation date.

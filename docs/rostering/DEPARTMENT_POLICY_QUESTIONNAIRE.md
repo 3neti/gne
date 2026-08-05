@@ -62,3 +62,7 @@ Repeated unhonored requests escalate: [ ] yes [ ] no. Notes: ___________________
 Who may approve excess, fatigue, availability, or preference overrides? ____________________
 
 Meeting date: __________ Decision authority: __________ Evidence reference: __________
+
+## Decision record requirements
+
+For every policy, select one registered option and record operational impact, notes, authority name and designation, inclusive effective start, optional end, and evidence or meeting reference. “Other” requires a reviewed repository grammar revision; it is not an arbitrary operational value. The generated pack includes separate choice pages and a final acknowledgment page.

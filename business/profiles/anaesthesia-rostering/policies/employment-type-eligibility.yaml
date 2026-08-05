@@ -8,3 +8,7 @@ decision_authority: anaesthesia_department
 question: How do full-time, part-time, visiting, and locum categories affect eligibility?
 generation_impact: mandatory
 provenance: All active demonstration doctors remain eligible pending department confirmation.
+options:
+  - { value: all_active_types_eligible, label: All active types eligible, description: "Full-time, part-time, visiting, and locum doctors share the active eligibility rule.", impact: No employment weighting or exclusion is inferred. }
+  - { value: explicit_availability_by_type, label: Explicit availability by employment type, description: Visiting or locum eligibility may require explicit availability., impact: Requires category-specific configuration before use. }
+  - { value: unresolved, label: Leave unresolved, description: Employment eligibility is not selected., impact: Blocks generation preview., confirmation_required: false }

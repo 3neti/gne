@@ -8,6 +8,8 @@ use App\Application\Rostering\GenerateDraftRoster;
 use App\Application\Rostering\PreviewDraftRosterGeneration;
 use App\Application\Rostering\ResolveRosterPolicy;
 use App\Domain\Rostering\InvalidRosterGeneration;
+use App\Domain\Rostering\RosterPolicyEvaluationContext;
+use App\Domain\Rostering\RosterPolicyEvaluationPurpose;
 use App\Models\RosterPeriod;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\Gate;
@@ -20,7 +22,7 @@ class RosterGenerationController extends Controller
     {
         Gate::authorize('generate', $rosterPeriod);
         $input = $buildInput->handle($rosterPeriod);
-        $policy = $resolvePolicy->handle();
+        $policy = $resolvePolicy->handle(new RosterPolicyEvaluationContext($rosterPeriod->start_date->toImmutable(), RosterPolicyEvaluationPurpose::GenerationPreview, $rosterPeriod->identifier));
 
         return Inertia::render('rostering/periods/Generation', ['period' => ['identifier' => $rosterPeriod->identifier, 'title' => $rosterPeriod->title, 'status' => $rosterPeriod->status->value], 'readiness' => ['doctor_count' => count($input->doctors), 'date_count' => count($input->days), 'required_slots' => array_sum(array_column($input->days, 'required')), 'required_hours_complete' => collect($input->doctors)->every(fn (array $doctor): bool => (float) $doctor['required_hours'] >= 0), 'existing_assignments' => $input->existingAssignmentCount], 'feasibility' => $analyzeFeasibility->handle($input)->toArray(), 'generator' => $policy->toArray(), 'policy_calibration' => $policy->calibrationStatus()->toArray(), 'preview' => session('generation_preview'), 'committed' => session('generation_committed')]);
     }

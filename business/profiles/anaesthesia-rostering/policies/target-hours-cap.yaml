@@ -8,3 +8,10 @@ decision_authority: anaesthesia_department
 question: Are target hours a soft target, a minimum, or a hard maximum?
 generation_impact: quality
 provenance: Targets are treated as soft planning targets pending confirmation.
+options:
+  - { value: soft_target, label: Soft target, description: Hours guide balancing but may be exceeded., impact: Excess is explained or warned. }
+  - { value: hard_maximum, label: Hard maximum, description: Hours may not exceed the target., impact: Excess becomes an error. }
+  - { value: hard_minimum, label: Hard minimum, description: Hours should reach at least the target., impact: Deficit becomes an error. }
+  - { value: target_with_authorized_excess, label: Target with authorized excess, description: Excess requires explicit approval., impact: Unapproved excess is invalid. }
+  - { value: target_with_overtime, label: Target with overtime, description: Excess is tracked as overtime., impact: Requires a future overtime model. }
+  - { value: unresolved, label: Leave unresolved, description: Target enforcement is not selected., impact: Target compliance remains limited., confirmation_required: false }

@@ -14,3 +14,5 @@ No current implementation assumption is a confirmed department policy unless its
 | `preference_strength` | How strongly do preferred work/off requests influence assignment? | soft preference | provisional | quality | Anaesthesia department | Confirm hard prohibitions and escalation. |
 
 Statuses are `unconfirmed`, `provisional`, `confirmed`, `superseded`, and `rejected`. Effective dates and meeting references are recorded at confirmation. A new confirmation changes the resolved fingerprint; stored generation runs retain their original fingerprint.
+
+`future-effective` and `expired` are derived states. Pending department decisions count provisional fallbacks separately from blocking and non-blocking unresolved policies. Each registered YAML owns its complete allowed option list; requests reject anything outside it.

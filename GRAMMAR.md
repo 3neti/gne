@@ -130,3 +130,8 @@ The active duty vocabulary is only `standard_day`, `leave`, and `unavailable`. A
 - **Resolved Roster Policy**: the closed, fingerprinted policy set consumed by all roster compiler services.
 - **Structural Hours Allocation**: the declared distribution of aggregate staffing excess or deficit. Supported values are equal, proportional to target hours, and unresolved.
 - **Policy Calibration Required**: quality state used when technical feasibility is known but individual fairness cannot be classified honestly.
+- **Policy Evaluation Context**: explicit evaluation date and purpose used to resolve effective policy.
+- **Effective Window**: inclusive `effective_from` and optional `effective_until` dates in which a confirmed revision applies.
+- **Future-effective** and **Expired**: derived temporal states excluded from current effective identity.
+- **Pending Department Decision**: a provisional working assumption awaiting explicit confirmation.
+- **Closed Policy Option**: a repository-defined value, label, description, impact, and confirmation requirement; arbitrary values fail closed.

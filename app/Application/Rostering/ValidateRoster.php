@@ -3,19 +3,29 @@
 namespace App\Application\Rostering;
 
 use App\Domain\Rostering\FoundationValidationSeverity;
+use App\Domain\Rostering\RosterPolicyEvaluationContext;
+use App\Domain\Rostering\RosterPolicyEvaluationPurpose;
 use App\Domain\Rostering\RosterValidationFinding;
 use App\Domain\Rostering\RosterValidationResult;
 use App\Models\RosterPeriod;
 
 final readonly class ValidateRoster
 {
-    public function __construct(private ResolveDoctorAvailability $availability, private BuildDoctorHoursSummary $hours, private BuildRosterGenerationInput $generationInput, private AnalyzeRosterGenerationFeasibility $feasibility, private ResolveRosterPolicy $resolvePolicy, private AllocateStructuralVariance $allocator) {}
+    public function __construct(private ResolveDoctorAvailability $availability, private BuildDoctorHoursSummary $hours, private BuildRosterGenerationInput $generationInput, private AnalyzeRosterGenerationFeasibility $feasibility, private ResolveRosterPolicy $resolvePolicy, private HydrateResolvedRosterPolicy $hydratePolicy, private AllocateStructuralVariance $allocator) {}
 
     public function handle(RosterPeriod $period): RosterValidationResult
     {
         $period->load(['days', 'assignments.doctor', 'assignments.rosterDay', 'doctorRequirements.doctor', 'scheduleRequests.dates']);
         $availability = collect($this->availability->handle($period)['availability'])->keyBy(fn (array $cell): string => $cell['doctor_identifier'].'|'.$cell['date']);
-        $policy = $this->resolvePolicy->handle();
+        $generationRun = $period->generationRuns()->latest('id')->first();
+        $policy = is_array($generationRun?->policy_snapshot)
+            ? $this->hydratePolicy->handle($generationRun->policy_snapshot)
+            : $this->resolvePolicy->handle(new RosterPolicyEvaluationContext(
+                evaluationDate: $period->start_date->toImmutable(),
+                purpose: RosterPolicyEvaluationPurpose::Validation,
+                rosterPeriodIdentifier: $period->identifier,
+                generationRunIdentifier: $generationRun?->identifier,
+            ));
         $findings = [];
 
         foreach ($period->assignments->sortBy('identifier') as $assignment) {

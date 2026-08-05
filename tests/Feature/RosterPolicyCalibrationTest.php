@@ -25,9 +25,20 @@ test('confirmation creates an audited immutable revision and changes the effecti
     $administrator = User::factory()->create(['is_roster_administrator' => true]);
     $before = app(ResolveRosterPolicy::class)->handle()->fingerprint;
 
-    $this->actingAs($administrator)->post(route('rostering.policy_calibration.store'), ['policy_key' => 'structural_hours_allocation', 'selected_value' => 'proportional_to_target_hours', 'effective_from' => '2026-08-04', 'source_reference' => 'Anaesthesia policy meeting 2026-08-04', 'notes' => 'Department selected target-hour proportional allocation.'])->assertRedirect();
+    $this->actingAs($administrator)->post(route('rostering.policy_calibration.store'), ['policy_key' => 'structural_hours_allocation', 'selected_value' => 'proportional_to_target_hours', 'effective_from' => '2026-08-04', 'decision_authority' => 'Dr Department Chair', 'source_reference' => 'Anaesthesia policy meeting 2026-08-04', 'notes' => 'Department selected target-hour proportional allocation.'])->assertRedirect();
 
     $record = RosterPolicyCalibration::query()->sole();
     expect($record->status->value)->toBe('confirmed')->and($record->revision)->toBe(1)->and(app(ResolveRosterPolicy::class)->handle()->fingerprint)->not->toBe($before);
     $this->assertDatabaseHas('roster_audit_entries', ['action' => 'roster_policy.confirmed', 'entity_identifier' => $record->identifier]);
+});
+
+test('closed policy choices reject arbitrary values and impact preview does not mutate state', function () {
+    $administrator = User::factory()->create(['is_roster_administrator' => true]);
+    $before = app(ResolveRosterPolicy::class)->handle()->fingerprint;
+
+    $this->actingAs($administrator)->post(route('rostering.policy_calibration.store'), ['policy_key' => 'structural_hours_allocation', 'selected_value' => 'invented_policy', 'effective_from' => '2026-08-04', 'decision_authority' => 'Chair', 'source_reference' => 'Meeting', 'notes' => 'No'])->assertSessionHasErrors('selected_value');
+    $this->actingAs($administrator)->post(route('rostering.policy_calibration.impact_preview'), ['policy_key' => 'structural_hours_allocation', 'candidate_value' => 'proportional_to_target_hours'])->assertRedirect()->assertSessionHas('policy_impact_preview');
+
+    expect(RosterPolicyCalibration::query()->count())->toBe(0)
+        ->and(app(ResolveRosterPolicy::class)->handle()->fingerprint)->toBe($before);
 });

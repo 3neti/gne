@@ -35,7 +35,9 @@ Administrator-entered requests and availability are implemented as audited host 
 
 ## Recommended next slice
 
-**Generation Policy Calibration with Department Inputs** — validate provisional unspecified eligibility, target-hour meaning, weekend observations, and acceptable balance thresholds with the department before publication.
+**Calibrated Generation and Validation Enforcement** — use actual confirmed, effective department choices to harden generation and validation before publication.
 # Policy calibration boundary
 
 Department decision -> authored/calibrated policy -> `ResolvedRosterPolicy` -> generation, validation, quality, and explanations. Safe provisional choices remain visible. No optimizer, publication, or workbook inference is introduced.
+
+Resolution is date-aware and snapshot-safe. Future confirmation does not alter the current fingerprint; roster generation evaluates the period start; validation hydrates its persisted resolved-policy snapshot. Department controls use closed choices with explicit authority and effective dates.

@@ -6,6 +6,8 @@ use App\Contracts\Rostering\RosterGenerator;
 use App\Domain\Rostering\GeneratedRosterResult;
 use App\Domain\Rostering\InvalidRosterGeneration;
 use App\Domain\Rostering\RosterPeriodStatus;
+use App\Domain\Rostering\RosterPolicyEvaluationContext;
+use App\Domain\Rostering\RosterPolicyEvaluationPurpose;
 use App\Models\RosterPeriod;
 
 final readonly class PreviewDraftRosterGeneration
@@ -21,7 +23,11 @@ final readonly class PreviewDraftRosterGeneration
         if ($input->existingAssignmentCount > 0) {
             throw new InvalidRosterGeneration('Initial draft generation cannot overwrite existing assignments.');
         }
-        $policy = $this->policy->handle();
+        $policy = $this->policy->handle(new RosterPolicyEvaluationContext(
+            evaluationDate: $period->start_date->toImmutable(),
+            purpose: RosterPolicyEvaluationPurpose::GenerationPreview,
+            rosterPeriodIdentifier: $period->identifier,
+        ));
         if ($policy->calibrationStatus()->blocksGeneration()) {
             throw new InvalidRosterGeneration('Generation is blocked until mandatory department policies are calibrated: '.implode(', ', $policy->calibrationStatus()->unresolvedMandatory).'.');
         }

@@ -6,6 +6,8 @@ use App\Contracts\Rostering\RosterAuditRecorder;
 use App\Contracts\Rostering\RosterGenerator;
 use App\Domain\Rostering\InvalidRosterGeneration;
 use App\Domain\Rostering\RosterPeriodStatus;
+use App\Domain\Rostering\RosterPolicyEvaluationContext;
+use App\Domain\Rostering\RosterPolicyEvaluationPurpose;
 use App\Models\RosterPeriod;
 use App\Models\User;
 use Illuminate\Support\Facades\DB;
@@ -21,7 +23,11 @@ final readonly class GenerateDraftRoster
             throw new InvalidRosterGeneration('Initial draft generation requires an authorised administrator, ready_for_generation status, and an empty roster.');
         }
         $input = $this->input->handle($period);
-        $policy = $this->policy->handle();
+        $policy = $this->policy->handle(new RosterPolicyEvaluationContext(
+            evaluationDate: $period->start_date->toImmutable(),
+            purpose: RosterPolicyEvaluationPurpose::GenerationCommit,
+            rosterPeriodIdentifier: $period->identifier,
+        ));
         if ($policy->calibrationStatus()->blocksGeneration()) {
             throw new InvalidRosterGeneration('Generation is blocked until mandatory department policies are calibrated.');
         }

@@ -8,3 +8,7 @@ decision_authority: anaesthesia_department
 question: How should unavoidable extra or short staffing hours be distributed?
 generation_impact: quality
 provenance: Equal allocation is explicit for the homogeneous demonstration only; department confirmation is pending.
+options:
+  - { value: equal_per_eligible_doctor, label: Equal among eligible doctors, description: Every eligible doctor receives the same share., impact: A 24-hour excess across two doctors allocates 12 hours each. }
+  - { value: proportional_to_target_hours, label: Proportional to target hours, description: Larger target obligations receive a larger share., impact: Targets of 160 and 80 allocate a 24-hour excess as 16 and 8. }
+  - { value: unresolved, label: Leave unresolved, description: No individual fair-share rule is selected., impact: Generation may remain possible but individual fairness is not classified., confirmation_required: false }

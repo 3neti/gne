@@ -9,7 +9,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
-#[Fillable(['identifier', 'roster_period_id', 'generator_name', 'generator_version', 'policy_fingerprint', 'input_fingerprint', 'result_fingerprint', 'status', 'started_by', 'started_at', 'completed_at', 'summary', 'validation_status'])]
+#[Fillable(['identifier', 'roster_period_id', 'generator_name', 'generator_version', 'policy_fingerprint', 'policy_evaluation_date', 'policy_snapshot', 'input_fingerprint', 'result_fingerprint', 'status', 'started_by', 'started_at', 'completed_at', 'summary', 'validation_status'])]
 class RosterGenerationRun extends Model
 {
     /** @use HasFactory<RosterGenerationRunFactory> */
@@ -32,6 +32,6 @@ class RosterGenerationRun extends Model
 
     protected function casts(): array
     {
-        return ['summary' => 'array', 'started_at' => 'datetime', 'completed_at' => 'datetime'];
+        return ['summary' => 'array', 'policy_evaluation_date' => 'date', 'policy_snapshot' => 'array', 'started_at' => 'datetime', 'completed_at' => 'datetime'];
     }
 }

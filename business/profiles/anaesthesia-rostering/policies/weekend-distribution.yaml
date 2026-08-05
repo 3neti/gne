@@ -8,3 +8,8 @@ decision_authority: anaesthesia_department
 question: How should Saturday, Sunday, and holiday work be distributed and enforced?
 generation_impact: quality
 provenance: Weekend counts are informational pending thresholds and employment rules.
+options:
+  - { value: informational, label: Information only, description: Report weekend distribution without enforcement., impact: No warnings or errors are introduced. }
+  - { value: warning, label: Warning threshold, description: A configured difference produces warnings., impact: Review is required but generation remains possible. }
+  - { value: mandatory, label: Mandatory limit, description: A configured difference is a hard rule., impact: Violations block a valid roster. }
+  - { value: unresolved, label: Leave unresolved, description: Weekend treatment remains undecided., impact: Weekend fairness cannot be classified., confirmation_required: false }

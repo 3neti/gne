@@ -9,7 +9,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
-#[Fillable(['identifier', 'department_key', 'policy_key', 'revision', 'status', 'selected_value', 'configuration', 'effective_from', 'effective_until', 'confirmed_by', 'confirmed_at', 'source_reference', 'notes', 'fingerprint'])]
+#[Fillable(['identifier', 'department_key', 'policy_key', 'revision', 'status', 'selected_value', 'configuration', 'effective_from', 'effective_until', 'confirmed_by', 'confirmed_at', 'decision_authority', 'source_reference', 'notes', 'fingerprint'])]
 class RosterPolicyCalibration extends Model
 {
     /** @use HasFactory<RosterPolicyCalibrationFactory> */

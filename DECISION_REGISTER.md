@@ -247,3 +247,7 @@ Accepted. A staffing-count table is a staffing summary, not a roster calendar. G
 - Unresolved structural allocation prevents individual residual-fairness claims.
 - Historical generation runs retain the exact policy fingerprint used at generation time.
 - Provisional policies remain visible in generation, validation, explanations, UI, and artifacts.
+
+# Policy effective date and decision closure
+
+**Status:** Accepted — 2026-08-05. **Decision:** Resolve roster policy from an explicit evaluation context and inclusive effective windows; fingerprint only the effective set; persist generated-run snapshots; expose only repository-authored department options. New effective revisions atomically close an earlier overlapping window, while other ambiguous overlaps fail. **Rationale:** revision order alone is not temporal business meaning, and free-text identifiers are unsafe department controls. **Consequences:** future decisions do not activate early, historical generation is immutable, and the questionnaire provides choices, impacts, authority, dates, evidence, and signature fields.

@@ -8,3 +8,7 @@ decision_authority: anaesthesia_department
 question: How strongly should preferred work and preferred off influence assignments?
 generation_impact: quality
 provenance: Preferences remain soft ranking signals pending confirmation.
+options:
+  - { value: soft_preference, label: Soft preferences, description: Preferred work and preferred off influence ranking only., impact: Preferences may be unhonored when staffing requires. }
+  - { value: preferred_off_prohibition, label: Preferred off is a prohibition, description: Preferred-off dates cannot be assigned., impact: Reduces eligibility and may make dates understaffable. }
+  - { value: unresolved, label: Leave unresolved, description: Preference strength remains undecided., impact: Preference quality cannot be classified., confirmation_required: false }

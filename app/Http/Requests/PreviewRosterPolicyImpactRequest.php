@@ -8,14 +8,14 @@ use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
 
-class ConfirmRosterPolicyCalibrationRequest extends FormRequest
+class PreviewRosterPolicyImpactRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
      */
     public function authorize(): bool
     {
-        return (bool) $this->user()?->can('confirmPolicyCalibration', RosterPolicyCalibration::class);
+        return (bool) $this->user()?->can('create', RosterPolicyCalibration::class);
     }
 
     /**
@@ -29,14 +29,6 @@ class ConfirmRosterPolicyCalibrationRequest extends FormRequest
         $knownKeys = ['unspecified_availability', 'required_hours_meaning', 'structural_hours_allocation', 'weekend_distribution', 'consecutive_day_limit', 'target_hours_cap', 'employment_type_eligibility', 'preference_strength'];
         $allowedValues = in_array($policyKey, $knownKeys, true) ? RosterPolicyDefinition::allowedValues($policyKey) : [];
 
-        return [
-            'policy_key' => ['required', Rule::in($knownKeys)],
-            'selected_value' => ['required', 'string', Rule::in($allowedValues)],
-            'effective_from' => ['required', 'date'],
-            'effective_until' => ['nullable', 'date', 'after_or_equal:effective_from'],
-            'decision_authority' => ['required', 'string', 'max:255'],
-            'source_reference' => ['required', 'string', 'max:255'],
-            'notes' => ['required', 'string', 'max:2000'],
-        ];
+        return ['policy_key' => ['required', Rule::in($knownKeys)], 'candidate_value' => ['required', 'string', Rule::in($allowedValues)]];
     }
 }

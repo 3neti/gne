@@ -37,3 +37,5 @@ MVP readiness: **Operator-ready local demonstration with deliberate subject auth
 # Anaesthesia generation policy calibration
 
 Implemented: eight-policy register, department questionnaire, closed resolved values for unspecified availability and structural allocation, policy diagnostics, deterministic equal/proportional allocation, unresolved fairness classification, audited confirmation UI, and policy provenance. Department decisions remain provisional until explicitly confirmed. Publication, advanced fatigue rules, optimization, and regeneration remain deferred.
+
+Effective-date closure implemented: explicit purpose/date contexts; current/future/expired/rejected/superseded handling; highest applicable revision; effective-set-only fingerprints; atomic supersession and overlap rejection; repository-defined choice cards; authority and effective-window confirmation; no-mutation impact preview; pending-decision count; generated-run policy snapshots; and a 13-page decision pack. All eight canonical choices remain provisional until the Anaesthesia Department enters real decisions.

@@ -37,6 +37,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::prefix('rostering')->name('rostering.')->group(function () {
         Route::get('policy-calibration', [RosterPolicyCalibrationController::class, 'index'])->name('policy_calibration.index');
         Route::post('policy-calibration', [RosterPolicyCalibrationController::class, 'store'])->name('policy_calibration.store');
+        Route::post('policy-calibration/impact-preview', [RosterPolicyCalibrationController::class, 'previewImpact'])->name('policy_calibration.impact_preview');
         Route::get('/', RosteringDashboardController::class)->name('dashboard');
         Route::resource('doctors', DoctorController::class)->except(['show']);
         Route::resource('requests', DoctorScheduleRequestController::class)->parameters(['requests' => 'doctor_schedule_request'])->except(['destroy']);

@@ -25,7 +25,9 @@ Validation supports the implemented document grammar and JSON Schema 2020-12 but
 
 ## Recommended next task
 
-**Generation Policy Calibration with Department Inputs** — confirm provisional unspecified eligibility, target-hour interpretation, and acceptable descriptive balance thresholds before publication is designed.
+**Calibrated Generation and Validation Enforcement** — after real Anaesthesia Department choices are entered, enforce those effective decisions consistently in generation and validation before publication is designed.
 # Current rostering direction
 
 Generation policy calibration precedes publication. The generator must not decide department policy implicitly; unresolved fairness is reported rather than normalized away.
+
+Policy timing is explicit business meaning. Current diagnostics use today, generation uses roster-period start, and historical validation uses its immutable stored snapshot. Future decisions are visible but excluded from current identity. The department chooses only from closed repository options.

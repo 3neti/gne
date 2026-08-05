@@ -31,6 +31,10 @@ final readonly class RosterPolicyDefinition
         public string $sourceReference,
         public string $question,
         public string $generationImpact,
+        public ?string $effectiveUntil = null,
+        public string $effectiveState = 'provisional',
+        public bool $applicable = true,
+        /** @var list<RosterPolicyOption> */ public array $options = [],
     ) {}
 
     public function isProvisional(): bool
@@ -48,11 +52,15 @@ final readonly class RosterPolicyDefinition
             'status' => $this->status->value,
             'selected_value' => $this->selectedValue,
             'effective_date' => $this->effectiveDate,
+            'effective_until' => $this->effectiveUntil,
+            'effective_state' => $this->effectiveState,
+            'applicable' => $this->applicable,
             'decision_authority' => $this->decisionAuthority,
             'source_reference' => $this->sourceReference,
             'provisional' => $this->isProvisional(),
             'question' => $this->question,
             'generation_impact' => $this->generationImpact,
+            'options' => array_map(fn (RosterPolicyOption $option): array => $option->toArray(), $this->options),
         ];
     }
 }
