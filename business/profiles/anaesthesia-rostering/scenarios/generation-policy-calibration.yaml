@@ -1,18 +1,20 @@
 identifier: ANAESTHESIA-GENERATION-POLICY-CALIBRATION
 title: Anaesthesia generation policy calibration
-description: Demonstrates explicit temporal policy resolution, closed choices, no-mutation impact previews, decision evidence, and rollback-by-default reporting.
+description: Demonstrates typed confirmability, unsupported choices, permanent supersession, provisional fallback, deterministic allocation, and rollback-by-default reporting.
 profile: PROFILE-ANAESTHESIA-ROSTERING
 lifecycle: LIFECYCLE-ANAESTHESIA-ROSTER-PERIOD
 steps:
-  - { id: provisional-set, title: Resolve current provisional policy set, operation: load_policy_calibration }
-  - { id: future-exclusion, title: Prove future decisions do not activate early, operation: verify_effective_window }
-  - { id: current-activation, title: Prove current confirmed decisions activate, operation: verify_effective_window }
-  - { id: expiry, title: Prove expired decisions are ignored, operation: verify_effective_window }
-  - { id: revision-order, title: Prove a higher future revision does not hide the current revision, operation: verify_revision_selection }
-  - { id: overlap, title: Prove overlapping windows are rejected, operation: verify_window_integrity }
-  - { id: fingerprint, title: Prove fingerprints change only at effective transition, operation: verify_policy_provenance }
-  - { id: closed-options, title: Prove the department option registry is closed, operation: verify_option_registry }
-  - { id: impact-preview, title: Prove impact preview makes no mutation, operation: preview_policy_impact }
-  - { id: pending-count, title: Report eight pending department decisions, operation: report_policy_diagnostics }
-  - { id: questionnaire, title: Render candidate choices and operational impacts, operation: render_policy_calibration_artifacts }
+  - { id: weekend-incomplete, title: Prove a weekend threshold without values is not confirmable, operation: verify_option_registry }
+  - { id: weekend-complete, title: Prove a configured weekend threshold is confirmable, operation: verify_option_registry }
+  - { id: consecutive-incomplete, title: Reject a consecutive hard limit without a numeric limit, operation: verify_option_registry }
+  - { id: employment-categories, title: Require selected employment categories, operation: verify_option_registry }
+  - { id: authorized-excess, title: Report authorized excess as unsupported, operation: verify_option_registry }
+  - { id: overtime, title: Report overtime as unsupported, operation: verify_option_registry }
+  - { id: structural-determinism, title: Prove proportional rounding is deterministic and reconciled, operation: compare_structural_allocation }
+  - { id: unsupported-no-effect, title: Prove unsupported choices do not alter effective policy, operation: verify_policy_provenance }
+  - { id: configured-fingerprint, title: Prove confirmed configuration changes the fingerprint, operation: verify_policy_provenance }
+  - { id: permanent-supersession, title: Prove a new revision permanently closes its predecessor, operation: verify_effective_window }
+  - { id: no-reactivation, title: Prove an expired new revision does not reactivate its predecessor, operation: verify_effective_window }
+  - { id: provisional-fallback, title: Prove repository fallback is provisional after expiry, operation: verify_effective_window }
+  - { id: discovery-only, title: Prove holiday and credited-hours questions are discovery only, operation: verify_option_registry }
   - { id: rollback, title: Preserve rollback-by-default scenario behavior, operation: verify_rollback }

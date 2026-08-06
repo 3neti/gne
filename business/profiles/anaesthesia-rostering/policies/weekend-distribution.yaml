@@ -9,7 +9,24 @@ question: How should Saturday, Sunday, and holiday work be distributed and enfor
 generation_impact: quality
 provenance: Weekend counts are informational pending thresholds and employment rules.
 options:
-  - { value: informational, label: Information only, description: Report weekend distribution without enforcement., impact: No warnings or errors are introduced. }
-  - { value: warning, label: Warning threshold, description: A configured difference produces warnings., impact: Review is required but generation remains possible. }
-  - { value: mandatory, label: Mandatory limit, description: A configured difference is a hard rule., impact: Violations block a valid roster. }
-  - { value: unresolved, label: Leave unresolved, description: Weekend treatment remains undecided., impact: Weekend fairness cannot be classified., confirmation_required: false }
+  - value: informational
+    label: Information only
+    description: Report Saturday and Sunday distribution without enforcement; public holidays are excluded.
+    impact: No warnings or errors are introduced.
+    supported: true
+    parameters: []
+  - &threshold
+    value: warning
+    label: Warning threshold
+    description: A configured Saturday and Sunday difference produces warnings; public holidays are excluded.
+    impact: Review is required but generation remains possible.
+    supported: true
+    parameters:
+      - { key: maximum_weekend_difference, label: Maximum allowed difference, type: integer, minimum: 0, required: true }
+      - { key: day_grouping, label: Evaluate weekend days, type: enum, values: [combined, separate], required: true }
+  - <<: *threshold
+    value: mandatory
+    label: Mandatory limit
+    description: A configured Saturday and Sunday difference is a hard rule; public holidays are excluded.
+    impact: Violations block a valid roster.
+  - { value: unresolved, label: Decision pending, description: Weekend treatment remains undecided., impact: Weekend fairness cannot be classified., confirmation_required: false, supported: true, parameters: [] }

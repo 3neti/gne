@@ -29,6 +29,6 @@ class PreviewRosterPolicyImpactRequest extends FormRequest
         $knownKeys = ['unspecified_availability', 'required_hours_meaning', 'structural_hours_allocation', 'weekend_distribution', 'consecutive_day_limit', 'target_hours_cap', 'employment_type_eligibility', 'preference_strength'];
         $allowedValues = in_array($policyKey, $knownKeys, true) ? RosterPolicyDefinition::allowedValues($policyKey) : [];
 
-        return ['policy_key' => ['required', Rule::in($knownKeys)], 'candidate_value' => ['required', 'string', Rule::in($allowedValues)]];
+        return ['policy_key' => ['required', Rule::in($knownKeys)], 'candidate_value' => ['required', 'string', Rule::in($allowedValues)], 'configuration' => ['sometimes', 'array'], 'configuration.*' => ['present']];
     }
 }

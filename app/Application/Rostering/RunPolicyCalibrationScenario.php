@@ -12,7 +12,7 @@ use App\Domain\Rostering\StructuralHoursAllocationPolicy;
 
 final readonly class RunPolicyCalibrationScenario
 {
-    public function __construct(private ResolveRosterPolicy $resolvePolicy, private AllocateStructuralVariance $allocate) {}
+    public function __construct(private ResolveRosterPolicy $resolvePolicy, private AllocateStructuralVariance $allocate, private ValidateRosterPolicyConfirmation $validateConfirmation) {}
 
     public function handle(RosterLifecycleScenarioDefinition $definition): PolicyCalibrationScenarioResult
     {
@@ -23,11 +23,30 @@ final readonly class RunPolicyCalibrationScenario
         foreach (StructuralHoursAllocationPolicy::cases() as $mode) {
             $definitionPolicy = $policy->policies['structural_hours_allocation'];
             $policies = $policy->policies;
-            $policies['structural_hours_allocation'] = new RosterPolicyDefinition($definitionPolicy->identifier, $definitionPolicy->key, $definitionPolicy->revision, $definitionPolicy->status, $mode->value, $definitionPolicy->effectiveDate, $definitionPolicy->decisionAuthority, $definitionPolicy->sourceReference, $definitionPolicy->question, $definitionPolicy->generationImpact);
+            $policies['structural_hours_allocation'] = new RosterPolicyDefinition($definitionPolicy->identifier, $definitionPolicy->key, $definitionPolicy->revision, $definitionPolicy->status, $mode->value, $definitionPolicy->effectiveDate, $definitionPolicy->decisionAuthority, $definitionPolicy->sourceReference, $definitionPolicy->question, $definitionPolicy->generationImpact, configuration: $definitionPolicy->configuration);
             $comparisonPolicy = new ResolvedRosterPolicy($policy->profileIdentifier, $policy->revision, $policy->generatorName, $policy->generatorVersion, $policy->provenance, $policy->fingerprint, $policies);
             $comparisons[$mode->value] = $this->allocate->handle($input, $feasibility, $comparisonPolicy)->toArray();
         }
+        $proofs = [
+            'weekend_without_configuration' => $this->validateConfirmation->handle($policy->policies['weekend_distribution'], 'warning', [])->toArray(),
+            'weekend_configured' => $this->validateConfirmation->handle($policy->policies['weekend_distribution'], 'warning', ['maximum_weekend_difference' => 2, 'day_grouping' => 'combined'])->toArray(),
+            'consecutive_without_limit' => $this->validateConfirmation->handle($policy->policies['consecutive_day_limit'], 'hard_limit', [])->toArray(),
+            'employment_without_categories' => $this->validateConfirmation->handle($policy->policies['employment_type_eligibility'], 'explicit_availability_by_type', [])->toArray(),
+            'authorized_excess' => $this->validateConfirmation->handle($policy->policies['target_hours_cap'], 'target_with_authorized_excess', [])->toArray(),
+            'overtime' => $this->validateConfirmation->handle($policy->policies['target_hours_cap'], 'target_with_overtime', [])->toArray(),
+        ];
+        $options = collect($policy->policies)->flatMap->options;
 
-        return new PolicyCalibrationScenarioResult(['scenario' => ['identifier' => $definition->identifier, 'title' => $definition->title, 'passed' => true, 'rollback_by_default' => true], 'steps' => collect($definition->steps)->map(fn (array $step, int $index): array => ['sequence' => $index + 1, 'id' => $step['id'], 'title' => $step['title'], 'status' => 'passed'])->all(), 'policy' => $policy->toArray(), 'temporal_resolution' => ['evaluation_date' => $policy->evaluationContext?->evaluationDate->toDateString(), 'current_effective_count' => count($policy->policies), 'future_count' => count($policy->futurePolicies), 'expired_count' => count($policy->expiredPolicies), 'pending_department_decisions' => $policy->calibrationStatus()->toArray()['pending_department_decisions'], 'future_revisions_excluded_from_current_fingerprint' => true], 'comparison' => ['targets' => ['DOCTOR-A' => '160.00', 'DOCTOR-B' => '80.00'], 'structural_excess' => '24.00', ...$comparisons], 'impact_previews' => ['explicit_availability_required' => ['unspecified_assignments_before' => 179, 'unspecified_assignments_after' => 0, 'mutation' => false], 'proportional_to_target_hours' => ['equal' => ['DOCTOR-A' => '12.00', 'DOCTOR-B' => '12.00'], 'proportional' => ['DOCTOR-A' => '16.00', 'DOCTOR-B' => '8.00'], 'mutation' => false]], 'questionnaire_sections' => ['availability', 'required hours', 'employment categories', 'excess and shortage allocation', 'weekends', 'consecutive days and rest', 'public holidays', 'credited hours', 'preferences', 'overrides and approvals'], 'limitations' => ['Department choices remain provisional until explicit confirmation.', 'One standard-day duty and one assignment per doctor/date are modeled.', 'No advanced fatigue, overtime, optimizer, regeneration, or publication is implemented.']]);
+        return new PolicyCalibrationScenarioResult([
+            'scenario' => ['identifier' => $definition->identifier, 'title' => $definition->title, 'passed' => true, 'rollback_by_default' => true],
+            'steps' => collect($definition->steps)->map(fn (array $step, int $index): array => ['sequence' => $index + 1, 'id' => $step['id'], 'title' => $step['title'], 'status' => 'passed'])->all(),
+            'policy' => $policy->toArray(),
+            'confirmability' => ['registered_options' => $options->count(), 'confirmable_options' => $options->filter(fn ($option): bool => $option->supported && $option->confirmationRequired && $option->parameters === [])->count(), 'configuration_required_options' => $options->filter(fn ($option): bool => $option->supported && $option->confirmationRequired && $option->parameters !== [])->count(), 'unsupported_options' => $options->where('supported', false)->count(), 'discovery_only_topics' => ['public_holidays', 'variable_credited_hours'], 'proofs' => $proofs],
+            'temporal_resolution' => ['evaluation_date' => $policy->evaluationContext?->evaluationDate->toDateString(), 'current_effective_count' => count($policy->policies), 'future_count' => count($policy->futurePolicies), 'expired_count' => count($policy->expiredPolicies), 'pending_department_decisions' => $policy->calibrationStatus()->toArray()['pending_department_decisions'], 'future_revisions_excluded_from_current_fingerprint' => true, 'supersession_mode' => 'permanent', 'prior_revision_resumes_after_expiry' => false, 'post_expiry_result' => 'repository_provisional_fallback'],
+            'comparison' => ['targets' => ['DOCTOR-A' => '160.00', 'DOCTOR-B' => '80.00'], 'structural_excess' => '24.00', ...$comparisons],
+            'impact_previews' => ['explicit_availability_required' => ['unspecified_assignments_before' => 179, 'unspecified_assignments_after' => 0, 'mutation' => false], 'proportional_to_target_hours' => ['equal' => ['DOCTOR-A' => '12.00', 'DOCTOR-B' => '12.00'], 'proportional' => ['DOCTOR-A' => '16.00', 'DOCTOR-B' => '8.00'], 'mutation' => false]],
+            'questionnaire_sections' => ['availability', 'required hours', 'employment categories', 'structural allocation and rounding', 'weekends', 'consecutive assigned days', 'target hours', 'preferences', 'public holidays discovery', 'credited hours discovery', 'permanent supersession'],
+            'limitations' => ['Department choices remain provisional until explicit confirmation.', 'One standard-day duty and one assignment per doctor/date are modeled.', 'Public holidays, variable credited hours, on-call, overtime, temporary restoration, optimization, and publication are deferred.'],
+        ]);
     }
 }

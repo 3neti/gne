@@ -16,3 +16,5 @@ No current implementation assumption is a confirmed department policy unless its
 Statuses are `unconfirmed`, `provisional`, `confirmed`, `superseded`, and `rejected`. Effective dates and meeting references are recorded at confirmation. A new confirmation changes the resolved fingerprint; stored generation runs retain their original fingerprint.
 
 `future-effective` and `expired` are derived states. Pending department decisions count provisional fallbacks separately from blocking and non-blocking unresolved policies. Each registered YAML owns its complete allowed option list; requests reject anything outside it.
+
+Each option now explicitly declares support, typed parameters, fixed configuration, impacts, and deferred dependencies. The register contains 31 options: 10 immediately confirmable, 11 configuration-required, 2 unsupported, and 8 decision-pending. Public holidays and variable credited hours are separate discovery-only topics.

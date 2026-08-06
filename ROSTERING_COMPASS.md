@@ -41,3 +41,5 @@ Administrator-entered requests and availability are implemented as audited host 
 Department decision -> authored/calibrated policy -> `ResolvedRosterPolicy` -> generation, validation, quality, and explanations. Safe provisional choices remain visible. No optimizer, publication, or workbook inference is introduced.
 
 Resolution is date-aware and snapshot-safe. Future confirmation does not alter the current fingerprint; roster generation evaluates the period start; validation hydrates its persisted resolved-policy snapshot. Department controls use closed choices with explicit authority and effective dates.
+
+Typed parameter schemas belong to repository policy declarations. Runtime confirmation fails closed for missing, invalid, unresolved, or unsupported choices. New revisions permanently supersede predecessors, and post-expiry resolution never silently restores old policy.

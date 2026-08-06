@@ -9,7 +9,18 @@ question: What consecutive-day and rest limit should apply?
 generation_impact: quality
 provenance: Consecutive-day counts are informational; no fatigue rule is inferred.
 options:
-  - { value: informational, label: Information only, description: Report runs without enforcing a fatigue rule., impact: Current maximum run remains descriptive. }
-  - { value: warning, label: Warning threshold, description: Runs beyond a configured limit produce warnings., impact: Review is required. }
-  - { value: hard_limit, label: Hard limit, description: Runs beyond a configured limit are prohibited., impact: Violations become errors. }
-  - { value: unresolved, label: Leave unresolved, description: No consecutive-day rule is selected., impact: Fatigue compliance cannot be claimed., confirmation_required: false }
+  - { value: informational, label: Information only, description: Report assigned-calendar-day runs without enforcement; leave and unassigned days break a run., impact: Current maximum run remains descriptive., supported: true, parameters: [] }
+  - &limited
+    value: warning
+    label: Warning threshold
+    description: Runs beyond a configured assigned-calendar-day limit produce warnings; on-call and rest-after-run are deferred.
+    impact: Review is required.
+    supported: true
+    parameters:
+      - { key: maximum_consecutive_days, label: Maximum consecutive days, type: integer, minimum: 1, required: true }
+  - <<: *limited
+    value: hard_limit
+    label: Hard limit
+    description: Runs beyond a configured assigned-calendar-day limit are prohibited; on-call and rest-after-run are deferred.
+    impact: Violations become errors.
+  - { value: unresolved, label: Decision pending, description: No consecutive-day rule is selected., impact: Fatigue compliance cannot be claimed., confirmation_required: false, supported: true, parameters: [] }

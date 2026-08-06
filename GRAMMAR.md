@@ -135,3 +135,7 @@ The active duty vocabulary is only `standard_day`, `leave`, and `unavailable`. A
 - **Future-effective** and **Expired**: derived temporal states excluded from current effective identity.
 - **Pending Department Decision**: a provisional working assumption awaiting explicit confirmation.
 - **Closed Policy Option**: a repository-defined value, label, description, impact, and confirmation requirement; arbitrary values fail closed.
+- **Policy Parameter**: a repository-defined integer, boolean, enum, or enum-list input with explicit requiredness, values, and minimum where relevant.
+- **Policy Confirmability**: `confirmable`, `configuration_required`, `unsupported_in_current_release`, `unresolved`, or `invalid`.
+- **Permanent Supersession**: a new confirmed revision closes its predecessor; expiry does not restore the predecessor.
+- **Discovery-only Topic**: a future policy question with no confirmable runtime option, currently public holidays and variable credited hours.

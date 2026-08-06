@@ -7,3 +7,5 @@ For each key, the resolver chooses the highest supported confirmed revision whos
 Current diagnostics evaluate today. Generation preview and commit evaluate roster-period start. A generated run persists that date, the complete resolved snapshot, and the effective fingerprint. Validation hydrates that snapshot, preventing later policy decisions from rewriting historical meaning.
 
 The fingerprint is calculated only from effective definition content. It excludes current time, UI state, audit identity, unrelated history, and future revisions.
+
+Normalized typed configuration is effective definition content. Supersession is permanent: a successor closes its predecessor at start minus one day, and expiry never reactivates that predecessor. The repository provisional declaration then resolves unless a later confirmed revision applies.

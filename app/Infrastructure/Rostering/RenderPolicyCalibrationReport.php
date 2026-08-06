@@ -18,16 +18,18 @@ final readonly class RenderPolicyCalibrationReport
         $policies = $report['policy']['policies'];
         $pages = [
             'index.html' => ['Anaesthesia Generation Policy Calibration', $this->cover($report).$this->links()],
-            'current-effective-policy.html' => ['Decision Status and Current Effective Policy', $this->status($report).$this->policyTable($policies)],
-            'future-and-expired-policy.html' => ['Future and Expired Policy', $this->temporal($report)],
-            'department-questionnaire.html' => ['Department Decision Questionnaire', $this->questionnaireOverview($report)],
+            'confirmability-legend.html' => ['Confirmability Legend', $this->confirmabilityLegend($policies)],
+            'current-effective-policy.html' => ['Current Effective Policy', $this->status($report).$this->policyTable($policies)],
             'availability-decision.html' => ['Availability Decision', $this->decision($policies['unspecified_availability'], ['May a doctor with no accepted request be assigned?', 'Does employment type change the rule?'])],
             'required-hours-decision.html' => ['Required Hours Decisions', $this->decision($policies['required_hours_meaning'], ['What period does the target cover?', 'Does leave, education, a public holiday, overtime, or on-call change credited hours?'])],
             'employment-types-decision.html' => ['Employment Type Decisions', $this->decision($policies['employment_type_eligibility'], ['Set eligibility and target treatment separately for full-time, part-time, visiting, and locum doctors.'])],
             'structural-allocation-decision.html' => ['Structural Allocation Decision', $this->decision($policies['structural_hours_allocation'], ['Choose how unavoidable excess or shortage is allocated.']).$this->comparison($report)],
-            'weekend-and-rest-decision.html' => ['Weekend and Rest Decisions', '<div class="compact">'.$this->decision($policies['weekend_distribution'], ['Distinguish Saturdays, Sundays, public holidays, severity, and acceptable difference.']).$this->decision($policies['consecutive_day_limit'], ['Select a run limit and whether it is information, warning, or prohibition.']).'</div>'],
-            'holidays-and-credited-hours-decision.html' => ['Public Holidays and Credited Hours', $this->prompts(['Public holiday source and staffing rule', 'Standard credited hours per duty', 'Whether date, doctor, education, overtime, or on-call changes credit'])],
-            'preferences-and-overrides-decision.html' => ['Preferences and Overrides', '<div class="compact">'.$this->decision($policies['preference_strength'], ['Confirm whether preferred work and preferred off remain soft.']).$this->decision($policies['target_hours_cap'], ['Identify overrideable rules, approving authority, required reason, and publication effect.']).'</div>'],
+            'weekend-decision.html' => ['Weekend Distribution', $this->decision($policies['weekend_distribution'], ['Enter the maximum difference and choose combined or separate Saturday/Sunday evaluation. Public holidays are excluded.'])],
+            'consecutive-day-decision.html' => ['Consecutive Assigned Days', $this->decision($policies['consecutive_day_limit'], ['Enter the maximum assigned-calendar-day run. Leave and unassigned days break it; on-call and rest-after-run are deferred.'])],
+            'target-hours-decision.html' => ['Target Hours', $this->decision($policies['target_hours_cap'], ['Hard limits require tolerances. Authorized excess and overtime are not supported in this release.'])],
+            'preferences-decision.html' => ['Preferences', $this->decision($policies['preference_strength'], ['Preferred-off prohibition is a hard eligibility exclusion; override support is deferred.'])],
+            'holidays-and-credited-hours-decision.html' => ['Public Holidays and Credited Hours — Discovery Only', '<div class="notice"><b>Discovery topic only · Not supported in this release</b><p>These decisions cannot be confirmed because the roster supports standard-day assignments and has no authoritative holiday source.</p></div>'.$this->prompts(['Future authoritative public-holiday source', 'Future varying duty-credit model'])],
+            'permanent-supersession.html' => ['Permanent Supersession', $this->permanentSupersession($report)],
             'impact-comparison.html' => ['No-Mutation Impact Comparison', $this->impact($report)],
             'confirmation-summary.html' => ['Decision Authority and Confirmation Record', $this->decisionRecord($report)],
         ];
@@ -87,9 +89,31 @@ final readonly class RenderPolicyCalibrationReport
     /** @param array<string, mixed> $policy @param list<string> $prompts */
     private function decision(array $policy, array $prompts): string
     {
-        $options = collect($policy['options'])->map(fn (array $option): string => '<div class="option"><span class="checkbox">□</span><div><b>'.$this->e($option['label']).'</b><p>'.$this->e($option['description']).'</p><p class="impact"><b>Operational impact:</b> '.$this->e($option['impact']).'</p></div></div>')->implode('');
+        $options = collect($policy['options'])->map(function (array $option): string {
+            $status = ! $option['supported'] ? 'Not supported in this release' : (! $option['confirmation_required'] ? 'Decision pending' : ($option['parameters'] === [] ? 'Confirmable' : 'Configuration required'));
+            $parameters = collect($option['parameters'])->map(fn (array $parameter): string => $parameter['type'] === 'enum_list'
+                ? '<p class="parameter">'.$this->e($parameter['label']).': '.implode(' &nbsp; ', array_map(fn (string $value): string => '□ '.$this->e($this->human($value)), $parameter['values'])).'</p>'
+                : '<p class="parameter">'.$this->e($parameter['label']).': ____________________ <small>('.$this->e($parameter['type']).($parameter['minimum'] !== null ? ', minimum '.$parameter['minimum'] : '').($parameter['values'] !== [] ? ': '.implode(' / ', array_map($this->e(...), $parameter['values'])) : '').')</small></p>')->implode('');
+            $dependencies = $option['unsupported_dependencies'] === [] ? '' : '<p class="unsupported">Requires: '.$this->e(implode(', ', $option['unsupported_dependencies'])).'</p>';
+
+            return '<div class="option '.(! $option['supported'] ? 'disabled' : '').'"><span class="checkbox">□</span><div><b>'.$this->e($option['label']).'</b> · <span class="badge">'.$this->e($status).'</span><p>'.$this->e($option['description']).'</p><p class="impact"><b>Operational impact:</b> '.$this->e($option['impact']).'</p>'.$parameters.$dependencies.'</div></div>';
+        })->implode('');
 
         return '<div class="current"><b>Question</b><p>'.$this->e($policy['question']).'</p><b>Current provisional choice</b><p>'.$this->e($this->human($policy['selected_value'])).'</p></div>'.$this->prompts($prompts).'<h2>Registered candidate choices</h2><div class="options">'.$options.'</div>'.$this->decisionLines();
+    }
+
+    /** @param array<string, mixed> $policies */
+    private function confirmabilityLegend(array $policies): string
+    {
+        $options = collect($policies)->flatMap(fn (array $policy): array => $policy['options']);
+
+        return '<div class="stats"><div><b>'.$options->filter(fn (array $option): bool => $option['supported'] && $option['confirmation_required'] && $option['parameters'] === [])->count().'</b><span>Confirmable now</span></div><div><b>'.$options->filter(fn (array $option): bool => $option['supported'] && $option['confirmation_required'] && $option['parameters'] !== [])->count().'</b><span>Configuration required</span></div><div><b>'.$options->where('supported', false)->count().'</b><span>Not supported</span></div><div><b>2</b><span>Discovery-only topics</span></div><div><b>8</b><span>Runtime policies</span></div></div><div class="notice"><b>Operational completeness</b><p>A registered choice is confirmable only when it is supported and every typed parameter is supplied. Unknown parameters fail closed.</p></div>';
+    }
+
+    /** @param array<string, mixed> $report */
+    private function permanentSupersession(array $report): string
+    {
+        return '<div class="notice"><b>Option A — permanent supersession</b><p>A new confirmed revision closes the earlier revision on the day before its effective date. If the new revision expires, the earlier revision does not resume. The repository provisional fallback applies unless another confirmed revision is scheduled.</p></div><ol><li>Revision 1 begins 2026-01-01.</li><li>Revision 2 begins 2026-09-01 and expires 2026-09-30.</li><li>Revision 1 closes on 2026-08-31.</li><li>After September, use the provisional fallback—not Revision 1.</li></ol><p><b>Operator warning:</b> schedule the next revision when confirmed coverage must continue.</p><p class="technical">Current fingerprint: '.$this->e($report['policy']['fingerprint']).'</p>';
     }
 
     /** @param list<string> $prompts */

@@ -9,8 +9,30 @@ question: What does required hours mean, and which duties reduce or count toward
 generation_impact: quality
 provenance: Treated as a roster-period planning target pending confirmation.
 options:
-  - { value: roster_period_target, label: Roster-period target, description: Hours are a planning target for the complete roster period., impact: Supports target balancing without a hard cap. }
-  - { value: minimum_expected_hours, label: Minimum expected hours, description: The value is a minimum obligation., impact: Below-target hours require attention. }
-  - { value: hard_maximum, label: Hard maximum, description: Assignments must not exceed the value., impact: Excess hours become an error. }
-  - { value: planning_reference, label: Planning reference only, description: The value informs planning but is not enforced., impact: Hours remain descriptive. }
-  - { value: unresolved, label: Leave unresolved, description: Department meaning is not yet selected., impact: Quality interpretation remains limited., confirmation_required: false }
+  - &configured
+    value: roster_period_target
+    label: Roster-period target
+    description: Hours are a planning target for the complete roster period; on-call and overtime counting are unsupported.
+    impact: Supports target balancing without a hard cap.
+    supported: true
+    fixed_configuration: { period_basis: roster_period }
+    parameters:
+      - { key: leave_reduces_target, label: Leave reduces target, type: boolean, required: true }
+      - { key: education_counts, label: Education counts toward target, type: boolean, required: true }
+      - { key: public_holiday_reduces_target, label: Public holiday reduces target, type: boolean, required: true }
+  - <<: *configured
+    value: minimum_expected_hours
+    label: Minimum expected hours
+    description: The value is a minimum obligation for the roster period; on-call and overtime counting are unsupported.
+    impact: Below-target hours require attention.
+  - <<: *configured
+    value: hard_maximum
+    label: Hard maximum
+    description: Assignments must not exceed the roster-period value; on-call and overtime counting are unsupported.
+    impact: Excess hours become an error.
+  - <<: *configured
+    value: planning_reference
+    label: Planning reference only
+    description: The roster-period value informs planning but is not enforced; on-call and overtime counting are unsupported.
+    impact: Hours remain descriptive.
+  - { value: unresolved, label: Decision pending, description: Department meaning is not yet selected., impact: Quality interpretation remains limited., confirmation_required: false, supported: true, parameters: [] }

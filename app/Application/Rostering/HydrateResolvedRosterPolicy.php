@@ -7,6 +7,7 @@ use App\Domain\Rostering\RosterPolicyDefinition;
 use App\Domain\Rostering\RosterPolicyEvaluationContext;
 use App\Domain\Rostering\RosterPolicyEvaluationPurpose;
 use App\Domain\Rostering\RosterPolicyOption;
+use App\Domain\Rostering\RosterPolicyParameterDefinition;
 use App\Domain\Rostering\RosterPolicyStatus;
 use Carbon\CarbonImmutable;
 
@@ -24,13 +25,11 @@ final readonly class HydrateResolvedRosterPolicy
             )
             : null;
         $policies = collect($snapshot['policies'] ?? [])->mapWithKeys(function (array $policy, string $key): array {
-            $options = array_map(fn (array $option): RosterPolicyOption => new RosterPolicyOption(
-                (string) $option['value'],
-                (string) $option['label'],
-                (string) $option['description'],
-                (string) $option['impact'],
-                (bool) ($option['confirmation_required'] ?? true),
-            ), $policy['options'] ?? []);
+            $options = array_map(function (array $option): RosterPolicyOption {
+                $parameters = array_map(fn (array $parameter): RosterPolicyParameterDefinition => new RosterPolicyParameterDefinition((string) $parameter['key'], (string) $parameter['label'], (string) $parameter['type'], (bool) ($parameter['required'] ?? true), isset($parameter['minimum']) ? (int) $parameter['minimum'] : null, array_values($parameter['values'] ?? []), (string) ($parameter['description'] ?? '')), $option['parameters'] ?? []);
+
+                return new RosterPolicyOption((string) $option['value'], (string) $option['label'], (string) $option['description'], (string) ($option['generation_impact'] ?? $option['impact'] ?? ''), (bool) ($option['confirmation_required'] ?? true), (bool) ($option['supported'] ?? true), $parameters, array_values($option['unsupported_dependencies'] ?? []), $option['fixed_configuration'] ?? [], (string) ($option['validation_impact'] ?? ''), (string) ($option['quality_impact'] ?? ''));
+            }, $policy['options'] ?? []);
 
             return [$key => new RosterPolicyDefinition(
                 (string) $policy['identifier'],
@@ -47,6 +46,7 @@ final readonly class HydrateResolvedRosterPolicy
                 (string) ($policy['effective_state'] ?? 'current'),
                 (bool) ($policy['applicable'] ?? true),
                 $options,
+                $policy['configuration'] ?? [],
             )];
         })->all();
 

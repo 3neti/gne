@@ -62,6 +62,7 @@ it('commits one atomic generation run revision and audit then transitions lifecy
         ->and($result['generation_run']->policy_evaluation_date->toDateString())->toBe('2026-09-01')
         ->and($result['generation_run']->policy_snapshot['fingerprint'])->toBe($result['generation_run']->policy_fingerprint)
         ->and($result['generation_run']->policy_snapshot['evaluation_context']['purpose'])->toBe('generation_commit')
+        ->and($result['generation_run']->policy_snapshot['policies']['structural_hours_allocation']['configuration'])->toMatchArray(['rounding_unit' => 'hundredth_hour', 'remainder_distribution' => 'largest_fractional_remainder_then_stable_doctor_identity'])
         ->and(RosterRevision::count())->toBe(1)
         ->and($result['revision']->changes)->toHaveCount(2)
         ->and(RosterAuditEntry::where('action', 'roster_generation.completed')->count())->toBe(1)

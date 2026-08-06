@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Application\Rostering\ConfirmRosterPolicyCalibration;
 use App\Application\Rostering\PreviewRosterPolicyImpact;
 use App\Application\Rostering\ResolveRosterPolicy;
+use App\Domain\Rostering\InvalidRosterPolicyConfirmation;
 use App\Http\Requests\ConfirmRosterPolicyCalibrationRequest;
 use App\Http\Requests\PreviewRosterPolicyImpactRequest;
 use App\Models\RosterPolicyCalibration;
@@ -25,7 +26,11 @@ class RosterPolicyCalibrationController extends Controller
 
     public function store(ConfirmRosterPolicyCalibrationRequest $request, ConfirmRosterPolicyCalibration $confirm): RedirectResponse
     {
-        $record = $confirm->handle($request->user(), $request->validated());
+        try {
+            $record = $confirm->handle($request->user(), $request->validated());
+        } catch (InvalidRosterPolicyConfirmation $exception) {
+            return back()->withErrors(['configuration' => $exception->getMessage()])->withInput();
+        }
 
         return back()->with('success', "Confirmed {$record->policy_key} revision {$record->revision}.");
     }
@@ -34,6 +39,6 @@ class RosterPolicyCalibrationController extends Controller
     {
         $data = $request->validated();
 
-        return back()->with('policy_impact_preview', $preview->handle($data['policy_key'], $data['candidate_value'])->toArray());
+        return back()->with('policy_impact_preview', $preview->handle($data['policy_key'], $data['candidate_value'], $data['configuration'] ?? [])->toArray());
     }
 }

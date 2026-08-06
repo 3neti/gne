@@ -31,13 +31,21 @@ final readonly class AllocateStructuralVariance
         if ($weightTotal <= 0) {
             return new StructuralVarianceAllocationResult('unsupported_inputs', [], $definition?->identifier ?? 'unsupported', 'Target-hour weights must total more than zero.');
         }
-        $remainingCents = (int) round($variance * 100);
-        $allocations = [];
-        foreach ($doctors as $index => $doctor) {
-            $cents = $index === $doctors->count() - 1 ? $remainingCents : (int) round(($variance * 100) * ($weights[$doctor['identifier']] / $weightTotal));
-            $allocations[$doctor['identifier']] = number_format($cents / 100, 2, '.', '');
-            $remainingCents -= $cents;
+        $totalCents = (int) round($variance * 100);
+        $ranked = $doctors->map(function (array $doctor) use ($totalCents, $weights, $weightTotal): array {
+            $identifier = (string) $doctor['identifier'];
+            $exact = $totalCents * ($weights[$identifier] / $weightTotal);
+            $whole = $totalCents >= 0 ? (int) floor($exact) : (int) ceil($exact);
+
+            return ['identifier' => $identifier, 'cents' => $whole, 'fraction' => abs($exact - $whole)];
+        })->sort(fn (array $left, array $right): int => $right['fraction'] <=> $left['fraction'] ?: $left['identifier'] <=> $right['identifier'])->values();
+        $rankedAllocations = $ranked->all();
+        $remainingCents = $totalCents - (int) $ranked->sum('cents');
+        $direction = $remainingCents <=> 0;
+        for ($index = 0; $index < abs($remainingCents); $index++) {
+            $rankedAllocations[$index % count($rankedAllocations)]['cents'] += $direction;
         }
+        $allocations = collect($rankedAllocations)->sortBy('identifier')->mapWithKeys(fn (array $allocation): array => [$allocation['identifier'] => number_format($allocation['cents'] / 100, 2, '.', '')])->all();
 
         return new StructuralVarianceAllocationResult('resolved', $allocations, $definition?->identifier ?? 'configured', 'Extra staffing hours were distributed under '.$policy->structuralHoursAllocation()->value.'.');
     }

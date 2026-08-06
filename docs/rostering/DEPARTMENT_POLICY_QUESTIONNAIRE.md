@@ -66,3 +66,5 @@ Meeting date: __________ Decision authority: __________ Evidence reference: ____
 ## Decision record requirements
 
 For every policy, select one registered option and record operational impact, notes, authority name and designation, inclusive effective start, optional end, and evidence or meeting reference. “Other” requires a reviewed repository grammar revision; it is not an arbitrary operational value. The generated pack includes separate choice pages and a final acknowledgment page.
+
+Complete every parameter printed beneath the selected option. Unsupported choices cannot be selected. A bounded new revision permanently supersedes the earlier revision; when it expires the older choice does not resume, so schedule continued confirmed coverage deliberately.

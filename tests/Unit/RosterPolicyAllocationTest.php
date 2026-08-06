@@ -36,6 +36,16 @@ test('proportional structural allocation follows target hours and reconciles', f
     expect($result->allocations)->toBe(['A' => '16.00', 'B' => '8.00'])->and(array_sum(array_map('floatval', $result->allocations)))->toBe(24.0);
 });
 
+test('structural rounding uses largest fractional remainder then stable doctor identity', function () {
+    $input = new RosterGenerationInput('PERIOD', 'ready_for_generation', [], [['identifier' => 'DOCTOR-B', 'name' => 'B', 'required_hours' => '1', 'standard_daily_hours' => '8'], ['identifier' => 'DOCTOR-A', 'name' => 'A', 'required_hours' => '1', 'standard_daily_hours' => '8'], ['identifier' => 'DOCTOR-C', 'name' => 'C', 'required_hours' => '1', 'standard_daily_hours' => '8']], [], 0, 'sha256:input');
+    $feasibility = new RosterGenerationFeasibility('PERIOD', 1, '0.01', '0.01', '0.00', '0.01', 'staffing_demand_exceeds_targets', '0.01', '0.00', 3, [], 'One cent must reconcile.');
+
+    $result = (new AllocateStructuralVariance)->handle($input, $feasibility, allocationPolicy('proportional_to_target_hours'));
+
+    expect($result->allocations)->toBe(['DOCTOR-A' => '0.01', 'DOCTOR-B' => '0.00', 'DOCTOR-C' => '0.00'])
+        ->and(array_sum(array_map('floatval', $result->allocations)))->toBe(0.01);
+});
+
 test('unresolved structural allocation does not invent individual fairness', function () {
     $result = (new AllocateStructuralVariance)->handle(heterogeneousInput(), excessFeasibility(), allocationPolicy('unresolved'));
 

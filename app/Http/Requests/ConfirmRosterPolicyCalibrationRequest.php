@@ -32,6 +32,8 @@ class ConfirmRosterPolicyCalibrationRequest extends FormRequest
         return [
             'policy_key' => ['required', Rule::in($knownKeys)],
             'selected_value' => ['required', 'string', Rule::in($allowedValues)],
+            'configuration' => ['sometimes', 'array'],
+            'configuration.*' => ['present'],
             'effective_from' => ['required', 'date'],
             'effective_until' => ['nullable', 'date', 'after_or_equal:effective_from'],
             'decision_authority' => ['required', 'string', 'max:255'],

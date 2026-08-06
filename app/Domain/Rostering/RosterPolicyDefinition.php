@@ -35,6 +35,7 @@ final readonly class RosterPolicyDefinition
         public string $effectiveState = 'provisional',
         public bool $applicable = true,
         /** @var list<RosterPolicyOption> */ public array $options = [],
+        /** @var array<string, mixed> */ public array $configuration = [],
     ) {}
 
     public function isProvisional(): bool
@@ -60,6 +61,7 @@ final readonly class RosterPolicyDefinition
             'provisional' => $this->isProvisional(),
             'question' => $this->question,
             'generation_impact' => $this->generationImpact,
+            'configuration' => $this->configuration,
             'options' => array_map(fn (RosterPolicyOption $option): array => $option->toArray(), $this->options),
         ];
     }
