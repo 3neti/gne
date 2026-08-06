@@ -1,0 +1,43 @@
+#!/usr/bin/env php
+<?php
+
+declare(strict_types=1);
+
+use App\Quality\PhpStanNoRegressionVerifier;
+
+require dirname(__DIR__).'/vendor/autoload.php';
+
+$root = dirname(__DIR__);
+$command = [PHP_BINARY, $root.'/vendor/phpstan/phpstan/phpstan.phar', 'analyse', '--no-progress', '--debug', '-v', '--error-format=json', '--memory-limit=1G'];
+$descriptorSpec = [1 => ['pipe', 'w'], 2 => ['pipe', 'w']];
+$process = proc_open($command, $descriptorSpec, $pipes, $root);
+if (! is_resource($process)) {
+    fwrite(STDERR, "Unable to start PHPStan.\n");
+    exit(2);
+}
+$output = stream_get_contents($pipes[1]).stream_get_contents($pipes[2]);
+fclose($pipes[1]);
+fclose($pipes[2]);
+proc_close($process);
+$jsonStart = strpos($output, '{"totals"');
+if ($jsonStart !== false) {
+    $analysis = json_decode(substr($output, $jsonStart), true, 512, JSON_THROW_ON_ERROR);
+} else {
+    $jsonStart = strpos($output, '{"tool":"phpstan"');
+    if ($jsonStart === false) {
+        fwrite(STDERR, "PHPStan did not produce a JSON report.\n");
+        exit(2);
+    }
+    $toolReport = json_decode(substr($output, $jsonStart), true, 512, JSON_THROW_ON_ERROR);
+    $files = [];
+    foreach ($toolReport['error_details'] ?? [] as $path => $messages) {
+        $files[$path] = ['messages' => $messages];
+    }
+    $analysis = ['totals' => ['errors' => 0, 'file_errors' => (int) ($toolReport['errors'] ?? 0)], 'files' => $files];
+}
+$baseline = json_decode(file_get_contents($root.'/resources/quality/phpstan-reviewed-baseline.json'), true, 512, JSON_THROW_ON_ERROR);
+$newFilesOutput = shell_exec('git -C '.escapeshellarg($root).' diff --diff-filter=A --name-only '.escapeshellarg($baseline['reviewed_commit']).' -- app') ?? '';
+$newFiles = array_values(array_filter(explode("\n", trim($newFilesOutput))));
+$result = (new PhpStanNoRegressionVerifier)->verify($analysis, $baseline, $newFiles);
+echo json_encode($result, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES | JSON_THROW_ON_ERROR)."\n";
+exit($result['accepted'] ? 0 : 1);

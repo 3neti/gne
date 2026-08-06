@@ -41,3 +41,8 @@ Implemented: eight-policy register, department questionnaire, closed resolved va
 Effective-date closure implemented: explicit purpose/date contexts; current/future/expired/rejected/superseded handling; highest applicable revision; effective-set-only fingerprints; atomic supersession and overlap rejection; repository-defined choice cards; authority and effective-window confirmation; no-mutation impact preview; pending-decision count; generated-run policy snapshots; and a 13-page decision pack. All eight canonical choices remain provisional until the Anaesthesia Department enters real decisions.
 
 Typed confirmability closure implemented: 31 registered options with explicit support and parameter metadata; typed normalization; application-service enforcement; disabled unsupported choices; dynamic configuration controls; parameter-aware previews and fingerprints; deterministic largest-remainder rounding; permanent supersession with provisional post-expiry fallback; fourteen scenario proofs; and a fifteen-page decision pack. Real department decisions remain pending.
+# Resolved policy coherence and enforcement readiness
+
+Implemented: orthogonal hours grammar, 9/3 compatibility matrix, structured policy findings, deterministic runtime coverage, read-only period feasibility, enforcement fingerprint, explicit operational selection/fallback, readiness UI, 14-proof policy scenario, and readiness/compatibility decision-pack pages.
+
+Deferred: calibrated hard-limit enforcement, holiday source, variable duty credits, overtime/on-call, optimizer, publication, and production department decisions.

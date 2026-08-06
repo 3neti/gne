@@ -12,6 +12,11 @@ final readonly class RosterPolicyConfirmationValidation
         return $this->confirmability === RosterPolicyConfirmability::Confirmable;
     }
 
+    public function isRecordable(): bool
+    {
+        return in_array($this->confirmability, [RosterPolicyConfirmability::Confirmable, RosterPolicyConfirmability::UnsupportedInCurrentRelease], true);
+    }
+
     /** @return array<string, mixed> */
     public function toArray(): array
     {

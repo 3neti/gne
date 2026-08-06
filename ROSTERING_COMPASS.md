@@ -43,3 +43,6 @@ Department decision -> authored/calibrated policy -> `ResolvedRosterPolicy` -> g
 Resolution is date-aware and snapshot-safe. Future confirmation does not alter the current fingerprint; roster generation evaluates the period start; validation hydrates its persisted resolved-policy snapshot. Department controls use closed choices with explicit authority and effective dates.
 
 Typed parameter schemas belong to repository policy declarations. Runtime confirmation fails closed for missing, invalid, unresolved, or unsupported choices. New revisions permanently supersede predecessors, and post-expiry resolution never silently restores old policy.
+# Enforcement-readiness invariant
+
+Generation, validation, and quality analysis consume one explicitly selected operational policy. A confirmed but conflicting, unsupported, incomplete, or period-infeasible set remains visible and non-operational. The repository fallback is named; it is never hidden.

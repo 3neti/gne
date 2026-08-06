@@ -9,11 +9,11 @@ final readonly class RosterPolicyDefinition
     {
         return match ($key) {
             'unspecified_availability' => ['eligible_unless_blocked', 'explicit_availability_required', 'unresolved'],
-            'required_hours_meaning' => ['roster_period_target', 'minimum_expected_hours', 'hard_maximum', 'planning_reference', 'unresolved'],
+            'required_hours_meaning' => ['roster_period_clinical_duty_target', 'roster_period_minimum_obligation', 'planning_reference_only', 'unresolved'],
             'structural_hours_allocation' => ['equal_per_eligible_doctor', 'proportional_to_target_hours', 'unresolved'],
             'weekend_distribution' => ['informational', 'warning', 'mandatory', 'unresolved'],
             'consecutive_day_limit' => ['informational', 'warning', 'hard_limit', 'unresolved'],
-            'target_hours_cap' => ['soft_target', 'hard_maximum', 'hard_minimum', 'target_with_authorized_excess', 'target_with_overtime', 'unresolved'],
+            'target_hours_enforcement' => ['informational', 'soft_warning', 'hard_minimum', 'hard_maximum', 'authorized_excess', 'overtime_based', 'unresolved'],
             'employment_type_eligibility' => ['all_active_types_eligible', 'explicit_availability_by_type', 'unresolved'],
             'preference_strength' => ['soft_preference', 'preferred_off_prohibition', 'unresolved'],
             default => throw new \DomainException("Unknown roster policy key {$key}."),

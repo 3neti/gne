@@ -26,7 +26,7 @@ class ConfirmRosterPolicyCalibrationRequest extends FormRequest
     public function rules(): array
     {
         $policyKey = (string) $this->input('policy_key');
-        $knownKeys = ['unspecified_availability', 'required_hours_meaning', 'structural_hours_allocation', 'weekend_distribution', 'consecutive_day_limit', 'target_hours_cap', 'employment_type_eligibility', 'preference_strength'];
+        $knownKeys = ['unspecified_availability', 'required_hours_meaning', 'structural_hours_allocation', 'weekend_distribution', 'consecutive_day_limit', 'target_hours_enforcement', 'employment_type_eligibility', 'preference_strength'];
         $allowedValues = in_array($policyKey, $knownKeys, true) ? RosterPolicyDefinition::allowedValues($policyKey) : [];
 
         return [

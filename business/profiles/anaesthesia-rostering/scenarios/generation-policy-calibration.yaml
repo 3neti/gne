@@ -1,20 +1,20 @@
 identifier: ANAESTHESIA-GENERATION-POLICY-CALIBRATION
 title: Anaesthesia generation policy calibration
-description: Demonstrates typed confirmability, unsupported choices, permanent supersession, provisional fallback, deterministic allocation, and rollback-by-default reporting.
+description: Demonstrates complete policy-set coherence, enforcement readiness, period feasibility, explicit operational fallback, and rollback-by-default reporting.
 profile: PROFILE-ANAESTHESIA-ROSTERING
 lifecycle: LIFECYCLE-ANAESTHESIA-ROSTER-PERIOD
 steps:
-  - { id: weekend-incomplete, title: Prove a weekend threshold without values is not confirmable, operation: verify_option_registry }
-  - { id: weekend-complete, title: Prove a configured weekend threshold is confirmable, operation: verify_option_registry }
-  - { id: consecutive-incomplete, title: Reject a consecutive hard limit without a numeric limit, operation: verify_option_registry }
-  - { id: employment-categories, title: Require selected employment categories, operation: verify_option_registry }
-  - { id: authorized-excess, title: Report authorized excess as unsupported, operation: verify_option_registry }
-  - { id: overtime, title: Report overtime as unsupported, operation: verify_option_registry }
-  - { id: structural-determinism, title: Prove proportional rounding is deterministic and reconciled, operation: compare_structural_allocation }
-  - { id: unsupported-no-effect, title: Prove unsupported choices do not alter effective policy, operation: verify_policy_provenance }
-  - { id: configured-fingerprint, title: Prove confirmed configuration changes the fingerprint, operation: verify_policy_provenance }
-  - { id: permanent-supersession, title: Prove a new revision permanently closes its predecessor, operation: verify_effective_window }
-  - { id: no-reactivation, title: Prove an expired new revision does not reactivate its predecessor, operation: verify_effective_window }
-  - { id: provisional-fallback, title: Prove repository fallback is provisional after expiry, operation: verify_effective_window }
-  - { id: discovery-only, title: Prove holiday and credited-hours questions are discovery only, operation: verify_option_registry }
+  - { id: valid-hours, title: Prove a valid orthogonal required-hours combination, operation: verify_policy_coherence }
+  - { id: conflicting-hours, title: Reject a contradictory required-hours combination, operation: verify_policy_coherence }
+  - { id: holiday-isolation, title: Exclude holiday discovery metadata from enforcement identity, operation: verify_policy_provenance }
+  - { id: employment-scope, title: Prove employment policy concerns availability eligibility only, operation: verify_policy_coherence }
+  - { id: explicit-availability, title: Prove explicit availability can make a period infeasible, operation: evaluate_period }
+  - { id: hard-maximum, title: Prove hard maximum hours can make a period infeasible, operation: evaluate_period }
+  - { id: preferred-off, title: Prove preferred-off prohibition reduces eligibility, operation: evaluate_period }
+  - { id: hard-consecutive, title: Report unsupported hard consecutive-day enforcement, operation: verify_runtime_coverage }
+  - { id: coverage, title: Prove enforcement coverage is deterministic, operation: verify_runtime_coverage }
+  - { id: ready, title: Prove a coherent supported policy set is ready for enforcement, operation: verify_policy_coherence }
+  - { id: confirmed-unsupported, title: Keep a confirmed unsupported set non-operational, operation: verify_activation }
+  - { id: no-mutation, title: Prove candidate preview does not mutate policy or roster state, operation: verify_preview }
+  - { id: provisional-fallback, title: Make operational fallback explicit, operation: verify_activation }
   - { id: rollback, title: Preserve rollback-by-default scenario behavior, operation: verify_rollback }

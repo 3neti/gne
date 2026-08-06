@@ -20,8 +20,18 @@ final readonly class ResolveRosterPolicy
 
     public function handle(?RosterPolicyEvaluationContext $context = null): ResolvedRosterPolicy
     {
+        return $this->resolve($context, true);
+    }
+
+    public function repositoryFallback(?RosterPolicyEvaluationContext $context = null): ResolvedRosterPolicy
+    {
+        return $this->resolve($context, false);
+    }
+
+    private function resolve(?RosterPolicyEvaluationContext $context, bool $includeCalibrations): ResolvedRosterPolicy
+    {
         $context ??= RosterPolicyEvaluationContext::current();
-        $calibrationFiles = ['unspecified-availability.yaml', 'required-hours-meaning.yaml', 'structural-hours-allocation.yaml', 'weekend-distribution.yaml', 'consecutive-day-limit.yaml', 'target-hours-cap.yaml', 'employment-type-eligibility.yaml', 'preference-strength.yaml'];
+        $calibrationFiles = ['unspecified-availability.yaml', 'required-hours-meaning.yaml', 'structural-hours-allocation.yaml', 'weekend-distribution.yaml', 'consecutive-day-limit.yaml', 'target-hours-enforcement.yaml', 'employment-type-eligibility.yaml', 'preference-strength.yaml'];
         $paths = collect($calibrationFiles)->map(fn (string $file): string => "business/profiles/anaesthesia-rostering/policies/{$file}")->all();
         $definitions = collect($paths)->mapWithKeys(function (string $path): array {
             $data = Yaml::parseFile(base_path($path));
@@ -52,7 +62,7 @@ final readonly class ResolveRosterPolicy
         });
         $future = [];
         $expired = [];
-        if (RosterPolicyCalibration::query()->exists()) {
+        if ($includeCalibrations && RosterPolicyCalibration::query()->exists()) {
             $records = RosterPolicyCalibration::query()->with('confirmedBy')->orderBy('policy_key')->orderByDesc('revision')->get();
             foreach ($records as $record) {
                 if ($record->status === RosterPolicyStatus::Confirmed && $record->effective_from?->isAfter($context->evaluationDate)) {
@@ -70,7 +80,7 @@ final readonly class ResolveRosterPolicy
                 if (! in_array($override->selected_value, RosterPolicyDefinition::allowedValues($override->policy_key), true)) {
                     throw new \DomainException("Roster policy {$override->policy_key} contains an unsupported calibrated value.");
                 }
-                $validation = $this->validateConfirmation->confirmable($base, $override->selected_value, $override->configuration ?? [], $override->effective_from?->toDateString(), $override->effective_until?->toDateString());
+                $validation = $this->validateConfirmation->recordable($base, $override->selected_value, $override->configuration ?? [], $override->effective_from?->toDateString(), $override->effective_until?->toDateString());
                 $definitions[$override->policy_key] = new RosterPolicyDefinition($base->identifier, $base->key, $override->revision, $override->status, $override->selected_value, $override->effective_from?->toDateString(), $override->decision_authority ?? $override->confirmedBy?->name ?? 'department calibration record', $override->source_reference ?? $base->sourceReference, $base->question, $base->generationImpact, $override->effective_until?->toDateString(), 'current', true, $base->options, $validation->configuration);
             }
         }

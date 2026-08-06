@@ -34,3 +34,6 @@ For requests and availability, accepted leave and unavailability are hard blocks
 Roster policy resolution always receives an evaluation context. A confirmed revision applies only when its inclusive effective window contains the evaluation date. The current screen uses today; generation and preview use roster-period start; generated-run validation reuses the stored snapshot. Confirmation requires a registered option, authority, source reference, notes, and valid dates. An earlier window is atomically closed when a later decision supersedes it; ambiguous overlaps are rejected.
 
 Confirmation also requires every typed option parameter and current-release support. Configuration is normalized, fingerprinted, stored in immutable decision history, and retained in generation snapshots. Permanent supersession means an expired successor falls back to repository policy rather than restoring its predecessor.
+# Policy coherence closure
+
+Required-hours meaning defines the authored number; target-hours enforcement defines its operational treatment. The supported set is assessed as a whole and against the selected period before activation. Public-holiday treatment remains discovery-only. Employment-type policy is limited to availability eligibility.

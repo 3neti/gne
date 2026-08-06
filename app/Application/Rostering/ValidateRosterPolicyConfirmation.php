@@ -79,6 +79,17 @@ final readonly class ValidateRosterPolicyConfirmation
         return $validation;
     }
 
+    /** @param array<string, mixed> $configuration */
+    public function recordable(RosterPolicyDefinition $definition, string $selectedValue, array $configuration, ?string $effectiveFrom = null, ?string $effectiveUntil = null): RosterPolicyConfirmationValidation
+    {
+        $validation = $this->handle($definition, $selectedValue, $configuration, $effectiveFrom, $effectiveUntil);
+        if (! $validation->isRecordable()) {
+            throw new InvalidRosterPolicyConfirmation($validation);
+        }
+
+        return $validation;
+    }
+
     private function normalize(RosterPolicyParameterDefinition $parameter, mixed $value): mixed
     {
         return match ($parameter->type) {

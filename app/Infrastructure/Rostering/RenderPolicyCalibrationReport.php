@@ -20,13 +20,15 @@ final readonly class RenderPolicyCalibrationReport
             'index.html' => ['Anaesthesia Generation Policy Calibration', $this->cover($report).$this->links()],
             'confirmability-legend.html' => ['Confirmability Legend', $this->confirmabilityLegend($policies)],
             'current-effective-policy.html' => ['Current Effective Policy', $this->status($report).$this->policyTable($policies)],
+            'policy-compatibility.html' => ['Required Hours Compatibility', $this->compatibility($report)],
+            'enforcement-readiness.html' => ['Enforcement Readiness', $this->readiness($report)],
             'availability-decision.html' => ['Availability Decision', $this->decision($policies['unspecified_availability'], ['May a doctor with no accepted request be assigned?', 'Does employment type change the rule?'])],
-            'required-hours-decision.html' => ['Required Hours Decisions', $this->decision($policies['required_hours_meaning'], ['What period does the target cover?', 'Does leave, education, a public holiday, overtime, or on-call change credited hours?'])],
-            'employment-types-decision.html' => ['Employment Type Decisions', $this->decision($policies['employment_type_eligibility'], ['Set eligibility and target treatment separately for full-time, part-time, visiting, and locum doctors.'])],
+            'required-hours-decision.html' => ['Required Hours Meaning', $this->decision($policies['required_hours_meaning'], ['What does the authored number represent?', 'Do leave and education count? Enforcement is selected on a separate page.'])],
+            'employment-types-decision.html' => ['Employment-Type Availability Eligibility', $this->decision($policies['employment_type_eligibility'], ['Select only which employment categories require explicit accepted availability. Target treatment is outside this policy.'])],
             'structural-allocation-decision.html' => ['Structural Allocation Decision', $this->decision($policies['structural_hours_allocation'], ['Choose how unavoidable excess or shortage is allocated.']).$this->comparison($report)],
             'weekend-decision.html' => ['Weekend Distribution', $this->decision($policies['weekend_distribution'], ['Enter the maximum difference and choose combined or separate Saturday/Sunday evaluation. Public holidays are excluded.'])],
             'consecutive-day-decision.html' => ['Consecutive Assigned Days', $this->decision($policies['consecutive_day_limit'], ['Enter the maximum assigned-calendar-day run. Leave and unassigned days break it; on-call and rest-after-run are deferred.'])],
-            'target-hours-decision.html' => ['Target Hours', $this->decision($policies['target_hours_cap'], ['Hard limits require tolerances. Authorized excess and overtime are not supported in this release.'])],
+            'target-hours-decision.html' => ['Target Hours Enforcement', $this->decision($policies['target_hours_enforcement'], ['Required-hours meaning defines the number; this page defines enforcement only. Hard limits are not operationally ready.'])],
             'preferences-decision.html' => ['Preferences', $this->decision($policies['preference_strength'], ['Preferred-off prohibition is a hard eligibility exclusion; override support is deferred.'])],
             'holidays-and-credited-hours-decision.html' => ['Public Holidays and Credited Hours — Discovery Only', '<div class="notice"><b>Discovery topic only · Not supported in this release</b><p>These decisions cannot be confirmed because the roster supports standard-day assignments and has no authoritative holiday source.</p></div>'.$this->prompts(['Future authoritative public-holiday source', 'Future varying duty-credit model'])],
             'permanent-supersession.html' => ['Permanent Supersession', $this->permanentSupersession($report)],
@@ -63,6 +65,31 @@ final readonly class RenderPolicyCalibrationReport
         $rows = collect($policies)->map(fn (array $policy): string => '<tr><td>'.$this->e($this->human($policy['key'])).'</td><td>'.$this->e($this->human($policy['selected_value'])).'</td><td>'.$this->e($policy['status']).'</td><td>r'.$this->e((string) $policy['revision']).'</td><td>'.$this->e($policy['effective_date'] ?? 'Repository fallback').'</td></tr>')->implode('');
 
         return '<table><thead><tr><th>Policy</th><th>Current effective choice</th><th>Status</th><th>Revision</th><th>Effective from</th></tr></thead><tbody>'.$rows.'</tbody></table>';
+    }
+
+    /** @param array<string, mixed> $report */
+    private function compatibility(array $report): string
+    {
+        $rows = '';
+        /** @var array{required_hours_meaning: string, target_hours_enforcement: string, compatible: bool} $entry */
+        foreach ($report['compatibility_matrix']['entries'] as $entry) {
+            $rows .= '<tr><td>'.$this->e($this->human($entry['required_hours_meaning'])).'</td><td>'.$this->e($this->human($entry['target_hours_enforcement'])).'</td><td>'.($entry['compatible'] ? 'Compatible' : 'Conflict').'</td></tr>';
+        }
+
+        return '<div class="notice"><b>One authority per concern</b><p>Required Hours Meaning defines what the number represents. Target Hours Enforcement defines how that number is applied.</p></div><table><thead><tr><th>Meaning</th><th>Enforcement</th><th>Result</th></tr></thead><tbody>'.$rows.'</tbody></table>';
+    }
+
+    /** @param array<string, mixed> $report */
+    private function readiness(array $report): string
+    {
+        $readiness = $report['enforcement_readiness'];
+        $coverage = '';
+        /** @var array{policy_key: string, selected_value: string, generator: bool, validator: bool, quality: bool, enforcement_ready: bool} $entry */
+        foreach ($readiness['coverage'] as $entry) {
+            $coverage .= '<tr><td>'.$this->e($this->human($entry['policy_key'])).'</td><td>'.$this->e($this->human($entry['selected_value'])).'</td><td>'.($entry['generator'] ? 'Yes' : 'No').'</td><td>'.($entry['validator'] ? 'Yes' : 'No').'</td><td>'.($entry['quality'] ? 'Yes' : 'No').'</td><td>'.($entry['enforcement_ready'] ? 'Ready' : 'Not ready').'</td></tr>';
+        }
+
+        return '<div class="hero"><p class="kicker">Operational activation</p><h2>'.$this->e($this->human($readiness['status'])).'</h2><p>Confirmation status: '.$this->e($this->human($readiness['activation_status'])).'</p><p>Confirmed choices are not operational until coherence, runtime coverage, and selected-period feasibility pass.</p></div><table><thead><tr><th>Policy</th><th>Choice</th><th>Generator</th><th>Validator</th><th>Quality</th><th>Enforcement</th></tr></thead><tbody>'.$coverage.'</tbody></table><p class="technical">Enforcement fingerprint: '.$this->e($readiness['enforcement_fingerprint']).'</p>';
     }
 
     /** @param array<string, mixed> $report */
@@ -147,7 +174,7 @@ final readonly class RenderPolicyCalibrationReport
 
     private function links(): string
     {
-        return '<nav><a href="current-effective-policy.html">Current effective policy</a><a href="future-and-expired-policy.html">Future and expired policy</a><a href="department-questionnaire.html">Department questionnaire</a><a href="impact-comparison.html">Impact comparison</a><a href="confirmation-summary.html">Confirmation record</a></nav>';
+        return '<nav><a href="current-effective-policy.html">Current effective policy</a><a href="policy-compatibility.html">Compatibility matrix</a><a href="enforcement-readiness.html">Enforcement readiness</a><a href="impact-comparison.html">Impact comparison</a><a href="confirmation-summary.html">Confirmation record</a></nav>';
     }
 
     private function page(string $title, string $body, bool $print = false): string

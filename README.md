@@ -70,6 +70,8 @@ Canonical orientation: [GENEI.md](GENEI.md), [ARCHITECTURE.md](ARCHITECTURE.md),
 
 Roster administrators can review provisional department assumptions at `/rostering/policy-calibration`. See [the calibration guide](docs/rostering/GENERATION_POLICY_CALIBRATION.md) and [meeting questionnaire](docs/rostering/DEPARTMENT_POLICY_QUESTIONNAIRE.md).
 
+Operational roster policy is now gated by complete-set coherence, runtime coverage, and selected-period feasibility. See [Resolved Policy Coherence](docs/rostering/RESOLVED_POLICY_COHERENCE.md), [Enforcement Readiness](docs/rostering/ENFORCEMENT_READINESS.md), and the [Compatibility Matrix](docs/rostering/POLICY_COMPATIBILITY_MATRIX.md). Confirmation records a department decision; only `ready_for_enforcement` activates it.
+
 Policy decisions use repository-defined radio choices, an explicit authority and effective window, and a no-mutation impact preview. Current diagnostics evaluate today; roster generation evaluates the roster-period start; generated-run validation reuses the persisted policy snapshot.
 
 Policy options now declare typed parameters and confirmability metadata. Unsupported choices remain visible but disabled; incomplete configuration cannot be confirmed. Confirmed revisions permanently supersede earlier revisions, which never resume automatically after a successor expires. See [parameterization](docs/rostering/POLICY_PARAMETERIZATION.md) and [confirmability](docs/rostering/POLICY_CONFIRMABILITY.md).

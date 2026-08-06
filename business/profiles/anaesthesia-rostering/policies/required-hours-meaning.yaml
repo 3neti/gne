@@ -1,38 +1,35 @@
 identifier: POLICY-ANAESTHESIA-REQUIRED-HOURS-MEANING
 key: required_hours_meaning
-revision: 1
+revision: 2
 status: provisional
-selected_value: roster_period_target
+selected_value: roster_period_clinical_duty_target
 effective_date: null
 decision_authority: anaesthesia_department
-question: What does required hours mean, and which duties reduce or count toward it?
+question: What does the authored roster-period hours value mean?
 generation_impact: quality
-provenance: Treated as a roster-period planning target pending confirmation.
+provenance: Treated as a clinical-duty target pending department confirmation.
+discovery_metadata:
+  holiday_effect: recorded_for_future
+  operationally_applied: false
 options:
   - &configured
-    value: roster_period_target
-    label: Roster-period target
-    description: Hours are a planning target for the complete roster period; on-call and overtime counting are unsupported.
-    impact: Supports target balancing without a hard cap.
+    value: roster_period_clinical_duty_target
+    label: Roster-period clinical-duty target
+    description: The value is a clinical-duty planning target for the roster period.
+    impact: Accounting meaning is explicit; enforcement is selected separately.
     supported: true
     fixed_configuration: { period_basis: roster_period }
     parameters:
       - { key: leave_reduces_target, label: Leave reduces target, type: boolean, required: true }
       - { key: education_counts, label: Education counts toward target, type: boolean, required: true }
-      - { key: public_holiday_reduces_target, label: Public holiday reduces target, type: boolean, required: true }
   - <<: *configured
-    value: minimum_expected_hours
-    label: Minimum expected hours
-    description: The value is a minimum obligation for the roster period; on-call and overtime counting are unsupported.
-    impact: Below-target hours require attention.
+    value: roster_period_minimum_obligation
+    label: Roster-period minimum obligation
+    description: The value represents a minimum clinical-duty obligation for the roster period.
+    impact: Enforcement remains independently selected by Target Hours Enforcement.
   - <<: *configured
-    value: hard_maximum
-    label: Hard maximum
-    description: Assignments must not exceed the roster-period value; on-call and overtime counting are unsupported.
-    impact: Excess hours become an error.
-  - <<: *configured
-    value: planning_reference
+    value: planning_reference_only
     label: Planning reference only
-    description: The roster-period value informs planning but is not enforced; on-call and overtime counting are unsupported.
-    impact: Hours remain descriptive.
-  - { value: unresolved, label: Decision pending, description: Department meaning is not yet selected., impact: Quality interpretation remains limited., confirmation_required: false, supported: true, parameters: [] }
+    description: The value is descriptive planning information rather than an obligation.
+    impact: Hard enforcement modes conflict with this meaning.
+  - { value: unresolved, label: Decision pending, description: Department meaning is not yet selected., impact: Enforcement readiness remains incomplete., confirmation_required: false, supported: true, parameters: [] }

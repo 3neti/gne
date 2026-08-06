@@ -17,6 +17,8 @@ Structural allocation supports only equal per eligible doctor, proportional to t
 
 The administrator surface is `/rostering/policy-calibration`. Abilities remain explicit: view, edit, and confirm. Confirmation emits `roster_policy.confirmed`; the generator cannot confirm policy. Generation-run rows retain the fingerprint used at creation.
 
+Confirmation and operational activation are distinct. The surface reports complete-set compatibility, runtime-consumer coverage, period feasibility, department identity, enforcement identity, and explicit fallback use. Required Hours Meaning no longer defines maximum enforcement; Target Hours Enforcement owns that concern.
+
 Every resolution uses `RosterPolicyEvaluationContext`. Effective choice is the highest supported confirmed revision whose inclusive window contains the evaluation date. Rejected revisions never apply; future and expired revisions remain visible; superseded revisions resolve only inside their closed historical window. The fingerprint contains only effective choices. A generation run stores the resolved snapshot and evaluation date.
 
 The confirmation UI renders repository-authored option cards rather than free text. Preview calculates candidate impacts and a deterministic candidate fingerprint without mutation. See [effective-date model](POLICY_EFFECTIVE_DATE_MODEL.md) and [decision workflow](POLICY_DECISION_WORKFLOW.md).

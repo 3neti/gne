@@ -139,3 +139,12 @@ The active duty vocabulary is only `standard_day`, `leave`, and `unavailable`. A
 - **Policy Confirmability**: `confirmable`, `configuration_required`, `unsupported_in_current_release`, `unresolved`, or `invalid`.
 - **Permanent Supersession**: a new confirmed revision closes its predecessor; expiry does not restore the predecessor.
 - **Discovery-only Topic**: a future policy question with no confirmable runtime option, currently public holidays and variable credited hours.
+# Roster policy readiness grammar
+
+- **Required Hours Meaning**: what the authored roster-period hours number represents.
+- **Target Hours Enforcement**: how that number is enforced; it does not redefine its meaning.
+- **Policy Compatibility Matrix**: the closed set of coherent meaning/enforcement pairs.
+- **Enforcement Fingerprint**: deterministic identity of direct operational policy inputs; discovery-only holiday metadata is excluded.
+- **Enforcement Readiness**: `ready_for_enforcement`, `configuration_incomplete`, `policy_conflict`, `unsupported_dependency`, or `period_infeasible`.
+- **Confirmed but not enforceable**: a recorded department choice which is visible but cannot be consumed operationally.
+- **Operational fallback**: the explicit repository-authored provisional policy used when the confirmed set is not ready.

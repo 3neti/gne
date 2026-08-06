@@ -19,7 +19,7 @@ final readonly class ConfirmRosterPolicyCalibration
     {
         $current = $this->resolvePolicy->handle();
         $definition = $current->policies[$data['policy_key']] ?? throw new \InvalidArgumentException('Unknown policy key.');
-        $validation = $this->validateConfirmation->confirmable($definition, $data['selected_value'], $data['configuration'] ?? [], $data['effective_from'], $data['effective_until'] ?? null);
+        $validation = $this->validateConfirmation->recordable($definition, $data['selected_value'], $data['configuration'] ?? [], $data['effective_from'], $data['effective_until'] ?? null);
 
         return DB::transaction(function () use ($actor, $data, $definition, $validation): RosterPolicyCalibration {
             $start = CarbonImmutable::parse($data['effective_from']);

@@ -2,8 +2,10 @@
 
 use App\Application\Rostering\ConfirmRosterPolicyCalibration;
 use App\Application\Rostering\ResolveRosterPolicy;
+use App\Application\Rostering\SelectOperationalRosterPolicy;
 use App\Application\Rostering\ValidateRosterPolicyConfirmation;
 use App\Domain\Rostering\InvalidRosterPolicyConfirmation;
+use App\Domain\Rostering\RosterGenerationInput;
 use App\Domain\Rostering\RosterPolicyConfirmability;
 use App\Domain\Rostering\RosterPolicyConfirmationValidation;
 use App\Domain\Rostering\RosterPolicyEvaluationContext;
@@ -44,12 +46,25 @@ test('typed parameters reject omissions unknown values and wrong types', functio
         ->and(confirmationValidation('weekend_distribution', 'informational', ['invented' => true])->invalidParameters)->toHaveKey('invented');
 });
 
-test('unsupported and unresolved options cannot be confirmed', function () {
-    expect(confirmationValidation('target_hours_cap', 'soft_target')->confirmability)->toBe(RosterPolicyConfirmability::Confirmable)
-        ->and(confirmationValidation('target_hours_cap', 'hard_maximum', ['excess_tolerance_hours' => 0])->confirmability)->toBe(RosterPolicyConfirmability::Confirmable)
-        ->and(confirmationValidation('target_hours_cap', 'target_with_authorized_excess')->confirmability)->toBe(RosterPolicyConfirmability::UnsupportedInCurrentRelease)
-        ->and(confirmationValidation('target_hours_cap', 'target_with_overtime')->unsupportedDependencies)->toBe(['overtime_model'])
-        ->and(fn () => app(ValidateRosterPolicyConfirmation::class)->confirmable(app(ResolveRosterPolicy::class)->handle()->policies['target_hours_cap'], 'unresolved', []))->toThrow(InvalidRosterPolicyConfirmation::class);
+test('unsupported options are recordable but unresolved options cannot be confirmed', function () {
+    expect(confirmationValidation('target_hours_enforcement', 'soft_warning')->confirmability)->toBe(RosterPolicyConfirmability::Confirmable)
+        ->and(confirmationValidation('target_hours_enforcement', 'hard_maximum', ['excess_tolerance_hours' => 0])->confirmability)->toBe(RosterPolicyConfirmability::Confirmable)
+        ->and(confirmationValidation('target_hours_enforcement', 'authorized_excess')->confirmability)->toBe(RosterPolicyConfirmability::UnsupportedInCurrentRelease)
+        ->and(confirmationValidation('target_hours_enforcement', 'overtime_based')->unsupportedDependencies)->toBe(['overtime_model'])
+        ->and(fn () => app(ValidateRosterPolicyConfirmation::class)->confirmable(app(ResolveRosterPolicy::class)->handle()->policies['target_hours_enforcement'], 'unresolved', []))->toThrow(InvalidRosterPolicyConfirmation::class);
+});
+
+test('a confirmed unsupported decision remains visible and uses the explicit operational fallback', function () {
+    $actor = User::factory()->create(['is_roster_administrator' => true]);
+    app(ConfirmRosterPolicyCalibration::class)->handle($actor, ['policy_key' => 'target_hours_enforcement', 'selected_value' => 'authorized_excess', 'effective_from' => '2026-08-01', 'decision_authority' => 'Department Chair', 'source_reference' => 'Future policy meeting', 'notes' => 'Record intent without activation.']);
+    $input = new RosterGenerationInput('ROSTER-PERIOD-TEST', 'ready_for_generation', [], [], [], 0, 'sha256:test');
+
+    $selection = app(SelectOperationalRosterPolicy::class)->handle(new RosterPolicyEvaluationContext(CarbonImmutable::parse('2026-08-06'), RosterPolicyEvaluationPurpose::GenerationPreview, 'ROSTER-PERIOD-TEST'), $input);
+
+    expect($selection->confirmedPolicy->policies['target_hours_enforcement']->selectedValue)->toBe('authorized_excess')
+        ->and($selection->readiness->activationStatus)->toBe('confirmed_but_not_enforceable')
+        ->and($selection->usesFallback)->toBeTrue()
+        ->and($selection->operationalPolicy->policies['target_hours_enforcement']->selectedValue)->toBe('soft_warning');
 });
 
 test('normalized configuration changes identity but key order does not', function () {
@@ -84,7 +99,7 @@ test('calibration page exposes dynamic configuration and unsupported choices', f
 
     $this->actingAs($administrator)->get(route('rostering.policy_calibration.index'))->assertOk()->assertInertia(fn ($page) => $page
         ->where('policy.policies.weekend_distribution.options.1.parameters.0.key', 'maximum_weekend_difference')
-        ->where('policy.policies.target_hours_cap.options.3.supported', false)
+        ->where('policy.policies.target_hours_enforcement.options.4.supported', false)
         ->where('policy.policies.structural_hours_allocation.configuration.remainder_distribution', 'largest_fractional_remainder_then_stable_doctor_identity'));
 });
 

@@ -1,0 +1,30 @@
+identifier: POLICY-ANAESTHESIA-TARGET-HOURS-ENFORCEMENT
+key: target_hours_enforcement
+revision: 2
+status: provisional
+selected_value: soft_warning
+effective_date: null
+decision_authority: anaesthesia_department
+question: How should the authored roster-period hours be enforced?
+generation_impact: quality
+provenance: Hours produce a soft balancing warning pending department confirmation.
+options:
+  - { value: informational, label: Information only, description: Hours are reported without enforcement., impact: No warning or error is introduced., supported: true, parameters: [] }
+  - { value: soft_warning, label: Soft warning, description: Hours guide balancing and variances are reported., impact: Variance is explained without blocking generation., supported: true, parameters: [] }
+  - value: hard_minimum
+    label: Hard minimum
+    description: Hours must reach the authored value minus an explicit tolerance.
+    impact: Deficit beyond tolerance is prohibited once runtime enforcement is implemented.
+    supported: true
+    parameters:
+      - { key: minimum_tolerance_hours, label: Minimum tolerance hours, type: integer, minimum: 0, required: true }
+  - value: hard_maximum
+    label: Hard maximum
+    description: Hours may not exceed the authored value plus an explicit tolerance.
+    impact: Excess beyond tolerance is prohibited once runtime enforcement is implemented.
+    supported: true
+    parameters:
+      - { key: excess_tolerance_hours, label: Excess tolerance hours, type: integer, minimum: 0, required: true }
+  - { value: authorized_excess, label: Authorized excess, description: Excess requires a future approval workflow., impact: Recorded for future use and not operationally applied., supported: false, unsupported_dependencies: [approval_workflow], parameters: [] }
+  - { value: overtime_based, label: Overtime based, description: Excess requires a future overtime model., impact: Recorded for future use and not operationally applied., supported: false, unsupported_dependencies: [overtime_model], parameters: [] }
+  - { value: unresolved, label: Decision pending, description: Target-hours enforcement is not selected., impact: Enforcement readiness remains incomplete., confirmation_required: false, supported: true, parameters: [] }

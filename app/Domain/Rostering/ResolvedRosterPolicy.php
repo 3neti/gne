@@ -41,9 +41,23 @@ final readonly class ResolvedRosterPolicy
         return new RosterPolicyCalibrationStatus($confirmed, $provisional, $unresolvedMandatory, $unresolvedQuality, [], $this->fingerprint, array_values(array_unique(array_column($this->futurePolicies, 'policy_key'))), array_values(array_unique(array_column($this->expiredPolicies, 'policy_key'))), $this->evaluationContext?->evaluationDate->toDateString());
     }
 
+    public function enforcementFingerprint(): string
+    {
+        $policies = collect($this->policies)->map(fn (RosterPolicyDefinition $policy): array => [
+            'key' => $policy->key,
+            'revision' => $policy->revision,
+            'selected_value' => $policy->selectedValue,
+            'configuration' => collect($policy->configuration)->except(['public_holiday_reduces_target', 'holiday_effect'])->sortKeys()->all(),
+            'effective_date' => $policy->effectiveDate,
+            'effective_until' => $policy->effectiveUntil,
+        ])->sortKeys()->all();
+
+        return 'sha256:'.hash('sha256', json_encode($policies, JSON_THROW_ON_ERROR | JSON_UNESCAPED_SLASHES));
+    }
+
     /** @return array<string, mixed> */
     public function toArray(): array
     {
-        return ['profile_identifier' => $this->profileIdentifier, 'revision' => $this->revision, 'generator_name' => $this->generatorName, 'generator_version' => $this->generatorVersion, 'evaluation_context' => $this->evaluationContext?->toArray(), 'policies' => collect($this->policies)->map->toArray()->all(), 'future_policies' => $this->futurePolicies, 'expired_policies' => $this->expiredPolicies, 'calibration' => $this->calibrationStatus()->toArray(), 'provenance' => $this->provenance, 'fingerprint' => $this->fingerprint];
+        return ['profile_identifier' => $this->profileIdentifier, 'revision' => $this->revision, 'generator_name' => $this->generatorName, 'generator_version' => $this->generatorVersion, 'evaluation_context' => $this->evaluationContext?->toArray(), 'policies' => collect($this->policies)->map->toArray()->all(), 'future_policies' => $this->futurePolicies, 'expired_policies' => $this->expiredPolicies, 'calibration' => $this->calibrationStatus()->toArray(), 'provenance' => $this->provenance, 'fingerprint' => $this->fingerprint, 'enforcement_fingerprint' => $this->enforcementFingerprint()];
     }
 }

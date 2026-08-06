@@ -8,7 +8,14 @@ use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Support\Carbon;
 
+/**
+ * @property RosterPolicyStatus $status
+ * @property array<string, mixed>|null $configuration
+ * @property Carbon|null $effective_from
+ * @property Carbon|null $effective_until
+ */
 #[Fillable(['identifier', 'department_key', 'policy_key', 'revision', 'status', 'selected_value', 'configuration', 'effective_from', 'effective_until', 'confirmed_by', 'confirmed_at', 'decision_authority', 'source_reference', 'notes', 'fingerprint'])]
 class RosterPolicyCalibration extends Model
 {

@@ -161,3 +161,23 @@ Anaesthesia generation policy is repository-authored, explicitly calibrated, and
 `RosterPolicyEvaluationContext` makes time an explicit compiler input. Repository definitions plus operational decision revisions plus that context produce the only `ResolvedRosterPolicy` consumed by generation and validation. Confirmed revisions are active only inside their effective window; future, expired, and rejected revisions cannot displace the current choice. Superseded revisions remain available only for historical dates inside their closed window. Generation runs persist the complete resolved snapshot, fingerprint, and evaluation date.
 
 Repository policy definitions also own typed parameter schemas, support status, and dependency declarations. `ValidateRosterPolicyConfirmation` normalizes configuration before the application service may persist it. Effective fingerprints and generated-run snapshots include that configuration. Permanent supersession closes a predecessor; expiry falls back to repository source and never reactivates the predecessor.
+# Roster policy enforcement boundary
+
+Anaesthesia policy resolution now separates authored meaning from operational activation:
+
+```text
+Repository policy + confirmed revisions
+        ↓
+ResolvedRosterPolicy
+        ↓
+ValidateResolvedRosterPolicyCoherence
+        ├── compatibility
+        ├── runtime coverage
+        └── selected-period feasibility
+        ↓
+SelectOperationalRosterPolicy
+        ↓
+generator / validator / quality
+```
+
+Confirmed is not synonymous with operational. Only `ready_for_enforcement` activates the confirmed set; otherwise the repository fallback is explicit. Holiday discovery metadata is excluded from enforcement identity.

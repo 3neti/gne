@@ -253,3 +253,10 @@ Accepted. A staffing-count table is a staffing summary, not a roster calendar. G
 **Status:** Accepted — 2026-08-05. **Decision:** Resolve roster policy from an explicit evaluation context and inclusive effective windows; fingerprint only the effective set; persist generated-run snapshots; expose only repository-authored department options. New effective revisions atomically close an earlier overlapping window, while other ambiguous overlaps fail. **Rationale:** revision order alone is not temporal business meaning, and free-text identifiers are unsafe department controls. **Consequences:** future decisions do not activate early, historical generation is immutable, and the questionnaire provides choices, impacts, authority, dates, evidence, and signature fields.
 
 **Status:** Accepted — 2026-08-06. **Decision:** Confirm only supported, fully parameterized options; include normalized configuration in identity and history; use permanent supersession without automatic restoration; keep holiday and variable-credit questions discovery-only. **Rationale:** a named mode is not an executable policy. **Consequences:** incomplete and unsupported choices fail closed, and post-expiry resolution uses the repository fallback.
+# Resolved roster-policy coherence decisions (2026-08-06)
+
+- Required-hours meaning and target-hours enforcement are orthogonal policies with one closed compatibility matrix.
+- The complete resolved policy set is validated by one coherence service before operational use.
+- A confirmed policy is not active until enforcement readiness passes; blocked confirmation and explicit fallback are visible.
+- Discovery-only public-holiday metadata does not influence current enforcement identity.
+- Legacy PHPStan findings are measured by a no-regression gate and are never hidden by broad suppression.

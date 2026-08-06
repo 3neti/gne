@@ -129,6 +129,24 @@ arch('document readiness catches no unclassified implementation failures')
     ->expect('App\Domain\Compilation\BuildResolvedDocumentSet')
     ->not->toUse('Throwable');
 
+arch('roster policy coherence and feasibility remain deterministic application services')
+    ->expect([
+        'App\Application\Rostering\ValidateResolvedRosterPolicyCoherence',
+        'App\Application\Rostering\EvaluateRosterPolicySetAgainstPeriod',
+        'App\Application\Rostering\BuildRosterPolicyEnforcementCoverage',
+        'App\Application\Rostering\SelectOperationalRosterPolicy',
+    ])
+    ->not->toUse(['Throwable', 'App\Http', 'Inertia']);
+
+it('selects one operational policy before generation and keeps discovery metadata out of enforcement identity', function () {
+    $generation = file_get_contents(dirname(__DIR__, 2).'/app/Application/Rostering/GenerateDraftRoster.php');
+    $policy = file_get_contents(dirname(__DIR__, 2).'/app/Domain/Rostering/ResolvedRosterPolicy.php');
+
+    expect($generation)->toContain('SelectOperationalRosterPolicy')
+        ->and($policy)->toContain("except(['public_holiday_reduces_target', 'holiday_effect'])")
+        ->and($generation)->not->toContain('public_holiday_reduces_target');
+});
+
 it('classifies only missing evidence as ordinary document readiness', function () {
     $source = file_get_contents(dirname(__DIR__, 2).'/app/Domain/Compilation/BuildResolvedDocumentSet.php');
 

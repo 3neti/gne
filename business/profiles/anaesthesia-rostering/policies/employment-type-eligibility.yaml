@@ -5,14 +5,14 @@ status: provisional
 selected_value: all_active_types_eligible
 effective_date: null
 decision_authority: anaesthesia_department
-question: How do full-time, part-time, visiting, and locum categories affect eligibility?
+question: Which employment categories require explicit accepted availability?
 generation_impact: mandatory
 provenance: All active demonstration doctors remain eligible pending department confirmation.
 options:
-  - { value: all_active_types_eligible, label: All active types eligible, description: "Full-time, part-time, visiting, and locum doctors share the active eligibility rule.", impact: No employment weighting or exclusion is inferred., supported: true, parameters: [] }
+  - { value: all_active_types_eligible, label: All active employment types follow global availability, description: "Full-time, part-time, visiting, and locum doctors use the global availability rule.", impact: This policy does not define target-hours treatment., supported: true, parameters: [] }
   - value: explicit_availability_by_type
     label: Explicit availability by employment type
-    description: Selected employment categories require explicit accepted availability; manual override remains deferred.
+    description: Selected employment categories require explicit accepted availability; target-hours treatment is outside this policy.
     impact: Affected categories without accepted availability become ineligible.
     supported: true
     parameters:

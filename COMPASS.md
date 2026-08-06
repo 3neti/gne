@@ -33,3 +33,6 @@ Generation policy calibration precedes publication. The generator must not decid
 Policy timing is explicit business meaning. Current diagnostics use today, generation uses roster-period start, and historical validation uses its immutable stored snapshot. Future decisions are visible but excluded from current identity. The department chooses only from closed repository options.
 
 A closed option becomes operational only with valid registered parameters and supported runtime behavior. Configuration participates in identity and history. Permanent supersession prevents hidden reactivation; expired coverage returns to the provisional repository declaration.
+# Roster policy compass addition
+
+Department confirmation records intent. Coherence, runtime support, and period feasibility determine operational activation. Never let an individually valid choice bypass complete-set enforcement readiness.

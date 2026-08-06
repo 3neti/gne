@@ -38,7 +38,7 @@ policies:
   - policies/structural-hours-allocation.yaml
   - policies/weekend-distribution.yaml
   - policies/consecutive-day-limit.yaml
-  - policies/target-hours-cap.yaml
+  - policies/target-hours-enforcement.yaml
   - policies/employment-type-eligibility.yaml
   - policies/preference-strength.yaml
 documents: [documents/roster-period-summary.yaml]

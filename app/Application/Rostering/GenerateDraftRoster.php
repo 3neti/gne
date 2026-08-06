@@ -14,7 +14,7 @@ use Illuminate\Support\Facades\DB;
 
 final readonly class GenerateDraftRoster
 {
-    public function __construct(private BuildRosterGenerationInput $input, private ResolveRosterPolicy $policy, private RosterGenerator $generator, private AnalyzeGeneratedRoster $analyze, private PersistGeneratedRosterBatch $persist, private ValidateRoster $validate, private CreateRosterRevision $revision, private RosterAuditRecorder $audit, private TransitionRosterPeriod $transition) {}
+    public function __construct(private BuildRosterGenerationInput $input, private SelectOperationalRosterPolicy $selectPolicy, private RosterGenerator $generator, private AnalyzeGeneratedRoster $analyze, private PersistGeneratedRosterBatch $persist, private ValidateRoster $validate, private CreateRosterRevision $revision, private RosterAuditRecorder $audit, private TransitionRosterPeriod $transition) {}
 
     /** @return array<string, mixed> */
     public function handle(User $actor, RosterPeriod $period): array
@@ -23,13 +23,14 @@ final readonly class GenerateDraftRoster
             throw new InvalidRosterGeneration('Initial draft generation requires an authorised administrator, ready_for_generation status, and an empty roster.');
         }
         $input = $this->input->handle($period);
-        $policy = $this->policy->handle(new RosterPolicyEvaluationContext(
+        $selection = $this->selectPolicy->handle(new RosterPolicyEvaluationContext(
             evaluationDate: $period->start_date->toImmutable(),
             purpose: RosterPolicyEvaluationPurpose::GenerationCommit,
             rosterPeriodIdentifier: $period->identifier,
-        ));
+        ), $input);
+        $policy = $selection->operationalPolicy;
         if ($policy->calibrationStatus()->blocksGeneration()) {
-            throw new InvalidRosterGeneration('Generation is blocked until mandatory department policies are calibrated.');
+            throw new InvalidRosterGeneration('The explicit operational fallback is incomplete; generation cannot proceed.');
         }
         $result = $this->analyze->handle($input, $this->generator->generate($input, $policy), $policy);
         if ($result->hasErrors()) {
